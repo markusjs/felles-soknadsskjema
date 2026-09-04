@@ -1,0 +1,23 @@
+# server.js er kun en lokal dev-server. Uten denne linja bygger Vercel den som
+# en serverless function, og da havner alle statiske filer utenfor bundelen —
+# resultatet er at CSS/JS/SVG svarer 404 og siden vises ustylet.
+server.js
+
+# sok.html er en symlink til sok-skjema.html. Symlinks er upalitelige i statiske
+# deploys, sa den utelates — /sok loses av rewrite-regelen i vercel.json isteden.
+sok.html
+
+# Verktøy og kildefiler som ikke skal ut på web
+tools/
+__pycache__/
+*.py
+*.docx
+*.md
+~$*
+
+# Store binærblobber som bare gjør opplastingen tung
+ziEZXfi4
+ziWRdKsh
+*.zip
+.cache/
+.DS_Store

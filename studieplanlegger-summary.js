@@ -58,11 +58,23 @@ function spPendingList() {
     });
 }
 
-function spCommittedCount() {
-  return Object.keys(spCart).filter(function(code) {
-    var c = spCart[code];
-    return c && (c.program || c.loose);
-  }).length;
+/* Alt studenten har valgt i planleggeren, uansett om det alt ligger i søknaden.
+   Sammendraget viser begge deler som like rader. */
+function spValgteEmner() {
+  var radRekkefolge = {};
+  document.querySelectorAll('.sp-course-row[data-code]').forEach(function(row, i) {
+    if (!(row.dataset.code in radRekkefolge)) radRekkefolge[row.dataset.code] = i;
+  });
+  return Object.keys(spCart)
+    .sort(function(a, b) {
+      var ia = (a in radRekkefolge) ? radRekkefolge[a] : Infinity;
+      var ib = (b in radRekkefolge) ? radRekkefolge[b] : Infinity;
+      return ia - ib;
+    })
+    .map(function(code) {
+      var c = spCart[code];
+      return { code: code, name: c.name, pts: c.pts, price: c.price, url: c.url || null };
+    });
 }
 
 function spMarkRow(code, valgt) {
@@ -84,52 +96,56 @@ var SUMMARY_CSS = '\
 /* Faste kolonner for poeng og pris, så radene står på linje nedover. */\
 .sp-course-row{padding:16px 24px;gap:16px}\
 .sp-badge{min-width:76px;text-align:center}\
-.sp-price{min-width:92px;font-variant-numeric:tabular-nums}\
-.sp-bestill-alle:disabled{background:#e4e4e4;color:#8d8d8d;cursor:default}\
-.sp-bestill-alle:disabled:hover{background:#e4e4e4}\
+.sp-price{min-width:92px;font-variant-numeric:tabular-nums;font-family:\'Produkt\',\'Source Serif 4\',Georgia,serif}\
+.sp-bestill-alle:disabled{background:#D4D4D4;color:#5C5C5C;cursor:default}\
+.sp-bestill-alle:disabled:hover{background:#D4D4D4}\
+/* Valgt emne: hvit knapp med kryss, tegnet i CSS så den ikke er avhengig av\
+   hvilket tegn de ulike kodestiene setter i knappen. */\
+.sp-add-btn{box-sizing:border-box}\
+.sp-add-btn.added:not(.completed){position:relative;background:#fff;border:1.5px solid #1A1A1A;color:transparent;font-size:0}\
+.sp-add-btn.added:not(.completed):hover{background:#F5F5F5}\
+.sp-add-btn.added:not(.completed)::before,.sp-add-btn.added:not(.completed)::after{content:"";position:absolute;left:50%;top:50%;width:14px;height:1.8px;border-radius:1px;background:#1A1A1A}\
+.sp-add-btn.added:not(.completed)::before{transform:translate(-50%,-50%) rotate(45deg)}\
+.sp-add-btn.added:not(.completed)::after{transform:translate(-50%,-50%) rotate(-45deg)}\
 \
 .sp-side{position:sticky;top:88px;min-width:0}\
-.sp-summary{display:flex;flex-direction:column;max-height:calc(100vh - 116px);background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.06),0 14px 36px rgba(0,0,0,.07)}\
+.sp-summary{display:flex;flex-direction:column;max-height:calc(100vh - 116px);background:#fff;border-radius:8px;overflow:hidden;}\
 .sp-sum-head{flex-shrink:0;display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:24px 24px 14px}\
-.sp-sum-head h3{font-size:22px;font-weight:800;color:#111;margin:0;line-height:1.2}\
+.sp-sum-head h3{font-size:22px;font-weight:600;color:#1A1A1A;margin:0;line-height:1.2}\
 .sp-sum-count{font-size:13px;font-weight:600;color:#5c5c5c;white-space:nowrap}\
 .sp-sum-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 24px;scrollbar-width:thin;scrollbar-color:#d4d4d4 transparent}\.sp-sum-scroll::-webkit-scrollbar{width:6px}\.sp-sum-scroll::-webkit-scrollbar-track{background:transparent}\.sp-sum-scroll::-webkit-scrollbar-thumb{background:#d4d4d4;border-radius:3px}\
-.sp-sum-list{border-top:1px solid #111;border-bottom:1px solid #111}\
-.sp-sum-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto 28px;align-items:start;gap:6px 14px;padding:14px 0;border-bottom:1px solid #e8e8e8}\
+.sp-sum-list{border-top:1px solid #1A1A1A;border-bottom:1px solid #1A1A1A}\
+.sp-sum-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto 28px;align-items:start;gap:6px 14px;padding:14px 0;border-bottom:1px solid #E6E6E6}\
 .sp-sum-row:last-child{border-bottom:none}\
-.sp-sum-name{min-width:0;font-size:14px;color:#111;line-height:1.35;text-decoration:underline;text-underline-offset:2px}\
+.sp-sum-name{min-width:0;font-size:14px;color:#1A1A1A;line-height:1.35;text-decoration:underline;text-underline-offset:2px}\
 /* Sidens globale a-regel tegner en 2px bunnstrek i full boksbredde – her skal\
    understrekingen følge teksten. */\
 a.sp-sum-name,a.sp-sum-name:hover{border:none}\
-a.sp-sum-name:hover{color:#4e0000}\
+a.sp-sum-name:hover{color:#46000A}\
 .sp-sum-pts{font-size:13px;line-height:19px;color:#5c5c5c;white-space:nowrap;text-align:right}\
-.sp-sum-price{font-size:13px;line-height:19px;color:#111;white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}\
-.sp-sum-remove{width:28px;height:28px;margin-top:-4px;padding:0;border:1.5px solid #111;border-radius:6px;background:#fff;color:#111;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s,color .15s}\
-.sp-sum-remove:hover{background:#4e0000;border-color:#4e0000;color:#fff}\
+.sp-sum-price{font-size:13px;line-height:19px;color:#1A1A1A;white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums;font-family:\'Produkt\',\'Source Serif 4\',Georgia,serif}\
+.sp-sum-remove{width:28px;height:28px;margin-top:-4px;padding:0;border:1.5px solid #1A1A1A;border-radius:999px;background:#fff;color:#1A1A1A;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s,color .15s}\
+.sp-sum-remove:hover{background:#46000A;border-color:#46000A;color:#fff}\
 @keyframes spSumIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}\
 .sp-sum-row.is-new{animation:spSumIn .24s ease}\
-.sp-sum-empty{border-top:1px solid #dcdcdc;padding:30px 8px 28px;text-align:center}\
-.sp-sum-empty svg{color:#c2c2c2}\
-.sp-sum-empty p{margin:12px 0 0;font-size:14px;color:#6b6b6b;line-height:1.5}\
-.sp-sum-note{flex-shrink:0;display:flex;align-items:flex-start;gap:9px;margin:0;padding:13px 24px;background:#f6ece3;font-size:13px;color:#4a3a30;line-height:1.45}\
-.sp-sum-note svg{flex-shrink:0;margin-top:1px;color:#8a6a52}\
-.sp-sum-note button{background:none;border:none;padding:0;margin:0;font:inherit;color:#4e0000;font-weight:600;text-decoration:underline;cursor:pointer}\
-.sp-sum-total{flex-shrink:0;background:#111;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px}\
-.sp-sum-total-pts{display:block;font-size:14px;font-weight:700;line-height:1.3}\
-.sp-sum-total-price{display:block;font-size:22px;font-weight:400;margin-top:3px;line-height:1.15;font-variant-numeric:tabular-nums}\
-.sp-sum-total-empty{font-size:14px;color:#a8a8a8;line-height:1.4}\
-.sp-sum-cta{flex-shrink:0;background:#ffcc00;color:#111;border:none;border-radius:8px;padding:14px 22px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s,transform .1s}\
-.sp-sum-cta:hover:not(:disabled){background:#ffd94d}\
+.sp-sum-empty{border-top:1px solid #D4D4D4;padding:30px 8px 28px;text-align:center}\
+.sp-sum-empty svg{color:#D4D4D4}\
+.sp-sum-empty p{margin:12px 0 0;font-size:14px;color:#5C5C5C;line-height:1.5}\
+.sp-sum-total{flex-shrink:0;background:#1A1A1A;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px}\
+.sp-sum-total-pts{display:block;font-size:14px;font-weight:600;line-height:1.3}\
+.sp-sum-total-price{display:block;font-size:22px;font-weight:400;margin-top:3px;line-height:1.15;font-variant-numeric:tabular-nums;font-family:\'Produkt\',\'Source Serif 4\',Georgia,serif}\
+.sp-sum-total-empty{font-size:14px;color:#5C5C5C;line-height:1.4}\
+.sp-sum-cta{flex-shrink:0;background:#FFCA00;color:#1A1A1A;border:none;border-radius:8px;padding:14px 22px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s,transform .1s}\
+.sp-sum-cta:hover:not(:disabled){background:#FFCA00}\
 .sp-sum-cta:active:not(:disabled){transform:translateY(1px)}\
-.sp-sum-cta:disabled{background:#2b2b2b;color:#7b7b7b;box-shadow:inset 0 0 0 1px #3d3d3d;cursor:default}\
+.sp-sum-cta:disabled{background:#1A1A1A;color:#5C5C5C;box-shadow:inset 0 0 0 1px #3d3d3d;cursor:default}\
 \
 @media(max-width:980px){\
 .sp-wrap{display:block}\
 .sp-side{position:sticky;top:auto;bottom:0;margin-top:16px;z-index:30}\
-.sp-summary{max-height:none;border-radius:14px 14px 0 0;box-shadow:0 -8px 28px rgba(0,0,0,.18)}\
+.sp-summary{max-height:none;border-radius:8px 8px 0 0;}\
 .sp-sum-head{padding:16px 20px 10px}\
 .sp-sum-scroll{padding:0 20px;max-height:30vh}\
-.sp-sum-note{padding:11px 20px}\
 .sp-sum-total{padding:14px 20px}\
 .sp-sum-total-price{font-size:20px}\
 }\
@@ -161,7 +177,6 @@ function spInjectSummaryShell() {
 
 var X_SVG = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
 var TOMT_SVG = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M22 9L12 5 2 9l10 4 10-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M6 11v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>';
-var INFO_SVG = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9.25" stroke="currentColor" stroke-width="1.6"/><path d="M12 11v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="7.9" r="1.05" fill="currentColor"/></svg>';
 
 /* Emnet som nettopp ble lagt til – raden tones inn så valget bekreftes visuelt. */
 var _spNyKode = null;
@@ -171,7 +186,7 @@ function spRenderSummary() {
   spOppdaterLeggTilAlle();
   if (!side) return;
 
-  var valgte = spPendingList();
+  var valgte = spValgteEmner();
   var totalPts = 0, totalPris = 0, rader = '';
 
   valgte.forEach(function(e) {
@@ -196,15 +211,6 @@ function spRenderSummary() {
     : '<div class="sp-sum-empty">' + TOMT_SVG
       + '<p>Legg til emner fra semestrene for å fortsette.</p></div>';
 
-  /* Emner som allerede ligger i søknaden hører hjemme der, ikke her – men
-     studenten skal se at de er tatt vare på. */
-  var iSoknaden = spCommittedCount();
-  var notis = iSoknaden
-    ? '<p class="sp-sum-note">' + INFO_SVG + '<span>' + iSoknaden
-      + (iSoknaden === 1 ? ' emne ligger' : ' emner ligger') + ' allerede i søknaden din. '
-      + '<button type="button" onclick="openSoknaderPanel()">Se søknaden</button></span></p>'
-    : '';
-
   var sum = valgte.length
     ? '<div><span class="sp-sum-total-pts">Totalt ' + fmtPts(totalPts) + ' studiepoeng</span>'
       + '<span class="sp-sum-total-price">kr ' + fmtKr(totalPris) + '</span></div>'
@@ -216,7 +222,6 @@ function spRenderSummary() {
         + (valgte.length === 1 ? ' emne valgt' : ' emner valgt') + '</span>' : '')
     + '</div>'
     + '<div class="sp-sum-scroll">' + innhold + '</div>'
-    + notis
     + '<div class="sp-sum-total">' + sum
     + '<button class="sp-sum-cta" onclick="spGaVidere()"' + (valgte.length ? '' : ' disabled') + '>Gå videre</button>'
     + '</div>'
@@ -340,7 +345,11 @@ function spAktivGjennomforing() {
 
 window.spGaVidere = function() {
   var pending = spPendingList();
-  if (!pending.length) return;
+  /* Ligger alt i søknaden alt, er det ingen valg igjen å ta – da åpner vi den. */
+  if (!pending.length) {
+    if (typeof openSoknaderPanel === 'function') openSoknaderPanel();
+    return;
+  }
   velgProgramForPlanlegger(pending, SP_SIDENS_PROGRAM, function(p, opts) {
     opts = opts || {};
     /* p === null: emnene tas som frittstående enkeltemner. opts bærer
@@ -412,14 +421,14 @@ function spVisVarselKvittering(epost) {
 
   var mottaker = epost ? '«' + esc(epost) + '»' : 'e-postadressen din';
   body.innerHTML = '<div style="padding:8px 0;">'
-    + '<div style="background:#f6ece3;border-radius:12px;padding:18px 20px;">'
-    + '<p style="font-size:15px;font-weight:700;color:#5c1a1a;margin:0;">Vi sender deg en e-post når du kan bestille</p>'
-    + '<p style="font-size:13.5px;color:#555;margin:10px 0 0;line-height:1.55;">'
+    + '<div style="background:#FCF8F5;border-radius:8px;padding:18px 20px;">'
+    + '<p style="font-size:15px;font-weight:600;color:#46000A;margin:0;">Vi sender deg en e-post når du kan bestille</p>'
+    + '<p style="font-size:13.5px;color:#5C5C5C;margin:10px 0 0;line-height:1.55;">'
     + 'Vi varsler ' + mottaker + ' så snart bestillingen åpner for neste semester. '
     + 'Emnene du har valgt ligger fortsatt i sammendraget.</p>'
     + '</div>'
     + '<button onclick="closeSoknaderPanel()" style="background:none;border:none;padding:0;margin:20px 0 0;'
-    + 'cursor:pointer;font-family:inherit;font-size:15px;font-weight:500;color:#4e0000;">← Tilbake til studieplanleggeren</button>'
+    + 'cursor:pointer;font-family:inherit;font-size:15px;font-weight:500;color:#46000A;">← Tilbake til studieplanleggeren</button>'
     + '</div>';
 }
 

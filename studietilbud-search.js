@@ -326,34 +326,39 @@
   var allItems = catalogItems.filter(getLocalUrl);
   var totalCount = allItems.length;
 
-  /* ── CSS ── */
+  /* ── CSS ──
+     Verten eier rutenettet: widgeten monteres i .Page__body.wrapper, som
+     allerede gir maks-bredde 1200px og 32px sidepadding. Derfor skal
+     .sl-container ikke legge på egen maks-bredde/padding – da havnet lista
+     24px innenfor «Alle studier»-overskriften. */
   var css = document.createElement('style');
   css.textContent = '\
 .Page__body{background:#fff !important}\
-#8a1a76fd{background:#fff;padding:40px 0;min-height:80vh}\
-.sl-container{max-width:1200px;margin:0 auto;padding:0 24px}\
+#8a1a76fd{background:#fff;padding:40px 0;min-height:80vh;font-family:\'Graphik\',\'Helvetica Neue\',Arial,sans-serif}\
+.sl-container{width:100%}\
 .sl-layout{display:flex;gap:40px;align-items:flex-start}\
 .sl-main{flex:1;min-width:0}\
 .sl-sidebar{width:280px;flex-shrink:0;position:sticky;top:100px}\
-.sl-search{width:100%;padding:14px 18px;font-size:16px;border:1.5px solid #ddd;border-radius:8px;outline:none;font-family:inherit;margin-bottom:8px;transition:border-color .15s}\
-.sl-search:focus{border-color:#888}\
-.sl-count{font-size:14px;color:#666;margin:12px 0 20px}\
+.sl-search{width:100%;padding:14px 18px;font-size:16px;border:1.5px solid #D4D4D4;border-radius:8px;outline:none;font-family:inherit;margin-bottom:8px;transition:border-color .15s;background:#fff}\
+.sl-search:focus{border-color:#0A4FB8}\
+.sl-search:focus-visible{outline:3px solid #580F0F;outline-offset:3px}\
+.sl-count{font-size:14px;color:#5C5C5C;margin:12px 0 20px}\
 .sl-grid{display:flex;flex-direction:column;gap:0}\
-.sl-card{display:block;padding:20px 0;border-bottom:1px solid #eee;text-decoration:none;color:inherit;transition:background .1s}\
-.sl-card:hover{background:#f8f8f8;margin:0 -12px;padding:20px 12px;border-radius:8px}\
-.sl-card:first-child{border-top:1px solid #eee}\
-.sl-card-name{font-size:18px;font-weight:600;color:#1a1a1a;margin:0 0 8px;text-decoration:underline;text-underline-offset:3px}\
-.sl-card:hover .sl-card-name{color:#b71c2f}\
-.sl-card-meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:#666}\
+.sl-card{display:block;padding:20px 0;border-bottom:1px solid #E6E6E6;text-decoration:none;color:inherit;transition:background .1s}\
+.sl-card:hover{background:#F2F7FF;margin:0 -12px;padding:20px 12px;border-radius:8px}\
+.sl-card:first-child{border-top:1px solid #E6E6E6}\
+.sl-card-name{display:inline-block;font-size:18px;font-weight:600;color:#1A1A1A;margin:0 0 10px;border-bottom:2px solid #AF0018;padding-bottom:2px}\
+.sl-card-meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:#5C5C5C}\
 .sl-card-meta span{display:flex;align-items:center;gap:4px}\
 .sl-card-meta span svg{flex-shrink:0}\
+.sl-card-points{font-family:\'Produkt\',\'Source Serif 4\',Georgia,serif;color:#5C5C5C}\
 .sl-hidden{display:none}\
 .sl-filter-group{margin-bottom:24px}\
-.sl-filter-title{font-size:16px;font-weight:700;color:#1a1a1a;margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid #eee}\
-.sl-filter-option{display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer;font-size:14px;color:#333}\
-.sl-filter-option input{width:16px;height:16px;accent-color:#b71c2f;cursor:pointer}\
+.sl-filter-title{font-size:16px;font-weight:600;color:#1A1A1A;margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid #D4D4D4}\
+.sl-filter-option{display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer;font-size:14px;color:#1A1A1A}\
+.sl-filter-option input{width:16px;height:16px;accent-color:#0A4FB8;cursor:pointer}\
 .sl-filter-option label{cursor:pointer}\
-.sl-no-results{padding:40px 0;text-align:center;color:#888;font-size:15px}\
+.sl-no-results{padding:40px 0;text-align:center;color:#5C5C5C;font-size:15px}\
 @media(max-width:768px){\
   .sl-layout{flex-direction:column-reverse;gap:20px}\
   .sl-sidebar{width:100%;position:static}\
@@ -442,7 +447,7 @@
         + (locs ? '<span>' + locationIcon(item) + ' ' + locs + '</span>' : '')
         + '<span>' + svgBook + ' ' + item.levelLabel + '</span>'
         + (forms ? '<span>' + svgActivity + ' ' + forms + '</span>' : '')
-        + (item.points ? '<span>' + item.points + '</span>' : '')
+        + (item.points ? '<span class="sl-card-points">' + item.points + '</span>' : '')
         + '</div></a>';
     }).join('');
     resultsEl.innerHTML = html;

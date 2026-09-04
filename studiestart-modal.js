@@ -22,95 +22,95 @@ function injectStyles() {
   css.textContent = '\
 .ss-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1400;opacity:0;transition:opacity .3s}\
 .ss-backdrop.open{display:block;opacity:1}\
-.ss-modal{position:fixed;top:0;right:0;height:100vh;height:100dvh;width:460px;max-width:100vw;background:#fff;z-index:1401;box-shadow:-4px 0 32px rgba(0,0,0,.18);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden}\
+.ss-modal{position:fixed;top:0;right:0;height:100vh;height:100dvh;width:460px;max-width:100vw;background:#fff;z-index:1401;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;overflow:hidden}\
 .ss-backdrop.open .ss-modal{transform:translateX(0)}\
 .ss-header{padding:20px 24px 0;display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-shrink:0}\
-.ss-close{width:40px;height:40px;border-radius:50%;border:none;background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:24px;color:#111;flex-shrink:0;transition:background .15s;padding:0;line-height:1}\
-.ss-close:hover{background:#f0f0f0}\
-.ss-title{font-size:20px;font-weight:800;color:#111;padding:4px 24px 0;flex-shrink:0}\
+.ss-close{width:40px;height:40px;border-radius:50%;border:none;background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:24px;color:#1A1A1A;flex-shrink:0;transition:background .15s;padding:0;line-height:1}\
+.ss-close:hover{background:#E6E6E6}\
+.ss-title{font-size:20px;font-weight:600;color:#1A1A1A;padding:4px 24px 0;flex-shrink:0}\
 .ss-body{padding:16px 24px 24px;display:flex;flex-direction:column;gap:16px;flex:1 1 auto;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}\
 .ss-body > *{flex-shrink:0}\
-.ss-footer{padding:16px 24px calc(20px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #eee;flex-shrink:0}\
+.ss-footer{padding:16px 24px calc(20px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #E6E6E6;flex-shrink:0}\
 .ss-radio-group{display:flex;flex-direction:column;gap:8px}\
-.ss-radio-card{border:1.5px solid #e0e0e0;border-radius:12px;padding:18px 20px;cursor:pointer;display:flex;align-items:flex-start;gap:14px;transition:border-color .15s,background .15s}\
-.ss-radio-card:hover{background:#fafafa}\
-.ss-radio-card.selected{border-color:#06f;background:#f0f7ff}\
-.ss-radio-dot{width:22px;height:22px;border:2px solid #c7c8ca;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:border-color .15s}\
-.ss-radio-card.selected .ss-radio-dot{border-color:#06f}\
-.ss-radio-card.selected .ss-radio-dot::after{content:"";width:12px;height:12px;background:#06f;border-radius:50%}\
-.ss-radio-main{font-size:18px;font-weight:700;color:#121212;line-height:1.25}\
-.ss-radio-desc{font-size:14px;color:#555;margin:4px 0 0;line-height:1.45}\
-.ss-radio-sub{font-size:13px;color:#666;margin-top:18px;display:flex;align-items:center;gap:8px}\
+.ss-radio-card{border:1.5px solid #D4D4D4;border-radius:8px;padding:18px 20px;cursor:pointer;display:flex;align-items:flex-start;gap:14px;transition:border-color .15s,background .15s}\
+.ss-radio-card:hover{background:#F5F5F5}\
+.ss-radio-card.selected{border-color:#0A4FB8;background:#F2F7FF}\
+.ss-radio-dot{width:22px;height:22px;border:2px solid #D4D4D4;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:border-color .15s}\
+.ss-radio-card.selected .ss-radio-dot{border-color:#0A4FB8}\
+.ss-radio-card.selected .ss-radio-dot::after{content:"";width:12px;height:12px;background:#0A4FB8;border-radius:50%}\
+.ss-radio-main{font-size:18px;font-weight:600;color:#1A1A1A;line-height:1.25}\
+.ss-radio-desc{font-size:14px;color:#5C5C5C;margin:4px 0 0;line-height:1.45}\
+.ss-radio-sub{font-size:13px;color:#5C5C5C;margin-top:18px;display:flex;align-items:center;gap:8px}\
 .ss-radio-sub svg{flex-shrink:0}\
-.ss-radio-sub strong{color:#111;font-weight:700}\
-.ss-radio-link{color:#06f;text-decoration:underline;font-size:13px}\
+.ss-radio-sub strong{color:#1A1A1A;font-weight:600}\
+.ss-radio-link{color:#0A4FB8;text-decoration:underline;font-size:13px}\
 .ss-calendar-wrap{display:none;padding:4px 0 0}\
 .ss-calendar-wrap.open{display:block}\
-.ss-date-input{width:100%;border:1.5px solid #c7c8ca;border-radius:8px;padding:14px 16px;font-size:16px;font-family:inherit;outline:none;transition:border-color .15s;cursor:pointer;box-sizing:border-box;min-height:48px}\
-.ss-date-input:focus{border-color:#06f}\
-.ss-hint{font-size:13px;color:#888;margin-top:6px}\
+.ss-date-input{width:100%;border:1.5px solid #767676;border-radius:8px;padding:14px 16px;font-size:16px;font-family:inherit;outline:none;transition:border-color .15s;cursor:pointer;box-sizing:border-box;min-height:48px}\
+.ss-date-input:focus{border-color:#0A4FB8}\
+.ss-hint{font-size:13px;color:#5C5C5C;margin-top:6px}\
 .ss-checkbox-row{display:flex;align-items:flex-start;gap:10px;cursor:pointer}\
-.ss-checkbox-box{width:22px;height:22px;border:1.5px solid #c7c8ca;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}\
-.ss-checkbox-box.checked{background:#06f;border-color:#06f}\
-.ss-checkbox-label{font-size:14px;color:#121212;line-height:22px}\
-.ss-warning{background:#fdf6ec;border:1px solid #f0d8a8;border-radius:10px;padding:16px;margin-top:4px}\
-.ss-warning-title{font-size:12px;font-weight:700;color:#b45309;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}\
-.ss-warning p{font-size:13px;color:#555;line-height:1.5;margin:0 0 8px}\
+.ss-checkbox-box{width:22px;height:22px;border:1.5px solid #767676;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}\
+.ss-checkbox-box.checked{background:#0A4FB8;border-color:#0A4FB8}\
+.ss-checkbox-label{font-size:14px;color:#1A1A1A;line-height:22px}\
+.ss-warning{background:#FCF8F5;border:1px solid #FFCA00;border-radius:8px;padding:16px;margin-top:4px}\
+.ss-warning-title{font-size:12px;font-weight:600;color:#1A1A1A;letter-spacing:.5px;margin-bottom:8px}\
+.ss-warning p{font-size:13px;color:#5C5C5C;line-height:1.5;margin:0 0 8px}\
 .ss-warning p:last-child{margin-bottom:0}\
-.ss-warning strong{color:#121212}\
-.ss-warning-email-label{font-size:13px;color:#888;margin-bottom:6px}\
-.ss-warning-email{width:100%;border:1.5px solid #c7c8ca;border-radius:8px;padding:12px 14px;font-size:16px;font-family:inherit;outline:none;background:#fff;box-sizing:border-box;min-height:44px}\
-.ss-warning-email:focus{border-color:#06f}\
-.ss-or-text{font-size:13px;color:#888}\
-.ss-btn{display:flex;align-items:center;justify-content:center;gap:8px;height:48px;background:#06f;color:#fff;font-family:inherit;font-size:16px;font-weight:600;border:none;border-radius:40px;cursor:pointer;width:100%;transition:background .15s}\
-.ss-btn:hover{background:#0052cc}\
-.ss-btn:disabled{background:#ccc;cursor:not-allowed}\
+.ss-warning strong{color:#1A1A1A}\
+.ss-warning-email-label{font-size:13px;color:#5C5C5C;margin-bottom:6px}\
+.ss-warning-email{width:100%;border:1.5px solid #D4D4D4;border-radius:8px;padding:12px 14px;font-size:16px;font-family:inherit;outline:none;background:#fff;box-sizing:border-box;min-height:44px}\
+.ss-warning-email:focus{border-color:#0A4FB8}\
+.ss-or-text{font-size:13px;color:#5C5C5C}\
+.ss-btn{display:flex;align-items:center;justify-content:center;gap:8px;height:44px;background:#0A4FB8;color:#fff;font-family:inherit;font-size:16px;font-weight:600;border:none;border-radius:999px;cursor:pointer;width:100%;transition:background .15s}\
+.ss-btn:hover{background:#083D8F}\
+.ss-btn:disabled{background:#D4D4D4;cursor:not-allowed}\
 .ss-btn svg{flex-shrink:0}\
-.ss-cal{background:#fff;border-radius:12px;padding:16px;border:1px solid #e8e8e8}\
+.ss-cal{background:#fff;border-radius:8px;padding:16px;border:1px solid #E6E6E6}\
 .ss-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}\
-.ss-cal-month{font-size:16px;font-weight:600;color:#121212}\
+.ss-cal-month{font-size:16px;font-weight:600;color:#1A1A1A}\
 .ss-cal-arrows{display:flex;gap:4px}\
-.ss-cal-arrow{width:32px;height:32px;border:none;background:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#555;font-size:18px;transition:background .15s}\
-.ss-cal-arrow:hover{background:#f0f0f0}\
+.ss-cal-arrow{width:32px;height:32px;border:none;background:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#5C5C5C;font-size:18px;transition:background .15s}\
+.ss-cal-arrow:hover{background:#E6E6E6}\
 .ss-cal-arrow:disabled{opacity:.3;cursor:not-allowed}\
 .ss-cal-arrow:disabled:hover{background:none}\
 .ss-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}\
-.ss-cal-dow{font-size:12px;font-weight:600;color:#888;padding:4px 0 8px;text-transform:capitalize}\
-.ss-cal-dow.ss-weekend{color:#d94040}\
-.ss-cal-day{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:none;background:none;font-size:14px;color:#121212;cursor:pointer;margin:0 auto;transition:background .12s,color .12s;font-family:inherit}\
-.ss-cal-day:hover:not(:disabled):not(.ss-cal-today){background:#f0f0f0}\
-.ss-cal-day:disabled{color:#ccc;cursor:not-allowed}\
-.ss-cal-day.ss-weekend{color:#d94040}\
-.ss-cal-day:disabled.ss-weekend{color:#e8c0c0}\
-.ss-cal-day.ss-cal-today{background:#e0edff;color:#06f;font-weight:600}\
-.ss-cal-day.ss-cal-selected{background:#121212;color:#fff!important;font-weight:600}\
+.ss-cal-dow{font-size:12px;font-weight:600;color:#5C5C5C;padding:4px 0 8px;text-transform:capitalize}\
+.ss-cal-dow.ss-weekend{color:#8C1D18}\
+.ss-cal-day{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:none;background:none;font-size:14px;color:#1A1A1A;cursor:pointer;margin:0 auto;transition:background .12s,color .12s;font-family:inherit}\
+.ss-cal-day:hover:not(:disabled):not(.ss-cal-today){background:#E6E6E6}\
+.ss-cal-day:disabled{color:#D4D4D4;cursor:not-allowed}\
+.ss-cal-day.ss-weekend{color:#8C1D18}\
+.ss-cal-day:disabled.ss-weekend{color:#F9CCD2}\
+.ss-cal-day.ss-cal-today{background:#F2F7FF;color:#0A4FB8;font-weight:600}\
+.ss-cal-day.ss-cal-selected{background:#1A1A1A;color:#fff!important;font-weight:600}\
 .ss-cal-day.ss-cal-empty{cursor:default}\
 .ss-between-calendar{transition:max-height .3s ease,opacity .3s ease;overflow:hidden}\
 .ss-between-warning{transition:max-height .3s ease,opacity .3s ease;overflow:hidden}\
 .ss-date-row{position:relative}\
-.ss-date-row .ss-date-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#888;pointer-events:none}\
-.ss-info-accordion{border:1px solid #f9ccd2;background:#fffbf8;border-radius:8px;overflow:hidden}\
+.ss-date-row .ss-date-icon{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#5C5C5C;pointer-events:none}\
+.ss-info-accordion{border:1px solid #f9ccd2;background:#FCF8F5;border-radius:8px;overflow:hidden}\
 .ss-info-header{display:flex;align-items:center;justify-content:space-between;padding:12px;cursor:pointer;gap:12px;user-select:none}\
-.ss-info-header-text{font-size:14px;font-weight:500;color:#000;line-height:1.25}\
-.ss-info-header-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:#121212;flex-shrink:0;transition:transform .3s ease}\
+.ss-info-header-text{font-size:14px;font-weight:500;color:#1A1A1A;line-height:1.25}\
+.ss-info-header-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:#1A1A1A;flex-shrink:0;transition:transform .3s ease}\
 .ss-info-accordion.open .ss-info-header-icon{transform:rotate(180deg)}\
 .ss-info-body{max-height:0;overflow:hidden;transition:max-height .35s ease}\
 .ss-info-accordion.open .ss-info-body{max-height:800px}\
 .ss-info-body-inner{padding:0 18px 16px}\
 .ss-info-body ul{margin:0;padding-left:20px}\
-.ss-info-body li{font-size:13px;color:#333;line-height:1.55;margin-bottom:8px}\
+.ss-info-body li{font-size:13px;color:#1A1A1A;line-height:1.55;margin-bottom:8px}\
 .ss-info-body li:last-child{margin-bottom:0}\
 .ss-info-link-wrap{margin-top:14px;font-size:13px}\
-.ss-info-link{color:#000;font-size:13px;font-weight:500}\
-.ss-selected-date{display:none;align-items:flex-start;gap:10px;margin-top:4px;padding:14px 16px;background:#f0f7ff;border:1.5px solid #d4d8ff;border-radius:10px;font-size:14px;color:#111}\
+.ss-info-link{color:#1A1A1A;font-size:13px;font-weight:500}\
+.ss-selected-date{display:none;align-items:flex-start;gap:10px;margin-top:4px;padding:14px 16px;background:#F2F7FF;border:1.5px solid #0A4FB8;border-radius:8px;font-size:14px;color:#1A1A1A}\
 .ss-selected-date.show{display:flex}\
-.ss-selected-date svg{flex-shrink:0;color:#06f}\
-.ss-selected-date-label{color:#555;font-weight:500}\
-.ss-selected-date-value{font-weight:700;color:#111}\
-.ss-selected-date-hint{font-size:12px;color:#555;font-weight:400}\
+.ss-selected-date svg{flex-shrink:0;color:#0A4FB8}\
+.ss-selected-date-label{color:#5C5C5C;font-weight:500}\
+.ss-selected-date-value{font-weight:600;color:#1A1A1A}\
+.ss-selected-date-hint{font-size:12px;color:#5C5C5C;font-weight:400}\
 .ss-faq-section{padding:16px 16px 0;display:flex;flex-direction:column;gap:8px}\
 @media (max-width:480px){\
-.ss-modal{width:100%;max-width:100%;box-shadow:none}\
+.ss-modal{width:100%;max-width:100%;}\
 .ss-header{padding:12px 12px 0}\
 .ss-title{padding:4px 20px 0;font-size:19px}\
 .ss-body{padding:14px 20px 20px;gap:14px}\
@@ -124,7 +124,7 @@ function injectStyles() {
 .ss-cal-day{width:100%;max-width:40px;height:40px;font-size:15px}\
 .ss-cal-dow{font-size:11px}\
 .ss-close{width:44px;height:44px}\
-.ss-btn{height:52px}\
+.ss-btn{height:44px}\
 }\
 @media (max-width:360px){\
 .ss-body{padding:12px 14px 16px}\
@@ -132,41 +132,27 @@ function injectStyles() {
 .ss-cal{padding:10px 4px}\
 .ss-cal-day{max-width:36px;height:36px;font-size:14px}\
 }\
-.ss-simple-card{border:1.5px solid #e0e0e0;border-radius:12px;padding:20px 24px;cursor:pointer;font-size:18px;font-weight:700;color:#121212;transition:border-color .15s,background .15s}\
-.ss-simple-card:hover{background:#fafafa;border-color:#ccc}\
-.ss-simple-card.selected{border-color:#06f;background:#f0f7ff}\
-.ss-subtitle{font-size:15px;color:#555;padding:2px 24px 0;line-height:1.4;flex-shrink:0}\
-.ss-order-label{font-size:12px;color:#888;margin-bottom:4px}\
-.ss-notify-label{font-size:13px;color:#888;margin:14px 0 6px;line-height:1.4}\
+.ss-simple-card{border:1.5px solid #D4D4D4;border-radius:8px;padding:20px 24px;cursor:pointer;font-size:18px;font-weight:600;color:#1A1A1A;transition:border-color .15s,background .15s}\
+.ss-simple-card:hover{background:#F5F5F5;border-color:#D4D4D4}\
+.ss-simple-card.selected{border-color:#0A4FB8;background:#F2F7FF}\
+.ss-subtitle{font-size:15px;color:#5C5C5C;padding:2px 24px 0;line-height:1.4;flex-shrink:0}\
+.ss-order-label{font-size:12px;color:#5C5C5C;margin-bottom:4px}\
+.ss-notify-label{font-size:13px;color:#5C5C5C;margin:14px 0 6px;line-height:1.4}\
 .ss-between-lk-card{display:block}\
-.ss-between-lk-card.selected{border-color:#e0c0c0;background:#fff8f5}\
-.ss-between-lk-card:hover{background:#fff4f0}\
-.ss-warning-email{width:100%;border:1.5px solid #c7c8ca;border-radius:8px;padding:12px 14px;font-size:15px;font-family:inherit;outline:none;background:#fff;box-sizing:border-box;min-height:44px;transition:border-color .15s}\
-.ss-warning-email:focus{border-color:#06f}\
+.ss-between-lk-card.selected{border-color:#F9CCD2;background:#FCF8F5}\
+.ss-between-lk-card:hover{background:#FCF8F5}\
+.ss-warning-email{width:100%;border:1.5px solid #D4D4D4;border-radius:8px;padding:12px 14px;font-size:15px;font-family:inherit;outline:none;background:#fff;box-sizing:border-box;min-height:44px;transition:border-color .15s}\
+.ss-warning-email:focus{border-color:#0A4FB8}\
 /* Inline-modus: samme innhold rendret rett i s\u00f8knadspanelet i stedet for i en egen skuff */\
 .ss-backdrop.ss-inline-host{position:static;inset:auto;background:none;z-index:auto;display:block;opacity:1;transition:none}\
-.ss-inline-host .ss-modal{position:static;height:auto;width:auto;max-width:none;box-shadow:none;transform:none;display:block;overflow:visible;transition:none}\
+.ss-inline-host .ss-modal{position:static;height:auto;width:auto;max-width:none;transform:none;display:block;overflow:visible;transition:none}\
 .ss-inline-host .ss-header,.ss-inline-host .ss-title{display:none}\
-.ss-inline-host .ss-subtitle{padding:4px 0 0;font-size:18px;font-weight:500;color:#121212;line-height:1.4}\
+.ss-inline-host .ss-subtitle{padding:4px 0 0;font-size:18px;font-weight:500;color:#1A1A1A;line-height:1.4}\
 .ss-inline-host .ss-body{padding:16px 0 0;overflow:visible;flex:none;min-height:0}\
 .ss-inline-host .ss-faq-section{padding:8px 0 0}\
 .ss-inline-host .ss-footer{padding:20px 0 0;border-top:none;background:none}\
 .ss-inline-host .ss-cal-day{max-width:38px}\
-/* Varsel under «Valgfri oppstartsdato»: oppstart midt i semesteret kan koste\
-   studiest\u00f8tten, s\u00e5 alternativet – \u00e5 vente p\u00e5 neste semester – st\u00e5r rett under. */\
-.ss-startvarsel{margin-top:14px;padding:0;background:none;border:none}\
-.ss-dato-lead{margin:18px 0 8px;font-size:13.5px;color:#555;line-height:1.5}\
-.ss-startvarsel p{margin:0 0 8px;font-size:13.5px;color:#555;line-height:1.5}\
-.ss-startvarsel p:last-child{margin-bottom:0}\
-.ss-startvarsel strong{color:#121212;font-weight:700}\
-.ss-varsel-box{margin-top:14px;padding-top:14px;border-top:1px solid #e6e6e6}\
-.ss-varsel-title{font-size:14px;font-weight:700;color:#121212;margin:0 0 8px;line-height:1.35}\
-.ss-varsel-row{display:flex;gap:8px}\
-.ss-varsel-row .ss-warning-email{flex:1;min-width:0}\
-.ss-varsel-btn{flex-shrink:0;min-height:44px;padding:0 20px;border:none;border-radius:8px;background:#06f;color:#fff;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s}\
-.ss-varsel-btn:hover{background:#0052cc}\
-.ss-varsel-ok{display:flex;align-items:flex-start;gap:9px;margin:0;font-size:13.5px;color:#121212;line-height:1.5}\
-.ss-varsel-ok svg{flex-shrink:0;margin-top:2px;color:#1a7f37}';
+';
   document.head.appendChild(css);
 }
 
@@ -181,7 +167,7 @@ window.STUDIESTART_SCENARIO = {
   loanLink: 'Les mer: Lånekassen: Nettstudier og samlingsbasert',
   calendarMin: '2026-06-16',
   calendarMax: '2026-09-16',
-  /* Brukes i varselet under «Valgfri oppstartsdato». */
+  /* Brukes i «mellom semestre»-varianten av studiestartsteget. */
   nextSemester: 'høstsemesteret',
   nextDate: '16. august',
   orderOpens: '16. mai'
@@ -419,44 +405,6 @@ window.ssToggleInfo = function(header) {
 };
 
 /* ── Build modal HTML ── */
-/* Vises når studenten åpner «Valgfri oppstartsdato». Krever at scenariet vet
-   når neste semester starter og når det kan bestilles. */
-function harStartVarsel(sc) {
-  return !!(sc && sc.nextSemester && sc.nextDate && sc.orderOpens);
-}
-
-function buildStartVarsel(sc) {
-  if (!harStartVarsel(sc)) return '';
-  return '<div class="ss-startvarsel" onclick="event.stopPropagation()">'
-    + '<p>Semesteret er i gang, og oppstart nå vil muligens ikke gi støtte fra Lånekassen.</p>'
-    + '<p>Neste semester (' + sc.nextSemester + ') har oppstart <strong>' + sc.nextDate
-    + '</strong> og kan bestilles fra <strong>' + sc.orderOpens + '</strong>.</p>'
-    + '<div class="ss-varsel-box" id="ss-varsel-box">'
-    + '<p class="ss-varsel-title">Bli varslet når du kan bestille for ' + sc.nextSemester + '</p>'
-    + '<div class="ss-varsel-row">'
-    + '<input type="email" class="ss-warning-email" id="ss-varsel-epost" placeholder="mail@epost.no">'
-    + '<button type="button" class="ss-varsel-btn" onclick="ssSendStartVarsel()">Send</button>'
-    + '</div>'
-    + '</div>'
-    + '</div>';
-}
-
-window.ssSendStartVarsel = function() {
-  var felt = document.getElementById('ss-varsel-epost');
-  var boks = document.getElementById('ss-varsel-box');
-  if (!felt || !boks) return;
-  var val = felt.value.trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-    felt.style.borderColor = '#b60202';
-    felt.focus();
-    return;
-  }
-  var trygg = val.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  boks.innerHTML = '<p class="ss-varsel-ok">'
-    + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-    + '<span>Vi sender en e-post til «' + trygg + '» når bestillingen åpner.</span></p>';
-};
-
 function buildApproachingHTML(sc) {
   var mm = getCalendarMinMax();
   var calMin = sc.calendarMin || mm.min;
@@ -471,20 +419,16 @@ function buildApproachingHTML(sc) {
     + '<div style="flex:1">'
     + '<div class="ss-radio-main">' + sc.semesterLabel + '</div>'
     + '<p class="ss-radio-desc">' + sc.loanInfo + '</p>'
-    + '<div class="ss-radio-sub"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#888" stroke-width="1.5"/><path d="M12 6v6l4 2" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg> ' + sc.studierettLabel + '</div>'
+    + '<div class="ss-radio-sub"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#5C5C5C" stroke-width="1.5"/><path d="M12 6v6l4 2" stroke="#5C5C5C" stroke-width="1.5" stroke-linecap="round"/></svg> ' + sc.studierettLabel + '</div>'
     + '</div></div>'
     // Option 2: Custom date
     + '<div class="ss-radio-card" onclick="ssSelectRadio(this,\'custom\')">'
     + '<div class="ss-radio-dot"></div>'
     + '<div style="flex:1">'
-    + '<div class="ss-radio-main">Valgfri oppstartsdato</div>'
+    + '<div class="ss-radio-main">Valgfri oppstart</div>'
     + '<p class="ss-radio-desc">Du kan starte når som helst innen 3 måneder fra dagens dato.</p>'
-    + '<div class="ss-radio-sub"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#888" stroke-width="1.5"/><path d="M12 6v6l4 2" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg> 12 måneder studierett</div>'
+    + '<div class="ss-radio-sub"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#5C5C5C" stroke-width="1.5"/><path d="M12 6v6l4 2" stroke="#5C5C5C" stroke-width="1.5" stroke-linecap="round"/></svg> 12 måneder studierett</div>'
     + '<div class="ss-calendar-wrap" id="ss-cal-wrap">'
-    + buildStartVarsel(sc)
-    + (harStartVarsel(sc)
-        ? '<p class="ss-dato-lead">Du kan likevel velge en startdato og studere uten støtte:</p>'
-        : '')
     + '<input type="date" class="ss-date-input" id="ss-custom-date" min="' + calMin + '" max="' + calMax + '">'
     + '</div>'
     + '</div></div>'
@@ -502,7 +446,7 @@ function buildApproachingHTML(sc) {
 
 function buildBetweenHTML(sc) {
   var mm = getCalendarMinMax();
-  var clockSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#888" stroke-width="1.5"/><path d="M12 6v6l4 2" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>';
+  var clockSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#5C5C5C" stroke-width="1.5"/><path d="M12 6v6l4 2" stroke="#5C5C5C" stroke-width="1.5" stroke-linecap="round"/></svg>';
 
   if (_ssWantsLanekassen) {
     // Card-based layout: upcoming semester + email notification, OR custom date now
@@ -525,7 +469,7 @@ function buildBetweenHTML(sc) {
       + '<div class="ss-radio-card" onclick="ssSelectRadioBetween(this,\'custom\')">'
       + '<div class="ss-radio-dot"></div>'
       + '<div style="flex:1">'
-      + '<div class="ss-radio-main">Valgfri oppstartsdato</div>'
+      + '<div class="ss-radio-main">Valgfri oppstart</div>'
       + '<p class="ss-radio-desc">Du kan starte når som helst innen 3 måneder fra dagens dato.</p>'
       + '<div class="ss-radio-sub">' + clockSvg + ' 12 måneder studierett</div>'
       + '<div class="ss-calendar-wrap" id="ss-cal-wrap">'
@@ -607,7 +551,7 @@ window.ssStudiestotteSelect = function(val, card) {
       ssInitCalendarState();
       ssRenderCalendar();
     }
-    // Between+Ja: calendar is lazy-init'd when user clicks "Valgfri oppstartsdato"
+    // Between+Ja: calendar is lazy-init'd when user clicks "Valgfri oppstart"
   }, 120);
 };
 

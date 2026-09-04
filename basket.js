@@ -126,105 +126,105 @@ function clearAuthState() {
 var BASKET_CSS = '\
 .uTMhMIeN0bDXVFVIysSa::after{display:none!important}\
 #sok-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1200;transition:opacity .3s;opacity:0}\
-#sok-panel{display:none;position:fixed;top:0;right:0;height:100%;width:460px;max-width:100vw;background:#fff;z-index:1201;box-shadow:-4px 0 32px rgba(0,0,0,.18);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);flex-direction:column;font-family:inherit;overflow:hidden}\
-.hk-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;flex-shrink:0;border-bottom:1px solid #c7c8ca}\
-.hk-header h2{font-size:28px;font-weight:700;margin:0;color:#4e0000;line-height:1.2}\
-.hk-close{background:none;border:none;cursor:pointer;padding:6px;color:#121212}\
+#sok-panel{display:none;position:fixed;top:0;right:0;height:100%;width:460px;max-width:100vw;background:#fff;z-index:1201;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);flex-direction:column;font-family:inherit;overflow:hidden}\
+.hk-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;flex-shrink:0;border-bottom:1px solid #D4D4D4}\
+.hk-header h2{font-size:28px;font-weight:600;margin:0;color:#46000A;line-height:1.2}\
+.hk-close{background:none;border:none;cursor:pointer;padding:6px;color:#1A1A1A}\
 .hk-close svg{width:24px;height:24px}\
 .hk-body{flex:1;overflow-y:auto;padding:12px 20px}\
-.hk-card{border:1px solid #e2e2e2;border-radius:12px;margin-bottom:16px;overflow:hidden;background:#fff;transition:border-color .2s}\
-.hk-card:has(.hk-emner-list.open){border-color:#e3b9b9}\
+.hk-card{border:1px solid #D4D4D4;border-radius:8px;margin-bottom:16px;overflow:hidden;background:#fff;transition:border-color .2s}\
+.hk-card:has(.hk-emner-list.open){border-color:#F9CCD2}\
 .hk-card-header{display:flex;align-items:flex-start;justify-content:space-between;padding:16px;gap:12px;cursor:default;transition:background .2s}\
 .hk-card-header.hk-clickable{cursor:pointer}\
-.hk-card:has(.hk-emner-list) .hk-card-header{background:#fbeee4}\
-.hk-card-meta{font-size:14px;font-weight:400;color:#3f3f3f;line-height:17.5px;margin-bottom:4px}\
-.hk-card-name{font-size:18px;font-weight:700;color:#000;line-height:1.3}\
+.hk-card:has(.hk-emner-list) .hk-card-header{background:#FCF8F5}\
+.hk-card-meta{font-size:14px;font-weight:400;color:#1A1A1A;line-height:17.5px;margin-bottom:4px}\
+.hk-card-name{font-size:18px;font-weight:600;color:#1A1A1A;line-height:1.3}\
 .hk-card-right{display:flex;align-items:center;gap:8px;flex-shrink:0}\
-.hk-badge{font-size:14px;font-weight:500;padding:5px 12px;border-radius:16777200px;white-space:nowrap;line-height:16px;border:1px solid transparent}\
-.hk-badge-sem{background:#fdf3f4;border-color:#8a1c2b;color:#8a1c2b}\
-.hk-badge-city{background:#f6faff;border-color:#1a6dff;color:#1a6dff}\
-.hk-badge-nett{background:#f8f4fe;border-color:#9a5cf0;color:#9a5cf0}\
-.hk-trash{background:#eef1f6;border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;color:#3b6ea8;transition:background .15s,color .15s;flex-shrink:0}\
-.hk-trash:hover{background:#dde6f0;color:#254e75}\
-.hk-chevron{background:none;border:none;cursor:pointer;padding:4px;transition:transform .2s;color:#121212}\
-.hk-emner-list{border-top:1px solid #eee;display:none}\
+.hk-badge{font-size:12px;font-weight:600;padding:4px 11px;border-radius:999px;white-space:nowrap;line-height:16px;border:none;color:#fff}\
+.hk-badge-sem{background:#3D3D3D;color:#fff}\
+.hk-badge-city{background:#0A4FB8;color:#fff}\
+.hk-badge-nett{background:#7A3FD1;color:#fff}\
+.hk-trash{background:#F2F7FF;border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;color:#0A4FB8;transition:background .15s,color .15s;flex-shrink:0}\
+.hk-trash:hover{background:#E0EBFE;color:#083D8F}\
+.hk-chevron{background:none;border:none;cursor:pointer;padding:4px;transition:transform .2s;color:#1A1A1A}\
+.hk-emner-list{border-top:1px solid #E6E6E6;display:none}\
 .hk-emner-list.open{display:block}\
-.hk-card:has(.hk-emner-list.open) .hk-emner-list{border-top-color:#f0d9d9}\
-.hk-emne-row{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid #eee;gap:8px;background:#fff}\
+.hk-card:has(.hk-emner-list.open) .hk-emner-list{border-top-color:#F9CCD2}\
+.hk-emne-row{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid #E6E6E6;gap:8px;background:#fff}\
 .hk-emne-left{flex:1;min-width:0}\
-.hk-emne-oppstart{font-size:14px;font-weight:400;color:#3f3f3f;line-height:17.5px;margin-top:2px}\
-.hk-emne-oppstart strong{font-weight:700;color:#121212}\
+.hk-emne-oppstart{font-size:14px;font-weight:400;color:#1A1A1A;line-height:17.5px;margin-top:2px}\
+.hk-emne-oppstart strong{font-weight:600;color:#1A1A1A}\
 /* Nett-merket ligger i venstre kolonne, ikke ved slettknappen \u2013 da f\u00e5r\
    emnetittelen hele radbredden. Emnetitlene er lange: en tredjedel av dem\
    er over 30 tegn. */\
 .hk-emne-nett{display:inline-flex;margin-top:10px}\
 .hk-emne-row:last-child{border-bottom:none}\
-.hk-card:has(.hk-emner-list.open) .hk-emne-row{border-bottom-color:#f0d9d9}\
+.hk-card:has(.hk-emner-list.open) .hk-emne-row{border-bottom-color:#F9CCD2}\
 .hk-emner-list{overflow:hidden}\
-@keyframes hkEmneAdded{0%{background:#dbe5ff;box-shadow:inset 3px 0 0 #2f54eb}70%{background:#dbe5ff;box-shadow:inset 3px 0 0 #2f54eb}100%{background:transparent;box-shadow:inset 3px 0 0 transparent}}\
+@keyframes hkEmneAdded{0%{background:#E0EBFE;box-shadow:inset 3px 0 0 #0A4FB8}70%{background:#E0EBFE;box-shadow:inset 3px 0 0 #0A4FB8}100%{background:transparent;box-shadow:inset 3px 0 0 transparent}}\
 .hk-emne-row.hk-emne-added{animation:hkEmneAdded 2s ease}\
-.hk-emne-meta{font-size:14px;font-weight:400;color:#3f3f3f;line-height:17.5px}\
-.hk-emne-name{font-size:18px;font-weight:700;color:#000;line-height:1.3}\
+.hk-emne-meta{font-size:14px;font-weight:400;color:#1A1A1A;line-height:17.5px}\
+.hk-emne-name{font-size:18px;font-weight:600;color:#1A1A1A;line-height:1.3}\
 .hk-emne-right{display:flex;align-items:center;gap:8px;flex-shrink:0}\
-.hk-badge-date{background:#fff;color:#101828;font-size:14px;font-weight:400;padding:6px 10px;border-radius:16777200px;line-height:16px}\
+.hk-badge-date{background:#3D3D3D;color:#fff;font-size:12px;font-weight:600;padding:4px 11px;border-radius:999px;line-height:16px}\
 .hk-section-header{display:flex;align-items:center;justify-content:space-between;padding:12px 0 8px;cursor:pointer}\
-.hk-section-title{font-size:14px;font-weight:400;color:#3f3f3f}\
-.hk-footer{padding:16px 20px;border-top:1px solid #c7c8ca;flex-shrink:0;display:flex;flex-direction:column;gap:10px;position:sticky;bottom:0;background:#fff;z-index:2}\
+.hk-section-title{font-size:14px;font-weight:400;color:#1A1A1A}\
+.hk-footer{padding:16px 20px;border-top:1px solid #D4D4D4;flex-shrink:0;display:flex;flex-direction:column;gap:10px;position:sticky;bottom:0;background:#fff;z-index:2}\
 .hk-auth-row{display:flex;align-items:center;justify-content:space-between;gap:12px}\
-.hk-auth-row-loggedin{background:#f5f5f5;border-radius:10px;padding:10px 12px}\
-.hk-auth-prompt{font-size:14px;font-weight:500;color:#4e0000;flex:1;margin:0}\
+.hk-auth-row-loggedin{background:#f5f5f5;border-radius:8px;padding:10px 12px}\
+.hk-auth-prompt{font-size:14px;font-weight:500;color:#46000A;flex:1;margin:0}\
 .hk-auth-identity{display:flex;align-items:center;gap:10px;min-width:0}\
-.hk-auth-avatar{width:36px;height:36px;border-radius:50%;background:#d8d8d8;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#333;flex-shrink:0}\
+.hk-auth-avatar{width:36px;height:36px;border-radius:50%;background:#D4D4D4;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#1A1A1A;flex-shrink:0}\
 .hk-auth-info{display:flex;flex-direction:column;gap:2px;min-width:0}\
-.hk-auth-name{font-size:14px;font-weight:500;color:#121212;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\
-.hk-auth-source{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#4e0000;font-weight:500}\
+.hk-auth-name{font-size:14px;font-weight:500;color:#1A1A1A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}\
+.hk-auth-source{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#46000A;font-weight:500}\
 .hk-btn-small{display:inline-block !important;width:auto !important;padding:8px 16px !important;font-size:13px !important;white-space:nowrap;flex-shrink:0;text-decoration:none}\
-.hk-btn-outline{display:block;width:100%;text-align:center;padding:13px;border-radius:40px;font-size:16px;font-weight:600;cursor:pointer;border:1.5px solid #4e0000;color:#4e0000;background:none;font-family:inherit}\
-.hk-btn-outline:hover{background:#faf5f5}\
-.hk-btn-primary{display:block;width:100%;text-align:center;padding:13px;border-radius:40px;font-size:16px;font-weight:600;cursor:pointer;border:none;background:#06f;color:#fff;text-decoration:none;font-family:inherit}\
-.hk-btn-primary:hover{background:#0052cc}\
-.hk-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:24px;padding:64px 16px 16px;color:#888}\
-.hk-save-card{background:#fbeee4;border:1px solid #f0dfd2;border-radius:12px;margin-bottom:16px;overflow:hidden}\
+.hk-btn-outline{display:block;width:100%;text-align:center;padding:13px;border-radius:999px;font-size:16px;font-weight:600;cursor:pointer;border:1px solid #0A4FB8;color:#0A4FB8;background:none;font-family:inherit}\
+.hk-btn-outline:hover{background:#F2F7FF}\
+.hk-btn-primary{display:block;width:100%;text-align:center;padding:13px;border-radius:999px;font-size:16px;font-weight:600;cursor:pointer;border:none;background:#0A4FB8;color:#fff;text-decoration:none;font-family:inherit}\
+.hk-btn-primary:hover{background:#083D8F}\
+.hk-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:24px;padding:64px 16px 16px;color:#5C5C5C}\
+.hk-save-card{background:#FCF8F5;border:1px solid #F9CCD2;border-radius:8px;margin-bottom:16px;overflow:hidden}\
 #hk-save-slot .hk-save-card{margin-bottom:0}\
 #hk-save-slot .hk-save-body{max-height:46vh;overflow-y:auto}\
 .hk-save-card .hk-card-header{padding:16px;align-items:center}\
-.hk-save-title{font-size:16px;font-weight:700;color:#121212;margin:0}\
+.hk-save-title{font-size:16px;font-weight:600;color:#1A1A1A;margin:0}\
 .hk-save-body{padding:0 16px 20px}\
 .hk-radio-group{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:14px}\
-.hk-radio-option{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:15px;color:#121212}\
+.hk-radio-option{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:15px;color:#1A1A1A}\
 .hk-radio-option input{position:absolute;opacity:0;width:0;height:0}\
-.hk-radio-dot{position:relative;width:20px;height:20px;border-radius:50%;border:1.5px solid #06f;background:#fff;flex-shrink:0;box-sizing:border-box}\
+.hk-radio-dot{position:relative;width:20px;height:20px;border-radius:50%;border:1.5px solid #0A4FB8;background:#fff;flex-shrink:0;box-sizing:border-box}\
 .hk-radio-dot::after{content:"";position:absolute;top:50%;left:50%;width:10px;height:10px;border-radius:50%;background:transparent;transform:translate(-50%,-50%)}\
-.hk-radio-option input:checked + .hk-radio-dot::after{background:#06f}\
+.hk-radio-option input:checked + .hk-radio-dot::after{background:#0A4FB8}\
 .hk-save-consent-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:16px}\
-.hk-save-cb{width:20px;height:20px;min-width:20px;border:1.5px solid #c7c8ca;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-top:1px;transition:background .15s,border-color .15s}\
-.hk-save-cb.checked{background:#06f;border-color:#06f}\
-.hk-save-cb-label{font-size:14px;color:#121212;line-height:1.4;cursor:pointer}\
+.hk-save-cb{width:20px;height:20px;min-width:20px;border:1.5px solid #767676;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-top:1px;transition:background .15s,border-color .15s}\
+.hk-save-cb.checked{background:#0A4FB8;border-color:#0A4FB8}\
+.hk-save-cb-label{font-size:14px;color:#1A1A1A;line-height:1.4;cursor:pointer}\
 .hk-save-input-row{display:flex;gap:10px}\
-.hk-save-input{flex:1;min-width:0;border:1.5px solid #c7c8ca;border-radius:8px;padding:12px 14px;font-size:15px;font-family:inherit;outline:none;background:#fff}\
-.hk-save-input:focus{border-color:#06f}\
-.hk-save-send-btn{background:#06f;color:#fff;border:none;border-radius:8px;padding:0 22px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}\
-.hk-save-send-btn:hover{background:#0052cc}\
-.hk-save-privacy{font-size:13px;color:#3f3f3f;line-height:1.5;margin:14px 0 0}\
-.hk-save-privacy a{color:#121212}\
+.hk-save-input{flex:1;min-width:0;border:1.5px solid #767676;border-radius:8px;padding:12px 14px;font-size:15px;font-family:inherit;outline:none;background:#fff}\
+.hk-save-input:focus{border-color:#0A4FB8}\
+.hk-save-send-btn{background:#0A4FB8;color:#fff;border:none;border-radius:8px;padding:0 22px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}\
+.hk-save-send-btn:hover{background:#083D8F}\
+.hk-save-privacy{font-size:13px;color:#1A1A1A;line-height:1.5;margin:14px 0 0}\
+.hk-save-privacy a{color:#1A1A1A}\
 .hk-save-success-row{display:flex;gap:10px;align-items:flex-start}\
-.hk-save-success{font-size:15px;color:#121212;font-weight:400;margin:0;line-height:1.5}\
+.hk-save-success{font-size:15px;color:#1A1A1A;font-weight:400;margin:0;line-height:1.5}\
 /* Programvalget: ett kort per studieprogram, med niv\u00e5, hva som legges til og\
    hvor langt studenten er kommet. */\
-.hk-prog-card{display:block;width:100%;text-align:left;padding:18px 20px;margin-bottom:14px;border:1px solid #d8d8d8;border-radius:12px;background:#fff;cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s}\
-.hk-prog-card:hover{border-color:#4e0000;background:#faf5f5}\
+.hk-prog-card{display:block;width:100%;text-align:left;padding:18px 20px;margin-bottom:14px;border:1px solid #D4D4D4;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s}\
+.hk-prog-card:hover{border-color:#0A4FB8;background:#F2F7FF}\
 .hk-prog-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}\
 .hk-prog-meta{font-size:15px;font-weight:400;color:#5c5c5c;line-height:1.35}\
-.hk-prog-name{display:block;font-size:18px;font-weight:700;color:#121212;line-height:1.3;margin-top:2px}\
+.hk-prog-name{display:block;font-size:18px;font-weight:600;color:#1A1A1A;line-height:1.3;margin-top:2px}\
 .hk-prog-progress{display:block;font-size:15px;font-weight:400;color:#5c5c5c;line-height:1.35;margin-top:8px}\
-.hk-prog-sub{display:block;font-size:15px;font-weight:400;color:#3f3f3f;line-height:1.4;margin-top:4px}\
-.hk-prog-heading{font-size:19px;font-weight:700;color:#121212;margin:0 0 12px}\
+.hk-prog-sub{display:block;font-size:15px;font-weight:400;color:#1A1A1A;line-height:1.4;margin-top:4px}\
+.hk-prog-heading{font-size:19px;font-weight:600;color:#1A1A1A;margin:0 0 12px}\
 .hk-prog-heading + .hk-prog-card{margin-top:0}\
 .hk-prog-heading.hk-prog-heading-next{margin-top:26px}\
-.hk-city-popover{position:fixed;z-index:1300;background:#fff;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.2);padding:16px;min-width:200px}\
-.hk-city-popover h4{margin:0 0 12px;font-size:15px;font-weight:700;color:#111}\
-.hk-city-btn{display:block;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border:1.5px solid #ddd;border-radius:8px;background:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}\
-.hk-city-btn:hover{border-color:#4e0000;background:#faf5f5}\
+.hk-city-popover{position:fixed;z-index:1300;background:#fff;border-radius:8px;padding:16px;min-width:200px}\
+.hk-city-popover h4{margin:0 0 12px;font-size:15px;font-weight:600;color:#1A1A1A}\
+.hk-city-btn{display:block;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border:1.5px solid #D4D4D4;border-radius:8px;background:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}\
+.hk-city-btn:hover{border-color:#0A4FB8;background:#F2F7FF}\
 ';
 
 /* ─── CRUD ─── */
@@ -456,7 +456,7 @@ function closeSoknaderPanel() {
 
 /* ─── Trash SVG ─── */
 var TRASH_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
-var LOCK_SVG_SMALL = '<svg width="11" height="11" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="#4e0000" stroke-width="2.2"/><rect x="11" y="15" width="10" height="7" rx="1.5" stroke="#4e0000" stroke-width="1.8"/><path d="M13 15v-2.5a3 3 0 016 0V15" stroke="#4e0000" stroke-width="1.8" stroke-linecap="round"/><circle cx="16" cy="19" r="1.2" fill="#4e0000"/></svg>';
+var LOCK_SVG_SMALL = '<svg width="11" height="11" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="#46000A" stroke-width="2.2"/><rect x="11" y="15" width="10" height="7" rx="1.5" stroke="#46000A" stroke-width="1.8"/><path d="M13 15v-2.5a3 3 0 016 0V15" stroke="#46000A" stroke-width="1.8" stroke-linecap="round"/><circle cx="16" cy="19" r="1.2" fill="#46000A"/></svg>';
 
 /* Innloggingsrad i bunnen av Søknader-panelet — vises alltid, uansett kurvinnhold */
 function buildAuthFooterRow(awaitingChoice) {
@@ -531,7 +531,7 @@ function hkSaveBoxHtml() {
 }
 
 var CHECK_SVG_SMALL = '<svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-var CHECK_SVG_DARK = '<svg width="16" height="12" viewBox="0 0 16 12" fill="none" style="flex-shrink:0;margin-top:3px"><path d="M1 6l4.5 4.5L15 1" stroke="#121212" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var CHECK_SVG_DARK = '<svg width="16" height="12" viewBox="0 0 16 12" fill="none" style="flex-shrink:0;margin-top:3px"><path d="M1 6l4.5 4.5L15 1" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function toggleHkSaveBox() {
   _hkSaveOpen = !_hkSaveOpen;
@@ -561,7 +561,7 @@ function sendBasketSave() {
   var valid = _hkSaveMethod === 'epost'
     ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
     : val.replace(/\s/g, '').length >= 8;
-  if (!valid) { input.style.borderColor = '#b60202'; input.focus(); return; }
+  if (!valid) { input.style.borderColor = '#AF0018'; input.focus(); return; }
   var body = input.closest('.hk-save-body');
   if (!body) return;
   _hkSaveSentTo = val.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -610,10 +610,10 @@ function renderBasketPanel() {
 
   if (totalItems === 0) {
     body.innerHTML = '<div class="hk-empty">'
-      + '<div style="background:#f4ebe6;border-radius:88px;padding:16px;display:inline-flex;align-items:center;justify-content:center;">'
-      + '<svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M22 9L12 5 2 9l10 4 10-4z" stroke="#121212" stroke-width="1.8" stroke-linejoin="round" fill="none"/><path d="M6 11v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5" stroke="#121212" stroke-width="1.8" stroke-linejoin="round" fill="none"/><line x1="22" y1="9" x2="22" y2="14" stroke="#121212" stroke-width="1.8" stroke-linecap="round"/></svg>'
+      + '<div style="background:#FCF8F5;border-radius:999px;padding:16px;display:inline-flex;align-items:center;justify-content:center;">'
+      + '<svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M22 9L12 5 2 9l10 4 10-4z" stroke="#1A1A1A" stroke-width="1.8" stroke-linejoin="round" fill="none"/><path d="M6 11v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5" stroke="#1A1A1A" stroke-width="1.8" stroke-linejoin="round" fill="none"/><line x1="22" y1="9" x2="22" y2="14" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round"/></svg>'
       + '</div>'
-      + '<a href="/utdanning" style="display:block;width:100%;text-align:center;padding:12px;border-radius:40px;font-size:16px;font-weight:500;cursor:pointer;border:1px solid #4e0000;color:#4e0000;background:none;font-family:inherit;text-decoration:none;">Legg til studier eller emner</a>'
+      + '<a href="/utdanning" style="display:block;width:100%;text-align:center;padding:12px;border-radius:999px;font-size:16px;font-weight:500;cursor:pointer;border:1px solid #46000A;color:#46000A;background:none;font-family:inherit;text-decoration:none;">Legg til studier eller emner</a>'
       + '</div>';
     return;
   }
@@ -734,7 +734,7 @@ function renderLooseEmner(emner) {
   });
   return '<div class="hk-card" data-prog-id="' + HK_LOOSE_CARD_ID + '"><div class="hk-card-header hk-clickable" onclick="toggleHkEmner(this)">'
     + '<div><div class="hk-section-title">Emner uten tilknytning til studieprogram</div>'
-    + '<div style="font-weight:700;font-size:14px;">' + emner.length + ' emne' + (emner.length > 1 ? 'r' : '') + '</div></div>'
+    + '<div style="font-weight:600;font-size:14px;">' + emner.length + ' emne' + (emner.length > 1 ? 'r' : '') + '</div></div>'
     + '<div class="hk-card-right"><button class="hk-chevron">' + CHEVRON_DOWN + '</button></div>'
     + '</div><div class="hk-emner-list">' + inner + '</div></div>';
 }
@@ -848,14 +848,14 @@ function showCitySelectionInSidebar(cityMap) {
   if (firstChoice) studyName = firstChoice.name || '';
 
   var html = '<div style="padding:8px 0;">'
-    + '<p style="font-size:14px;color:#666;margin:0 0 4px;">Du legger til:</p>'
+    + '<p style="font-size:14px;color:#5C5C5C;margin:0 0 4px;">Du legger til:</p>'
     + '<p style="font-size:16px;font-weight:600;margin:0 0 20px;color:#1a1a1a;">' + studyName + '</p>'
     + '<p style="font-size:15px;font-weight:600;margin:0 0 12px;color:#1a1a1a;">Velg campus</p>';
   Object.keys(cityMap).forEach(function(city) {
     html += '<button class="hk-city-sidebar-btn" onclick="addChoiceToBasket(' + JSON.stringify(cityMap[city]).replace(/"/g, '&quot;') + ')"'
-      + ' style="display:block;width:100%;text-align:left;padding:16px;margin-bottom:8px;border:1.5px solid #ddd;border-radius:8px;background:#fff;font-size:16px;font-weight:500;cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s;"'
-      + ' onmouseover="this.style.borderColor=\'#b71c2f\';this.style.background=\'#fdf5f5\'"'
-      + ' onmouseout="this.style.borderColor=\'#ddd\';this.style.background=\'#fff\'"'
+      + ' style="display:block;width:100%;text-align:left;padding:16px;margin-bottom:8px;border:1.5px solid #D4D4D4;border-radius:8px;background:#fff;font-size:16px;font-weight:500;cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s;"'
+      + ' onmouseover="this.style.borderColor=\'#AF0018\';this.style.background=\'#FCF8F5\'"'
+      + ' onmouseout="this.style.borderColor=\'#D4D4D4\';this.style.background=\'#fff\'"'
       + '>' + city + '</button>';
   });
   html += '</div>';
@@ -917,7 +917,7 @@ function enhanceTopbarBasket() {
     btn.style.position = 'relative';
     var badge = document.createElement('span');
     badge.id = 'topbar-basket-count';
-    badge.style.cssText = 'display:none;position:absolute;top:2px;right:2px;background:#c8233f;color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:700;line-height:16px;text-align:center;box-sizing:border-box;';
+    badge.style.cssText = 'display:none;position:absolute;top:2px;right:2px;background:#AF0018;color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:600;line-height:16px;text-align:center;box-sizing:border-box;';
     btn.appendChild(badge);
   }
 }
@@ -1256,14 +1256,14 @@ function hkPts(n) {
 
 /* \u00abStudie p\u00e5g\u00e5r\u00bb \u2013 markerer programmet studenten allerede holder p\u00e5 med */
 var HK_BADGE_PAAGAAR = '<span style="flex-shrink:0;display:inline-flex;align-items:center;'
-  + 'background:#06f;color:#fff;border-radius:999px;padding:7px 16px;'
-  + 'font-size:14px;font-weight:700;line-height:1.2;white-space:nowrap;">Studie p\u00e5g\u00e5r</span>';
+  + 'background:#0A4FB8;color:#fff;border-radius:999px;padding:7px 16px;'
+  + 'font-size:14px;font-weight:600;line-height:1.2;white-space:nowrap;">Studie p\u00e5g\u00e5r</span>';
 
 /* ─── Byggeklosser for valgpanelet ─── */
 
 function hkChoiceLine(text, last) {
   return '<p style="font-size:18px;font-weight:500;margin:0 0 ' + (last ? '24px' : '8px')
-    + ';color:#121212;line-height:1.4;">' + text + '</p>';
+    + ';color:#1A1A1A;line-height:1.4;">' + text + '</p>';
 }
 
 /* Hvilket emne handler dette om – står øverst så konteksten ikke forsvinner
@@ -1271,32 +1271,32 @@ function hkChoiceLine(text, last) {
 function hkEmneContextCard(emne) {
   if (!emne) return '';
   var pts = emne.pts ? ' \u00b7 ' + String(emne.pts).replace('.', ',') + ' stp.' : '';
-  return '<div style="background:#f6ece3;border-radius:10px;padding:12px 16px;margin:0 0 20px;">'
-    + '<div style="font-size:12.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#7a6a6a;">Emne</div>'
-    + '<div style="font-size:16px;font-weight:700;color:#121212;margin-top:2px;">'
+  return '<div style="background:#FCF8F5;border-radius:8px;padding:12px 16px;margin:0 0 20px;">'
+    + '<div style="font-size:12.5px;font-weight:500;letter-spacing:.08em;color:#5C5C5C;">Emne</div>'
+    + '<div style="font-size:16px;font-weight:600;color:#1A1A1A;margin-top:2px;">'
     + emne.name + (emne.code ? ' (' + emne.code + ')' : '') + pts + '</div></div>';
 }
 
 var HK_CHOICE_STYLE = 'display:flex;align-items:center;gap:12px;width:100%;text-align:left;'
-  + 'padding:18px 20px;margin-bottom:12px;border:1px solid #c7c8ca;border-radius:12px;background:#fff;'
+  + 'padding:18px 20px;margin-bottom:12px;border:1px solid #D4D4D4;border-radius:8px;background:#fff;'
   + 'cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s;';
 
 function hkOrDivider() {
   return '<div style="display:flex;align-items:center;gap:14px;margin:20px 0;">'
-    + '<span style="flex:1;height:1px;background:#dcdcdc;"></span>'
-    + '<span style="font-size:12.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#7a6a6a;">Eller</span>'
-    + '<span style="flex:1;height:1px;background:#dcdcdc;"></span>'
+    + '<span style="flex:1;height:1px;background:#D4D4D4;"></span>'
+    + '<span style="font-size:12.5px;font-weight:500;letter-spacing:.08em;color:#5C5C5C;">Eller</span>'
+    + '<span style="flex:1;height:1px;background:#D4D4D4;"></span>'
     + '</div>';
 }
 
 function hkChoiceButton(onclick, name, sub, startedNote, badgeHtml) {
   return '<button class="hk-prog-choice" onclick="' + onclick + '" style="' + HK_CHOICE_STYLE + '"'
-    + ' onmouseover="this.style.borderColor=\'#4e0000\';this.style.background=\'#faf5f5\'"'
-    + ' onmouseout="this.style.borderColor=\'#c7c8ca\';this.style.background=\'#fff\'">'
+    + ' onmouseover="this.style.borderColor=\'#46000A\';this.style.background=\'#FCF8F5\'"'
+    + ' onmouseout="this.style.borderColor=\'#D4D4D4\';this.style.background=\'#fff\'">'
     + '<span style="flex:1;min-width:0;">'
-    + '<span style="display:block;font-size:18px;font-weight:500;color:#121212;line-height:1.3;">' + name + '</span>'
-    + (sub ? '<span style="display:block;font-size:15px;font-weight:400;color:#3f3f3f;margin-top:4px;line-height:1.4;">' + sub + '</span>' : '')
-    + (startedNote ? '<span style="display:block;font-size:15px;font-weight:400;color:#5c1a1a;margin-top:4px;line-height:1.4;">' + startedNote + '</span>' : '')
+    + '<span style="display:block;font-size:18px;font-weight:500;color:#1A1A1A;line-height:1.3;">' + name + '</span>'
+    + (sub ? '<span style="display:block;font-size:15px;font-weight:400;color:#1A1A1A;margin-top:4px;line-height:1.4;">' + sub + '</span>' : '')
+    + (startedNote ? '<span style="display:block;font-size:15px;font-weight:400;color:#46000A;margin-top:4px;line-height:1.4;">' + startedNote + '</span>' : '')
     + '</span>'
     + (badgeHtml || '')
     + '</button>';
@@ -1304,14 +1304,14 @@ function hkChoiceButton(onclick, name, sub, startedNote, badgeHtml) {
 
 /* ─── Utvidbar infoboks i valgpanelet ─── */
 function hkInfoAccordion(id, question, bodyHtml) {
-  return '<div style="background:#fdf3f0;border:1px solid #f0dcd6;border-radius:10px;margin:0 0 20px;overflow:hidden;">'
+  return '<div style="background:#FCF8F5;border:1px solid #F9CCD2;border-radius:8px;margin:0 0 20px;overflow:hidden;">'
     + '<button type="button" id="' + id + '-btn" aria-expanded="false" onclick="hkToggleInfo(\'' + id + '\')"'
     + ' style="display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:14px 16px;'
-    + 'background:none;border:none;cursor:pointer;font-family:inherit;font-size:16px;font-weight:500;color:#121212;">'
+    + 'background:none;border:none;cursor:pointer;font-family:inherit;font-size:16px;font-weight:500;color:#1A1A1A;">'
     + '<span style="flex:1;min-width:0;line-height:1.35;">' + question + '</span>'
-    + '<span id="' + id + '-chev" style="flex-shrink:0;display:flex;color:#4e0000;">' + CHEVRON_DOWN + '</span>'
+    + '<span id="' + id + '-chev" style="flex-shrink:0;display:flex;color:#46000A;">' + CHEVRON_DOWN + '</span>'
     + '</button>'
-    + '<div id="' + id + '-body" style="display:none;padding:0 16px 16px;font-size:15px;color:#3f3f3f;line-height:1.55;">'
+    + '<div id="' + id + '-body" style="display:none;padding:0 16px 16px;font-size:15px;color:#1A1A1A;line-height:1.55;">'
     + bodyHtml + '</div></div>';
 }
 
@@ -1331,7 +1331,7 @@ var INFO_GJENNOMFORING = '<p style="margin:0 0 10px;">Hvis du studerer p\u00e5 f
   + '<p style="margin:0 0 12px;">Graden du ender opp med, vil v\u00e6re den samme \u2013 den tar bare lengre tid '
   + '\u00e5 fullf\u00f8re. Du f\u00e5r ogs\u00e5 st\u00f8tte fra L\u00e5nekassen som deltidsstudent, men ikke s\u00e5 mye som om '
   + 'du hadde studert p\u00e5 heltid.</p>'
-  + '<a href="https://www.kristiania.no/nettstudier/" style="font-size:15px;font-weight:500;color:#4e0000;">'
+  + '<a href="https://www.kristiania.no/nettstudier/" style="font-size:15px;font-weight:500;color:#46000A;">'
   + 'Les mer om gjennomf\u00f8ring</a>';
 
 /* ─── Programvalg fra studieplanleggeren ─── */
@@ -1462,7 +1462,7 @@ function hkFormLabel(form, codes) {
 
 function hkBackLink(onclick, text) {
   return '<button onclick="' + onclick + '" style="background:none;border:none;padding:0;margin:20px 0 0;'
-    + 'cursor:pointer;font-family:inherit;font-size:15px;font-weight:500;color:#4e0000;">\u2190 ' + text + '</button>';
+    + 'cursor:pointer;font-family:inherit;font-size:15px;font-weight:500;color:#46000A;">\u2190 ' + text + '</button>';
 }
 
 /* Studieform er siste valg \u2013 emnet legges til her, med studiekoden for
@@ -1520,14 +1520,14 @@ function hkVisVarselKvittering(epost) {
     ? '\u00ab' + String(epost).replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\u00bb'
     : 'e-postadressen din';
   body.innerHTML = '<div style="padding:8px 0;">'
-    + '<div style="background:#f6ece3;border-radius:12px;padding:18px 20px;">'
-    + '<p style="font-size:15px;font-weight:700;color:#5c1a1a;margin:0;">Vi sender deg en e-post n\u00e5r du kan bestille</p>'
-    + '<p style="font-size:13.5px;color:#555;margin:10px 0 0;line-height:1.55;">'
+    + '<div style="background:#FCF8F5;border-radius:8px;padding:18px 20px;">'
+    + '<p style="font-size:15px;font-weight:600;color:#46000A;margin:0;">Vi sender deg en e-post n\u00e5r du kan bestille</p>'
+    + '<p style="font-size:13.5px;color:#5C5C5C;margin:10px 0 0;line-height:1.55;">'
     + 'Vi varsler ' + mottaker + ' s\u00e5 snart bestillingen \u00e5pner for neste semester. '
     + 'Emnet er ikke lagt til i s\u00f8knaden.</p>'
     + '</div>'
     + '<button onclick="closeSoknaderPanel()" style="background:none;border:none;padding:0;margin:20px 0 0;'
-    + 'cursor:pointer;font-family:inherit;font-size:15px;font-weight:500;color:#4e0000;">\u2190 Tilbake</button>'
+    + 'cursor:pointer;font-family:inherit;font-size:15px;font-weight:500;color:#46000A;">\u2190 Tilbake</button>'
     + '</div>';
 }
 
@@ -1582,14 +1582,14 @@ function showEmneAlreadyCompleted(emne, program) {
     : '';
 
   body.innerHTML = '<div style="padding:8px 0;">'
-    + '<div style="background:#f6ece3;border-radius:12px;padding:18px 20px;">'
+    + '<div style="background:#FCF8F5;border-radius:8px;padding:18px 20px;">'
     + '<div style="display:flex;align-items:flex-start;gap:10px;">'
-    + '<span style="color:#5c1a1a;font-size:15px;font-weight:700;flex-shrink:0;margin-top:2px;">&#10003;</span>'
-    + '<p style="font-size:15px;font-weight:700;color:#5c1a1a;margin:0;">Du har allerede bestått ' + emne.name + '</p>'
+    + '<span style="color:#46000A;font-size:15px;font-weight:600;flex-shrink:0;margin-top:2px;">&#10003;</span>'
+    + '<p style="font-size:15px;font-weight:600;color:#46000A;margin:0;">Du har allerede bestått ' + emne.name + '</p>'
     + '</div>'
-    + '<p style="font-size:13.5px;color:#555;margin:10px 0 0;line-height:1.55;padding-left:25px;">'
+    + '<p style="font-size:13.5px;color:#5C5C5C;margin:10px 0 0;line-height:1.55;padding-left:25px;">'
     + 'Emnet ble tatt' + iProgram + ' og kan ikke tas om igjen, så vi har ikke lagt det til. '
-    + 'Stemmer ikke dette, ta kontakt på <a href="mailto:opptaknettstudier@kristiania.no" style="color:#06f;">opptaknettstudier@kristiania.no</a> eller 21 09 30 00.'
+    + 'Stemmer ikke dette, ta kontakt på <a href="mailto:opptaknettstudier@kristiania.no" style="color:#0A4FB8;">opptaknettstudier@kristiania.no</a> eller 21 09 30 00.'
     + '</p>'
     + '</div></div>';
 }

@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <title>Søknadsskjema | Kristiania</title>
 <link rel="preconnect" href="https://www.kristiania.no">
 <link rel="preload" href="https://www.kristiania.no/dist/GraphikBold.4f49c33873a6d7f571f8.woff" as="font" crossorigin="anonymous">
@@ -13,22 +16,22 @@
 @font-face { font-family: 'Graphik'; src: url('https://www.kristiania.no/dist/GraphikRegular.7e9a488b4eb0442bc744.woff') format('woff'); font-weight: 400; }
 @font-face { font-family: 'Graphik'; src: url('https://www.kristiania.no/dist/GraphikMedium.94982326f74c637ac5ec.woff') format('woff'); font-weight: 500; }
 @font-face { font-family: 'Graphik'; src: url('https://www.kristiania.no/dist/GraphikSemibold.6670d77b61a5fc45b31e.woff') format('woff'); font-weight: 600; }
-@font-face { font-family: 'Graphik'; src: url('https://www.kristiania.no/dist/GraphikBold.4f49c33873a6d7f571f8.woff') format('woff'); font-weight: 700; }
+@font-face { font-family: 'Graphik'; src: url('https://www.kristiania.no/dist/GraphikBold.4f49c33873a6d7f571f8.woff') format('woff'); font-weight: 600; }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   font-family: 'Graphik', sans-serif;
   font-weight: 400;
-  color: #121212;
-  background: #f5f5f5;
+  color: #1A1A1A;
+  background: #F5F5F5;
   min-height: 100vh;
 }
 
 /* Topbar */
 .topbar {
   position: sticky; top: 0; z-index: 1070;
-  background: #fff; border-bottom: 1px solid #e8e8e8; height: 72px;
+  background: #fff; border-bottom: 1px solid #E6E6E6; height: 72px;
 }
 .topbar-inner {
   max-width: 1200px; margin: 0 auto; padding: 0 32px;
@@ -57,36 +60,35 @@ body {
 }
 .stepper-step::before {
   content: ''; position: absolute; top: 17px; right: 50%; left: -50%;
-  height: 2px; background: #ddd6d6; z-index: 0; transition: background .35s ease;
+  height: 2px; background: #D4D4D4; z-index: 0; transition: background .35s ease;
 }
 .stepper-step:first-child::before { display: none; }
-.stepper-step.done::before, .stepper-step.current::before { background: #4e0000; }
+.stepper-step.done::before, .stepper-step.current::before { background: #0A4FB8; }
 .stepper-node {
   position: relative; z-index: 1;
   width: 36px; height: 36px; border-radius: 50%;
-  background: #fff; border: 2px solid #ddd6d6; color: #9a9090;
+  background: #fff; border: 2px solid #767676; color: #5C5C5C;
   display: flex; align-items: center; justify-content: center;
   font-size: 15px; font-weight: 600;
   transition: all .35s ease;
 }
 .stepper-label {
-  margin-top: 9px; font-size: 13px; font-weight: 500; color: #9a9090;
+  margin-top: 9px; font-size: 13px; font-weight: 500; color: #5C5C5C;
   text-align: center; transition: color .35s ease; line-height: 1.25;
 }
 .stepper-step.current .stepper-node {
-  border-color: #0066FF; color: #0066FF;
-  box-shadow: 0 0 0 4px rgba(0,102,255,0.10);
+  border-color: #0A4FB8; color: #0A4FB8;
 }
-.stepper-step.current .stepper-label { color: #0066FF; font-weight: 600; }
-.stepper-step.done .stepper-node { background: #4e0000; border-color: #4e0000; color: #fff; }
-.stepper-step.done .stepper-label { color: #4e0000; }
+.stepper-step.current .stepper-label { color: #0A4FB8; font-weight: 600; }
+.stepper-step.done .stepper-node { background: #0A4FB8; border-color: #0A4FB8; color: #fff; }
+.stepper-step.done .stepper-label { color: #0A4FB8; }
 .stepper-step.clickable { cursor: pointer; }
-.stepper-step.clickable:hover .stepper-node { background: #6b1010; border-color: #6b1010; box-shadow: 0 0 0 4px rgba(78,0,0,0.10); }
+.stepper-step.clickable:hover .stepper-node { background: #0A4FB8; border-color: #0A4FB8; }
 .stepper-step.clickable:hover .stepper-label { text-decoration: underline; }
 .stepper-step.clickable:focus-visible { outline: none; }
-.stepper-step.clickable:focus-visible .stepper-node { box-shadow: 0 0 0 3px rgba(78,0,0,0.35); }
+.stepper-step.clickable:focus-visible .stepper-node { }
 .stepper-mobile-caption {
-  display: none; font-size: 14px; font-weight: 600; color: #4e0000;
+  display: none; font-size: 14px; font-weight: 600; color: #46000A;
   margin-bottom: 14px; text-align: center;
 }
 @media (max-width: 600px) {
@@ -99,15 +101,15 @@ body {
 
 /* Form card */
 .form-col {
-  background: #fff; border-radius: 12px; padding: 40px;
+  background: #fff; border-radius: 8px; padding: 40px;
   display: flex; flex-direction: column; gap: 24px;
 }
 
-.step-title { font-size: 28px; font-weight: 700; color: #4e0000; }
-.step-subtitle { font-size: 20px; font-weight: 600; color: #121212; }
+.step-title { font-size: 28px; font-weight: 600; color: #46000A; }
+.step-subtitle { font-size: 20px; font-weight: 600; color: #1A1A1A; }
 /* Seksjonsoverskrift inne i et skjemakort (Språk, Adresse) */
-.step-subtitle-section { font-size: 18px; color: #4e0000; margin: 0 0 4px; }
-.step-section-hint { font-size: 15px; color: #555; margin: 0 0 12px; }
+.step-subtitle-section { font-size: 18px; color: #46000A; margin: 0 0 4px; }
+.step-section-hint { font-size: 15px; color: #5C5C5C; margin: 0 0 12px; }
 /* Wrapperen arver ikke form-col sin gap, så seksjonene må få den her */
 #step3EditableFields { display: flex; flex-direction: column; gap: 24px; }
 
@@ -118,55 +120,55 @@ body {
 .input-wrap { position: relative; }
 .input-wrap label {
   position: absolute; top: 50%; left: 16px; transform: translateY(-50%);
-  font-size: 14px; color: #888; pointer-events: none; transition: all .15s;
+  font-size: 14px; color: #5C5C5C; pointer-events: none; transition: all .15s;
 }
 .input-wrap input:focus + label,
 .input-wrap input:not(:placeholder-shown) + label {
-  top: 10px; transform: none; font-size: 11px; color: #555;
+  top: 10px; transform: none; font-size: 11px; color: #5C5C5C;
 }
 .input-wrap input {
-  width: 100%; border: 1.5px solid #c7c8ca; border-radius: 8px;
-  padding: 22px 16px 8px; font-size: 15px; font-weight: 500; color: #121212;
+  width: 100%; border: 1.5px solid #767676; border-radius: 8px;
+  padding: 22px 16px 8px; font-size: 15px; font-weight: 500; color: #1A1A1A;
   background: #fff; font-family: 'Graphik', sans-serif; outline: none;
   transition: border-color .15s;
 }
-.input-wrap input:focus { border-color: #06f; }
-.input-wrap.error input { border-color: #b60202; background: #fffbfb; }
+.input-wrap input:focus { border-color: #0A4FB8; }
+.input-wrap.error input { border-color: #AF0018; background: #FCF8F5; }
 
 .input-wrap select {
-  width: 100%; border: 1.5px solid #c7c8ca; border-radius: 8px;
-  padding: 22px 40px 8px 16px; font-size: 15px; font-weight: 500; color: #121212;
+  width: 100%; border: 1.5px solid #767676; border-radius: 8px;
+  padding: 22px 40px 8px 16px; font-size: 15px; font-weight: 500; color: #1A1A1A;
   background: #fff; font-family: 'Graphik', sans-serif; outline: none;
   transition: border-color .15s; appearance: none; -webkit-appearance: none; -moz-appearance: none;
   cursor: pointer;
 }
-.input-wrap select:focus { border-color: #06f; }
-.input-wrap-select label { top: 10px; transform: none; font-size: 11px; color: #555; }
+.input-wrap select:focus { border-color: #0A4FB8; }
+.input-wrap-select label { top: 10px; transform: none; font-size: 11px; color: #5C5C5C; }
 .select-chevron { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none; }
-.error-msg { font-size: 12px; color: #b60202; margin-top: 4px; display: none; padding-left: 2px; }
+.error-msg { font-size: 12px; color: #AF0018; margin-top: 4px; display: none; padding-left: 2px; }
 
 /* Konflikt-varsel: emner som allerede er bestått og automatisk fjernet */
-.conflict-banner { background: #f6ece3; border-radius: 12px; padding: 18px 20px; margin-bottom: 16px; }
+.conflict-banner { background: #FCF8F5; border-radius: 8px; padding: 18px 20px; margin-bottom: 16px; }
 .conflict-banner-header { display: flex; align-items: flex-start; gap: 10px; }
-.conflict-banner-icon { color: #5c1a1a; font-size: 15px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
-.conflict-banner-title { font-size: 15px; font-weight: 700; color: #5c1a1a; margin: 0; }
-.conflict-banner-sub { font-size: 13.5px; color: #555; margin: 10px 0 0; line-height: 1.55; padding-left: 25px; }
-.conflict-banner-sub a { color: #06f; }
-.conflict-banner-toggle { display: block; background: none; border: none; color: #06f; font-size: 13.5px; font-weight: 600; cursor: pointer; font-family: 'Graphik', sans-serif; padding: 0; margin: 12px 0 0 25px; }
+.conflict-banner-icon { color: #46000A; font-size: 15px; font-weight: 600; flex-shrink: 0; margin-top: 2px; }
+.conflict-banner-title { font-size: 15px; font-weight: 600; color: #46000A; margin: 0; }
+.conflict-banner-sub { font-size: 13.5px; color: #5C5C5C; margin: 10px 0 0; line-height: 1.55; padding-left: 25px; }
+.conflict-banner-sub a { color: #0A4FB8; }
+.conflict-banner-toggle { display: block; background: none; border: none; color: #0A4FB8; font-size: 13.5px; font-weight: 600; cursor: pointer; font-family: 'Graphik', sans-serif; padding: 0; margin: 12px 0 0 25px; }
 .conflict-banner-list { margin: 12px 0 0; padding-left: 25px; }
-.conflict-row { display: flex; align-items: baseline; gap: 8px; padding: 8px 0; border-top: 1px solid #e7d8c8; }
+.conflict-row { display: flex; align-items: baseline; gap: 8px; padding: 8px 0; border-top: 1px solid #F9CCD2; }
 .conflict-row:first-of-type { border-top: none; }
-.conflict-row-name { font-size: 14px; font-weight: 500; color: #333; }
-.conflict-row-code { font-size: 12px; color: #8a7060; }
+.conflict-row-name { font-size: 14px; font-weight: 500; color: #1A1A1A; }
+.conflict-row-code { font-size: 12px; color: #5C5C5C; }
 .summary-emner-group + .summary-emner-group { margin-top: 12px; }
 .input-wrap.error + .error-msg { display: block; }
 
 /* Phone prefix */
 .phone-row { display: flex; }
 .phone-prefix {
-  border: 1.5px solid #c7c8ca; border-right: none; border-radius: 8px 0 0 8px;
+  border: 1.5px solid #D4D4D4; border-right: none; border-radius: 8px 0 0 8px;
   padding: 0 16px; font-size: 15px; background: #fff; display: flex; align-items: center;
-  color: #555; white-space: nowrap;
+  color: #5C5C5C; white-space: nowrap;
 }
 .phone-row .input-wrap { flex: 1; }
 .phone-row .input-wrap input { border-radius: 0 8px 8px 0; }
@@ -174,91 +176,91 @@ body {
 /* Checkbox */
 .checkbox-row { display: flex; gap: 10px; align-items: flex-start; }
 .checkbox-box {
-  width: 20px; height: 20px; border: 1.5px solid #c7c8ca; border-radius: 4px;
+  width: 20px; height: 20px; border: 1.5px solid #767676; border-radius: 4px;
   background: #fff; display: flex; align-items: center; justify-content: center;
   cursor: pointer; flex-shrink: 0; margin-top: 1px; transition: all .15s;
 }
-.checkbox-box.checked { background: #06f; border-color: #06f; }
-.checkbox-label { font-size: 14px; color: #121212; line-height: 20px; cursor: pointer; }
-.checkbox-label a { color: #06f; }
+.checkbox-box.checked { background: #0A4FB8; border-color: #0A4FB8; }
+.checkbox-label { font-size: 14px; color: #1A1A1A; line-height: 20px; cursor: pointer; }
+.checkbox-label a { color: #0A4FB8; }
 
 /* Divider */
 .eller-row { display: flex; align-items: center; gap: 12px; }
-.eller-line { flex: 1; height: 1px; background: #c7c8ca; }
-.eller-text { font-size: 13px; color: #999; white-space: nowrap; }
+.eller-line { flex: 1; height: 1px; background: #D4D4D4; }
+.eller-text { font-size: 13px; color: #5C5C5C; white-space: nowrap; }
 
 /* FEIDE login page */
 .feide-option-btn {
   display: flex; align-items: center; gap: 14px;
   width: 100%; padding: 16px 20px;
-  border: 1.5px solid #06f; border-radius: 8px;
-  background: #fff; font-size: 15px; font-weight: 500; color: #121212;
+  border: 1.5px solid #0A4FB8; border-radius: 8px;
+  background: #fff; font-size: 15px; font-weight: 500; color: #1A1A1A;
   cursor: pointer; font-family: 'Graphik', sans-serif; transition: background .15s;
 }
-.feide-option-btn:hover { background: #f0f7ff; }
+.feide-option-btn:hover { background: #F2F7FF; }
 .feide-tilhorighet-row {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 16px; border: 1.5px solid #c7c8ca; border-radius: 8px;
+  padding: 14px 16px; border: 1.5px solid #D4D4D4; border-radius: 8px;
   margin-bottom: 20px;
 }
 .feide-k-avatar {
-  width: 32px; height: 32px; border-radius: 6px; background: #cc0000;
+  width: 32px; height: 32px; border-radius: 50%; background: #AF0018;
   display: flex; align-items: center; justify-content: center;
-  color: #fff; font-weight: 700; font-size: 15px; flex-shrink: 0;
+  color: #fff; font-weight: 600; font-size: 15px; flex-shrink: 0;
 }
 .feide-hjelp-row {
   display: flex; align-items: center; justify-content: space-between;
   width: 100%; background: none; border: none; padding: 16px 0 0;
-  font-size: 15px; font-weight: 500; color: #121212;
+  font-size: 15px; font-weight: 500; color: #1A1A1A;
   cursor: pointer; font-family: 'Graphik', sans-serif;
-  border-top: 1px solid #e8e8e8;
+  border-top: 1px solid #E6E6E6;
 }
 
 /* FEIDE button */
 .feide-btn {
   display: flex; align-items: center; justify-content: center; gap: 10px;
-  border: 1.5px solid #d4d8ff; background: #f5f7ff; border-radius: 12px;
-  padding: 18px 24px; font-size: 16px; font-weight: 600; color: #121212;
+  border: 1.5px solid #0A4FB8; background: #F2F7FF; border-radius: 8px;
+  padding: 18px 24px; font-size: 16px; font-weight: 600; color: #1A1A1A;
   cursor: pointer; font-family: 'Graphik', sans-serif; width: 100%; transition: background .15s;
 }
-.feide-btn:hover { background: #eceffe; }
+.feide-btn:hover { background: #F2F7FF; }
 
 /* Buttons */
 .btn-primary {
   display: flex; align-items: center; justify-content: center;
-  height: 52px; background: #06f; color: #fff;
+  height:44px; background: #0A4FB8; color: #fff;
   font-family: 'Graphik', sans-serif; font-size: 16px; font-weight: 600;
-  border: none; border-radius: 40px; cursor: pointer; width: 100%; transition: background 0.15s;
+  border: none; border-radius: 999px; cursor: pointer; width: 100%; transition: background 0.15s;
 }
-.btn-primary:hover { background: #0052cc; }
-.btn-primary:disabled { background: #c7cad1; cursor: not-allowed; }
-.btn-primary:disabled:hover { background: #c7cad1; }
+.btn-primary:hover { background: #083D8F; }
+.btn-primary:disabled { background: #D4D4D4; cursor: not-allowed; }
+.btn-primary:disabled:hover { background: #D4D4D4; }
 
 .btn-outline {
   display: flex; align-items: center; justify-content: center;
-  height: 52px; background: #fff; color: #06f;
+  height:44px; background: #fff; color: #0A4FB8;
   font-family: 'Graphik', sans-serif; font-size: 16px; font-weight: 600;
-  border: 1.5px solid #06f; border-radius: 40px; cursor: pointer;
+  border: 1px solid #0A4FB8; border-radius: 999px; cursor: pointer;
   transition: background 0.15s; padding: 0 28px; white-space: nowrap;
 }
-.btn-outline:hover { background: #f2f7ff; }
+.btn-outline:hover { background: #F2F7FF; }
 
 .btn-secondary {
   display: flex; align-items: center; justify-content: center;
-  height: 52px; background: transparent; color: #121212;
+  height:44px; background: #fff; color: #0A4FB8;
   font-family: 'Graphik', sans-serif; font-size: 15px; font-weight: 500;
-  border: 1.5px solid #c7c8ca; border-radius: 40px; cursor: pointer;
+  border: 1px solid #0A4FB8; border-radius: 999px; cursor: pointer;
   transition: background 0.15s; padding: 0 24px; white-space: nowrap;
 }
-.btn-secondary:hover { background: #f5f5f5; }
+.btn-secondary:hover { background: #F2F7FF; }
 
 .btn-ghost {
   display: flex; align-items: center; justify-content: center;
-  height: 52px; background: #f5f5f5; color: #555;
+  height:44px; background: #F5F5F5; color: #5C5C5C;
   font-family: 'Graphik', sans-serif; font-size: 14px; font-weight: 500;
-  border: none; border-radius: 40px; cursor: pointer; width: 100%; transition: background 0.15s;
+  border: none; border-radius: 999px; cursor: pointer; width: 100%; transition: background 0.15s;
 }
-.btn-ghost:hover { background: #e8e8e8; }
+.btn-ghost:hover { background: #E6E6E6; }
 
 .btn-row { display: flex; gap: 12px; }
 .btn-row .btn-secondary { flex: 0 0 auto; }
@@ -268,126 +270,115 @@ body {
 /* OTP circles */
 .otp-group { display: flex; gap: 12px; }
 .otp-input {
-  width: 64px; height: 64px; border: 1.5px solid #c7c8ca; border-radius: 50%;
-  font-size: 24px; font-weight: 600; text-align: center; color: #121212;
+  width: 64px; height: 64px; border: 1.5px solid #767676; border-radius: 50%;
+  font-size: 24px; font-weight: 600; text-align: center; color: #1A1A1A;
   font-family: 'Graphik', sans-serif; background: #fff; outline: none; transition: border-color .15s;
 }
-.otp-input:focus { border-color: #06f; }
-.otp-phone { font-weight: 700; }
+.otp-input:focus { border-color: #0A4FB8; }
+.otp-phone { font-weight: 600; }
 
 /* Radio */
 .radio-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .radio-option {
   display: flex; align-items: center; gap: 10px;
-  padding: 14px 16px; border: 1.5px solid #c7c8ca; border-radius: 8px;
+  padding: 14px 16px; border: 1.5px solid #D4D4D4; border-radius: 8px;
   cursor: pointer; transition: background .1s;
 }
-.radio-option:hover { background: #fafafa; }
-.radio-option.active { background: #f0f7ff; border-color: #06f; }
+.radio-option:hover { background: #F5F5F5; }
+.radio-option.active { background: #F2F7FF; border-color: #0A4FB8; }
 .radio-circle {
-  width: 18px; height: 18px; border: 1.5px solid #c7c8ca; border-radius: 50%;
+  width: 18px; height: 18px; border: 1.5px solid #D4D4D4; border-radius: 50%;
   flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: border-color .15s;
 }
-.radio-circle.selected { border-color: #06f; }
-.radio-circle.selected::after { content: ''; width: 10px; height: 10px; background: #06f; border-radius: 50%; }
-.radio-text { font-size: 15px; color: #121212; }
+.radio-circle.selected { border-color: #0A4FB8; }
+.radio-circle.selected::after { content: ''; width: 10px; height: 10px; background: #0A4FB8; border-radius: 50%; }
+.radio-text { font-size: 15px; color: #1A1A1A; }
 
 /* Payment radio list */
-.payment-options { border: 1.5px solid #c7c8ca; border-radius: 8px; overflow: hidden; }
+.payment-options { border: 1.5px solid #D4D4D4; border-radius: 8px; overflow: hidden; }
 .payment-option {
   display: flex; align-items: flex-start; gap: 12px;
-  padding: 16px; border-bottom: 1px solid #e8e8e8; cursor: pointer;
+  padding: 16px; border-bottom: 1px solid #E6E6E6; cursor: pointer;
 }
 .payment-option:last-child { border-bottom: none; }
-.payment-option:hover { background: #fafafa; }
-.payment-option-label { font-size: 15px; font-weight: 500; color: #121212; }
-.payment-option-sub { font-size: 13px; color: #888; margin-top: 2px; }
+.payment-option:hover { background: #F5F5F5; }
+.payment-option-label { font-size: 15px; font-weight: 500; color: #1A1A1A; }
+.payment-option-sub { font-size: 13px; color: #5C5C5C; margin-top: 2px; }
 
 /* Badges & SP row */
 .sp-row {
   display: flex; align-items: center; justify-content: space-between;
-  border: 1.5px solid #c7c8ca; border-radius: 8px; padding: 14px 16px;
+  border: 1.5px solid #D4D4D4; border-radius: 8px; padding: 14px 16px;
 }
 .sp-badges { display: flex; gap: 6px; }
 .badge {
-  display: inline-flex; align-items: center; padding: 7px 16px; border-radius: 999px;
-  font-size: 14px; font-weight: 500; line-height: 1.2; border: 1.5px solid transparent;
+  display: inline-flex; align-items: center; padding: 4px 11px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; line-height: 1.2; border: none;
+  background: #3D3D3D; color: #fff;
 }
-.badge-gray { background: #fdf7f7; border-color: #4e0000; color: #4e0000; }
-.badge-city { background: #eaf1ff; border-color: #1f6feb; color: #1258d3; }
+.badge-gray { background: #3D3D3D; color: #fff; }
+.badge-city { background: #0A4FB8; color: #fff; }
 
 /* Timeline payment layout */
-.timeline-wrap { display: flex; flex-direction: column; margin-bottom: 24px; }
-.timeline-section { display: flex; gap: 16px; }
-.timeline-left { display: flex; flex-direction: column; align-items: center; width: 20px; flex-shrink: 0; padding-top: 2px; }
-.timeline-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #c7c8ca; background: #fff; flex-shrink: 0; }
-.timeline-dot.active { background: #4e0000; border-color: #4e0000; }
-.timeline-connector { width: 2px; flex: 1; background: #e8e8e8; min-height: 20px; margin: 4px 0; }
-.timeline-body { flex: 1; padding-bottom: 24px; }
-.timeline-row-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-.timeline-label { font-size: 16px; font-weight: 700; color: #121212; line-height: 1.3; }
-.timeline-label.muted { color: #aaa; font-weight: 500; }
-.timeline-amount { font-size: 20px; font-weight: 800; color: #4e0000; line-height: 1.2; }
-.timeline-count-tag { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: .5px; }
-.betaling-metode-title { font-size: 15px; font-weight: 700; color: #121212; margin: 0 0 12px 0; }
+.betaling-metode-title { font-size: 15px; font-weight: 600; color: #1A1A1A; margin: 0 0 12px 0; }
 
 /* Sidebar betales nå / planlagt */
 .sb-section-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-.sb-section-tag { font-size: 11px; font-weight: 700; color: #4e0000; letter-spacing: .7px; text-transform: uppercase; }
-.sb-section-price { font-size: 13px; font-weight: 700; color: #4e0000; }
-.sb-section-tag.muted { color: #aaa; }
+.sb-section-tag { font-size: 11px; font-weight: 600; color: #46000A; letter-spacing: .7px; }
+.sb-section-price { font-size: 13px; font-weight: 600; color: #46000A; }
+.sb-section-tag.muted { color: #5C5C5C; }
 .sb-total-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 4px; }
-.sb-total-label { font-size: 14px; font-weight: 600; color: #121212; }
-.sb-total-amount { font-size: 20px; font-weight: 800; color: #4e0000; }
+.sb-total-label { font-size: 14px; font-weight: 600; color: #1A1A1A; }
+.sb-total-amount { font-size: 20px; font-weight: 600; color: #46000A; }
 
 .payment-section-header { display: flex; align-items: baseline; justify-content: space-between; }
-.payment-section-label { font-size: 14px; font-weight: 600; color: #121212; }
-.payment-section-meta { font-size: 13px; color: #888; }
+.payment-section-label { font-size: 14px; font-weight: 600; color: #1A1A1A; }
+.payment-section-meta { font-size: 13px; color: #5C5C5C; }
 
 /* Emner + payment combined box */
-.emner-payment-box { border: 1.5px solid #e8c8c8; border-radius: 10px; overflow: hidden; background: #fff; }
+.emner-payment-box { border: 1.5px solid #F9CCD2; border-radius: 8px; overflow: hidden; background: #fff; }
 .emner-payment-box #betalingMetoderSection .payment-options { border: none; border-radius: 0; background: #fff; }
-.emner-payment-box .payment-option-group { border-bottom: 1px solid #e8c8c8; background: #fff; }
+.emner-payment-box .payment-option-group { border-bottom: 1px solid #F9CCD2; background: #fff; }
 .emner-payment-box .payment-option-group:last-child { border-bottom: none; }
 .emner-payment-box .payment-option { background: #fff; }
-.emner-payment-box .payment-option:hover { background: #fef2e4; }
-.emner-payment-box .payment-expand { background: #f6f3f3; border-top: 1px solid #e8c8c8; border-radius: 0; }
+.emner-payment-box .payment-option:hover { background: #F2F7FF; }
+.emner-payment-box .payment-expand { background: #FCF8F5; border-top: 1px solid #F9CCD2; border-radius: 0; }
 
 /* Emne row with badges */
-.emne-row-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #f0f0f0; }
+.emne-row-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #E6E6E6; }
 .emne-row-inner:last-child { border-bottom: none; }
-.emne-meta { font-size: 12px; color: #888; margin-bottom: 2px; }
-.emne-name { font-size: 14px; font-weight: 600; color: #121212; }
+.emne-meta { font-size: 12px; color: #5C5C5C; margin-bottom: 2px; }
+.emne-name { font-size: 14px; font-weight: 600; color: #1A1A1A; }
 .emne-badges { display: flex; gap: 6px; flex-shrink: 0; }
 
 /* Rabattkode */
 .rabattkode-toggle {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 14px; font-weight: 500; color: #06f; cursor: pointer;
+  font-size: 14px; font-weight: 500; color: #0A4FB8; cursor: pointer;
   background: none; border: none; font-family: 'Graphik', sans-serif; padding: 0;
 }
 .rabattkode-toggle:hover { text-decoration: underline; }
 .rabattkode-row { display: none; gap: 8px; }
 .rabattkode-row.open { display: flex; }
 .rabattkode-row input {
-  flex: 1; border: 1.5px solid #c7c8ca; border-radius: 8px;
+  flex: 1; border: 1.5px solid #767676; border-radius: 8px;
   padding: 12px 16px; font-size: 14px; font-family: 'Graphik', sans-serif; outline: none;
 }
-.rabattkode-row input:focus { border-color: #06f; }
+.rabattkode-row input:focus { border-color: #0A4FB8; }
 .rabattkode-row button {
-  background: #111; color: #fff; border: none; border-radius: 8px;
+  background: #1A1A1A; color: #fff; border: none; border-radius: 8px;
   padding: 0 20px; font-size: 14px; font-weight: 600; font-family: 'Graphik', sans-serif; cursor: pointer;
 }
 
 /* Summary step full-width */
 .summary-page-grid { max-width: 680px; margin: 0 auto; padding: 40px 32px; }
-.summary-page-card { background: #fff; border-radius: 12px; padding: 40px; }
-.summary-page-title { font-size: 32px; font-weight: 700; color: #4e0000; margin-bottom: 32px; }
+.summary-page-card { background: #fff; border-radius: 8px; padding: 40px; }
+.summary-page-title { font-size: 32px; font-weight: 600; color: #46000A; margin-bottom: 32px; }
 
-.summary-accordion { border-bottom: 1px solid #e8e8e8; padding: 20px 0; }
-.summary-accordion:first-of-type { border-top: 1px solid #e8e8e8; margin-bottom: 24px; }
+.summary-accordion { border-bottom: 1px solid #E6E6E6; padding: 20px 0; }
+.summary-accordion:first-of-type { border-top: 1px solid #E6E6E6; margin-bottom: 24px; }
 .summary-accordion-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-.summary-accordion-label { font-size: 16px; font-weight: 600; color: #4e0000; }
+.summary-accordion-label { font-size: 16px; font-weight: 600; color: #46000A; }
 .summary-accordion-chevron { transition: transform .2s; }
 .summary-accordion-chevron.open { transform: rotate(180deg); }
 .summary-accordion-body { display: none; padding-top: 16px; }
@@ -400,35 +391,35 @@ body {
   .summary-accordion-body { display: block; }
 }
 
-.summary-label { font-size: 16px; font-weight: 600; color: #4e0000; }
-.summary-meta { font-size: 14px; color: #4e0000; }
+.summary-label { font-size: 16px; font-weight: 600; color: #46000A; }
+.summary-meta { font-size: 14px; color: #46000A; }
 .summary-section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
 
 /* Emner groups */
-.summary-emner-group { border: 1.5px solid #e5e5e5; border-radius: 10px; overflow: hidden; }
+.summary-emner-group { border: 1.5px solid #D4D4D4; border-radius: 8px; overflow: hidden; }
 .summary-emner-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; gap: 8px; }
-.summary-emner-header:hover { background: #fafafa; }
-.summary-emner-header .seg-label { font-size: 15px; font-weight: 500; color: #121212; }
-.summary-emner-count { font-size: 14px; color: #888; }
+.summary-emner-header:hover { background: #F5F5F5; }
+.summary-emner-header .seg-label { font-size: 15px; font-weight: 500; color: #1A1A1A; }
+.summary-emner-count { font-size: 14px; color: #5C5C5C; }
 .summary-emner-header .seg-chevron { transition: transform .2s; flex-shrink: 0; }
 .summary-emner-header.open .seg-chevron { transform: rotate(180deg); }
-.summary-emner-list { display: none; border-top: 1px solid #e5e5e5; }
+.summary-emner-list { display: none; border-top: 1px solid #D4D4D4; }
 .summary-emner-list.open { display: block; }
-.summary-emne-row { display: flex; align-items: center; padding: 10px 16px; border-bottom: 1px solid #f0f0f0; }
+.summary-emne-row { display: flex; align-items: center; padding: 10px 16px; border-bottom: 1px solid #E6E6E6; }
 .summary-emne-row:last-child { border-bottom: none; }
 .summary-emne-info { display: flex; flex-direction: column; gap: 2px; }
-.summary-emne-code { color: #888; font-size: 12px; }
-.summary-emne-name { color: #121212; font-weight: 500; font-size: 13px; }
+.summary-emne-code { color: #5C5C5C; font-size: 12px; }
+.summary-emne-name { color: #1A1A1A; font-weight: 500; font-size: 13px; }
 
 /* Sidebar */
 .summary-col {
-  background: #fff; border-radius: 12px; overflow: hidden; position: sticky; top: 112px;
+  background: #fff; border-radius: 8px; overflow: hidden; position: sticky; top: 112px;
 }
 .summary-header {
-  background: #faf1ed; border-bottom: 1px solid #f0e2dc;
+  background: #FCF8F5; border-bottom: 1px solid #F9CCD2;
   padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;
 }
-.summary-header-label { font-size: 16px; font-weight: 700; color: #4e0000; }
+.summary-header-label { font-size: 16px; font-weight: 600; color: #46000A; }
 .summary-body { padding: 22px; display: flex; flex-direction: column; gap: 0; }
 
 /* Infokolonnen har ingen egen kortflate — info-boksene b\u00e6rer seg selv */
@@ -437,41 +428,41 @@ body {
 
 /* Sidebar: seksjonsoverskrifter og prisoppstilling (steg 4) */
 .sb-section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
-.sb-section-label { font-size: 15px; font-weight: 700; color: #4e0000; }
-.sb-section-note { display: flex; align-items: center; gap: 5px; font-size: 13px; color: #4e0000; }
-.sb-section-amount { font-size: 15px; color: #4e0000; }
-.sb-divider { height: 1px; background: #eee; margin: 20px 0; }
-.sb-prio-label { font-size: 15px; font-weight: 500; color: #888; margin-bottom: 2px; }
-.sb-prio-meta { font-size: 14px; color: #888; margin-bottom: 2px; }
-.sb-prio-name { font-size: 15px; font-weight: 700; color: #121212; margin-bottom: 10px; }
+.sb-section-label { font-size: 15px; font-weight: 600; color: #46000A; }
+.sb-section-note { display: flex; align-items: center; gap: 5px; font-size: 13px; color: #46000A; }
+.sb-section-amount { font-size: 15px; color: #46000A; }
+.sb-divider { height: 1px; background: #E6E6E6; margin: 20px 0; }
+.sb-prio-label { font-size: 15px; font-weight: 500; color: #5C5C5C; margin-bottom: 2px; }
+.sb-prio-meta { font-size: 14px; color: #5C5C5C; margin-bottom: 2px; }
+.sb-prio-name { font-size: 15px; font-weight: 600; color: #1A1A1A; margin-bottom: 10px; }
 .sb-prio-badges { display: flex; gap: 8px; flex-wrap: wrap; }
 .sb-prio-block { margin-bottom: 18px; }
 .sb-prio-block:last-child { margin-bottom: 0; }
 
 /* Payment expand sections */
-.payment-option-group { border-bottom: 1px solid #e8e8e8; }
+.payment-option-group { border-bottom: 1px solid #E6E6E6; }
 .payment-option-group:last-child { border-bottom: none; }
 .payment-option-group .payment-option { border-bottom: none; }
-.payment-option-group .payment-option.selected-option { background: #fdf6f6; }
-.emner-payment-box .payment-option.selected-option { background: #fdf6f6; }
-.emner-payment-box .payment-option.selected-option:hover { background: #fdf6f6; }
+.payment-option-group .payment-option.selected-option { background: #FCF8F5; }
+.emner-payment-box .payment-option.selected-option { background: #FCF8F5; }
+.emner-payment-box .payment-option.selected-option:hover { background: #FCF8F5; }
 
 .payment-radio {
-  width: 20px; height: 20px; border: 1.5px solid #c7c8ca; border-radius: 50%;
+  width: 20px; height: 20px; border: 1.5px solid #767676; border-radius: 50%;
   flex-shrink: 0; display: flex; align-items: center; justify-content: center;
   margin-top: 2px; transition: border-color .15s;
 }
-.payment-radio.selected { border-color: #c06878; }
-.payment-radio.selected::after { content: ''; width: 11px; height: 11px; background: #4e0000; border-radius: 50%; }
+.payment-radio.selected { border-color: #0A4FB8; }
+.payment-radio.selected::after { content: ''; width: 11px; height: 11px; background: #0A4FB8; border-radius: 50%; }
 
 /* Utbrettet hører til betalingsmåten over: innrykket linjerer med etiketten
    (16px padding + 20px radioknapp + 12px mellomrom), og en loddrett strek fra
    radioknappen og ned binder de to sammen. */
-.payment-expand { display: none; position: relative; background: #f6f3f3; border-top: 1px solid #e8d4d4; padding: 18px 20px 20px 48px; }
+.payment-expand { display: none; position: relative; background: #FCF8F5; border-top: 1px solid #F9CCD2; padding: 18px 20px 20px 48px; }
 .payment-expand.open { display: block; }
 .payment-expand.open::before {
   content: ''; position: absolute; left: 25px; top: 16px; bottom: 20px;
-  width: 2px; border-radius: 2px; background: #e2d1d1;
+  width: 2px; border-radius: 2px; background: #F9CCD2;
 }
 #pd-body .payment-expand.open { background: transparent; border-top: none; padding: 0; }
 #pd-body .payment-expand.open::before { display: none; }
@@ -481,64 +472,64 @@ body {
 }
 
 /* Card fields */
-.card-field-lbl { font-size: 15px; font-weight: 700; color: #121212; margin-bottom: 8px; }
+.card-field-lbl { font-size: 15px; font-weight: 600; color: #1A1A1A; margin-bottom: 8px; }
 .card-input {
-  width: 100%; border: 1.5px solid #c7c8ca; border-radius: 8px;
+  width: 100%; border: 1.5px solid #767676; border-radius: 8px;
   padding: 14px 16px; font-size: 15px; font-family: 'Graphik', sans-serif;
   background: #fff; outline: none; transition: border-color .15s;
   display: flex; align-items: center;
 }
-.card-input:focus { border-color: #c06878; }
+.card-input:focus { border-color: #0A4FB8; }
 .card-input-wrap { position: relative; margin-bottom: 12px; }
 .card-input-wrap input {
-  width: 100%; border: 1.5px solid #c7c8ca; border-radius: 8px;
+  width: 100%; border: 1.5px solid #767676; border-radius: 8px;
   padding: 14px 48px 14px 16px; font-size: 15px; font-family: 'Graphik', sans-serif;
   background: #fff; outline: none; transition: border-color .15s;
 }
-.card-input-wrap input:focus { border-color: #c06878; }
-.card-input-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #888; pointer-events: none; }
+.card-input-wrap input:focus { border-color: #0A4FB8; }
+.card-input-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #5C5C5C; pointer-events: none; }
 .card-logos { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; }
-.card-logo { height: 26px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; padding: 0 6px; border: 1px solid #e0e0e0; }
+.card-logo { height: 26px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; padding: 0 6px; border: 1px solid #D4D4D4; }
 .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
 .card-row .card-field-lbl { font-size: 14px; }
 .card-row input {
-  width: 100%; border: 1.5px solid #c7c8ca; border-radius: 8px;
+  width: 100%; border: 1.5px solid #767676; border-radius: 8px;
   padding: 12px 14px; font-size: 15px; font-family: 'Graphik', sans-serif;
   background: #fff; outline: none; transition: border-color .15s;
 }
-.card-row input:focus { border-color: #c06878; }
+.card-row input:focus { border-color: #0A4FB8; }
 /* Avdrag */
-.avdrag-title { font-size: 15px; font-weight: 700; color: #121212; margin-bottom: 12px; }
+.avdrag-title { font-size: 15px; font-weight: 600; color: #1A1A1A; margin-bottom: 12px; }
 .avdrag-option {
   display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; cursor: pointer;
 }
 .avdrag-circle {
-  width: 20px; height: 20px; border: 1.5px solid #c7c8ca; border-radius: 50%;
+  width: 20px; height: 20px; border: 1.5px solid #767676; border-radius: 50%;
   flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: border-color .15s;
 }
-.avdrag-circle.selected { border-color: #c06878; }
-.avdrag-circle.selected::after { content: ''; width: 11px; height: 11px; background: #4e0000; border-radius: 50%; }
-.avdrag-label { font-size: 15px; font-weight: 500; color: #121212; }
-.avdrag-sub { font-size: 13px; color: #888; margin-top: 2px; }
+.avdrag-circle.selected { border-color: #0A4FB8; }
+.avdrag-circle.selected::after { content: ''; width: 11px; height: 11px; background: #0A4FB8; border-radius: 50%; }
+.avdrag-label { font-size: 15px; font-weight: 500; color: #1A1A1A; }
+.avdrag-sub { font-size: 13px; color: #5C5C5C; margin-top: 2px; }
 
-.betalingsplan { margin-top: 16px; padding-top: 16px; border-top: 1px solid #e0d4d4; }
-.betalingsplan-title { font-size: 15px; font-weight: 700; color: #121212; margin-bottom: 10px; }
-.betalingsplan-row { display: flex; justify-content: space-between; font-size: 14px; color: #555; padding: 4px 0; }
-.betalingsplan-row.sum { font-weight: 700; color: #121212; border-top: 1px solid #e0d4d4; margin-top: 6px; padding-top: 8px; }
+.betalingsplan { margin-top: 16px; padding-top: 16px; border-top: 1px solid #F9CCD2; }
+.betalingsplan-title { font-size: 15px; font-weight: 600; color: #1A1A1A; margin-bottom: 10px; }
+.betalingsplan-row { display: flex; justify-content: space-between; font-size: 14px; color: #5C5C5C; padding: 4px 0; }
+.betalingsplan-row.sum { font-weight: 600; color: #1A1A1A; border-top: 1px solid #F9CCD2; margin-top: 6px; padding-top: 8px; }
 
 /* Faktura sub-options */
 .faktura-option {
-  display: flex; align-items: flex-start; gap: 10px; padding: 12px 0; cursor: pointer; border-bottom: 1px solid #e8d8d8;
+  display: flex; align-items: flex-start; gap: 10px; padding: 12px 0; cursor: pointer; border-bottom: 1px solid #F9CCD2;
 }
 .faktura-option:last-child { border-bottom: none; }
 .faktura-circle {
-  width: 20px; height: 20px; border: 1.5px solid #c7c8ca; border-radius: 50%;
+  width: 20px; height: 20px; border: 1.5px solid #767676; border-radius: 50%;
   flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: border-color .15s;
 }
-.faktura-circle.selected { border-color: #c06878; }
-.faktura-circle.selected::after { content: ''; width: 11px; height: 11px; background: #4e0000; border-radius: 50%; }
-.faktura-label { font-size: 15px; font-weight: 500; color: #121212; }
-.faktura-sub { font-size: 13px; color: #888; margin-top: 2px; }
+.faktura-circle.selected { border-color: #0A4FB8; }
+.faktura-circle.selected::after { content: ''; width: 11px; height: 11px; background: #0A4FB8; border-radius: 50%; }
+.faktura-label { font-size: 15px; font-weight: 500; color: #1A1A1A; }
+.faktura-sub { font-size: 13px; color: #5C5C5C; margin-top: 2px; }
 
 /* Tooltip */
 .tooltip-wrap { position: relative; display: inline-flex; align-items: center; cursor: help; }
@@ -546,129 +537,121 @@ body {
   display: none; position: absolute;
   left: 50%; bottom: calc(100% + 10px);
   transform: translateX(-50%);
-  background: #222; color: #fff;
+  background: #1A1A1A; color: #fff;
   font-size: 13px; font-weight: 400; line-height: 1.55;
   padding: 10px 14px; border-radius: 8px;
   width: 260px; z-index: 200; pointer-events: none;
-  box-shadow: 0 4px 16px rgba(0,0,0,.25);
   white-space: normal;
 }
 .tooltip-box::after {
   content: ''; position: absolute;
   top: 100%; left: 50%; transform: translateX(-50%);
-  border: 6px solid transparent; border-top-color: #222;
+  border: 6px solid transparent; border-top-color: #1A1A1A;
 }
 .tooltip-wrap:hover .tooltip-box { display: block; }
 
 /* EHF / Arbeidsgiver */
 .ehf-checkbox-row { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; user-select: none; }
 .ehf-checkbox {
-  width: 20px; height: 20px; border: 1.5px solid #c7c8ca; border-radius: 4px;
+  width: 20px; height: 20px; border: 1.5px solid #767676; border-radius: 4px;
   flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: background .15s, border-color .15s;
 }
-.ehf-checkbox.checked { background: #4e0000; border-color: #4e0000; }
+.ehf-checkbox.checked { background: #0A4FB8; border-color: #0A4FB8; }
 .ag-input-wrap { flex: 1; }
 .ag-input {
-  width: 100%; height: 48px; border: 1.5px solid #d0d0d0; border-radius: 8px;
-  padding: 0 14px; font-size: 15px; color: #121212; background: #fff; outline: none; box-sizing: border-box;
+  width: 100%; height: 48px; border: 1.5px solid #767676; border-radius: 8px;
+  padding: 0 14px; font-size: 15px; color: #1A1A1A; background: #fff; outline: none; box-sizing: border-box;
 }
-.ag-input:focus { border-color: #c06878; }
-.ag-input::placeholder { color: #aaa; }
+.ag-input:focus { border-color: #0A4FB8; }
+.ag-input::placeholder { color: #5C5C5C; }
 
 /* Receipt */
 .receipt-page { display: none; min-height: calc(100vh - 72px); justify-content: center; padding: 60px 24px; align-items: flex-start; }
 .receipt-card {
-  background: #fff; border-radius: 16px; padding: 48px 40px; max-width: 620px; width: 100%;
-  text-align: center; box-shadow: 0 2px 16px rgba(0,0,0,.06);
+  background: #fff; border-radius: 8px; padding: 48px 40px; max-width: 620px; width: 100%;
+  text-align: center;
 }
-.receipt-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; color: #4e0000; }
-.receipt-subtitle { font-size: 15px; color: #555; margin-bottom: 28px; }
-.receipt-section-label { font-size: 14px; font-weight: 600; color: #4e0000; text-align: left; margin-bottom: 10px; }
+.receipt-title { font-size: 28px; font-weight: 600; margin-bottom: 8px; color: #46000A; }
+.receipt-subtitle { font-size: 15px; color: #5C5C5C; margin-bottom: 28px; }
+.receipt-section-label { font-size: 14px; font-weight: 600; color: #46000A; text-align: left; margin-bottom: 10px; }
 .receipt-section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
 .receipt-section-head .receipt-section-label { margin-bottom: 0; }
 
 /* Betalingsmåte-oppsummering (steg 5) */
-.pay-summary-card { display: flex; align-items: center; justify-content: space-between; gap: 14px; border: 1.5px solid #e5e5e5; border-radius: 10px; padding: 14px 16px; }
+.pay-summary-card { display: flex; align-items: center; justify-content: space-between; gap: 14px; border: 1.5px solid #D4D4D4; border-radius: 8px; padding: 14px 16px; }
 .pay-summary-main { min-width: 0; }
-.pay-summary-name { font-size: 15px; font-weight: 600; color: #121212; }
-.pay-summary-detail { font-size: 13px; color: #666; margin-top: 3px; }
-.pay-summary-amount { font-size: 16px; font-weight: 700; color: #121212; white-space: nowrap; }
-.pay-summary-change { display: block; background: none; border: none; color: #06f; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Graphik', sans-serif; padding: 10px 0 0; }
+.pay-summary-name { font-size: 15px; font-weight: 600; color: #1A1A1A; }
+.pay-summary-detail { font-size: 13px; color: #5C5C5C; margin-top: 3px; }
+.pay-summary-amount { font-size: 16px; font-weight: 600; color: #1A1A1A; white-space: nowrap; }
+.pay-summary-change { display: block; background: none; border: none; color: #0A4FB8; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Graphik', sans-serif; padding: 10px 0 0; }
 .pay-summary-change:hover { text-decoration: underline; }
 
 /* Betalingsstatus på kvitteringen */
-.receipt-paid-row { display: flex; align-items: center; gap: 12px; background: #E3F2E7; border-radius: 10px; padding: 14px 16px; text-align: left; }
-.receipt-paid-check { width: 22px; height: 22px; border-radius: 9999px; background: #068718; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.receipt-paid-title { font-size: 14px; font-weight: 600; color: #1C4B24; }
-.receipt-paid-sub { font-size: 12px; color: #3D6A44; margin-top: 2px; }
-.receipt-pending-row { font-size: 14px; color: #555; background: #f5f5f5; border-radius: 10px; padding: 14px 16px; text-align: left; }
+.receipt-paid-row { display: flex; align-items: center; gap: 12px; background: #FCF8F5; border-radius: 8px; padding: 14px 16px; text-align: left; }
+.receipt-paid-check { width: 22px; height: 22px; border-radius: 999px; background: #166600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.receipt-paid-title { font-size: 14px; font-weight: 600; color: #166600; }
+.receipt-paid-sub { font-size: 12px; color: #166600; margin-top: 2px; }
+.receipt-pending-row { font-size: 14px; color: #5C5C5C; background: #F5F5F5; border-radius: 8px; padding: 14px 16px; text-align: left; }
 .receipt-items { text-align: left; display: flex; flex-direction: column; gap: 18px; margin-bottom: 36px; }
 .receipt-next { text-align: left; margin-bottom: 28px; }
-.receipt-next-title { font-size: 20px; font-weight: 700; color: #4e0000; margin-bottom: 16px; }
+.receipt-next-title { font-size: 20px; font-weight: 600; color: #46000A; margin-bottom: 16px; }
 .receipt-next-steps { display: flex; flex-direction: column; gap: 16px; }
 .receipt-next-step { display: flex; gap: 12px; align-items: flex-start; }
 .receipt-step-num {
-  width: 28px; height: 28px; border-radius: 50%; background: #06f; color: #fff;
-  font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 50%; background: #0A4FB8; color: #fff;
+  font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; margin-top: 1px;
 }
 .receipt-step-body { display: flex; flex-direction: column; gap: 4px; }
-.receipt-step-label { font-size: 15px; font-weight: 600; color: #4e0000; }
-.receipt-step-desc { font-size: 14px; color: #555; line-height: 1.5; }
+.receipt-step-label { font-size: 15px; font-weight: 600; color: #46000A; }
+.receipt-step-desc { font-size: 14px; color: #5C5C5C; line-height: 1.5; }
 
 /* Søknadsoversikt (step 0) */
 .s0-page {
   max-width: 700px; margin: 0 auto; padding: 40px 32px;
 }
-.s0-title {
-  font-size: 28px; font-weight: 700; color: #4e0000; margin-bottom: 24px;
-}
-.s0-card {
-  background: #fff; border-radius: 12px; padding: 24px 28px;
-}
-.s0-section-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 20px;
-}
-.s0-section-label { font-size: 18px; font-weight: 700; color: #4e0000; }
+.s0-title { font-size: 28px; font-weight: 600; color: #46000A; margin: 0 0 6px; }
+.s0-card { background: #fff; border: 1px solid #D4D4D4; border-radius: 8px; padding: 0; }
+.s0-section-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 16px 24px; border-bottom: 1px solid #E6E6E6; }
+.s0-section-label { font-size: 17px; font-weight: 600; color: #46000A; margin: 0; }
 .s0-faktor-badge {
   display: flex; align-items: center; gap: 6px;
-  border: 1px solid #e0e0e0; border-radius: 20px;
-  padding: 5px 12px; font-size: 13px; color: #555;
+  border: none; background: #F5F5F5; border-radius: 999px;
+  padding: 4px 12px; font-size: 12px; font-weight: 600; color: #5C5C5C;
 }
 .s0-prioritet-card {
-  border: 1.5px solid #e5e5e5; border-radius: 12px;
+  border: 1.5px solid #D4D4D4; border-radius: 8px;
   padding: 16px 18px; margin-bottom: 12px;
 }
 .s0-prioritet-header {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 10px;
 }
-.s0-prioritet-label { font-size: 13px; color: #888; font-weight: 500; }
+.s0-prioritet-label { font-size: 13px; color: #5C5C5C; margin-bottom: 3px; }
 .s0-prioritet-card { position: relative; }
-.s0-badges { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.s0-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
 .s0-badge {
   display: inline-flex; align-items: center;
-  padding: 5px 13px; border-radius: 999px;
-  font-size: 13px; font-weight: 500; line-height: 1.2;
-  background: #fdf7f7; border: 1.5px solid #4e0000; color: #4e0000;
+  padding: 4px 11px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; line-height: 1.2;
+  background: #3D3D3D; border: none; color: #fff;
 }
 /* Plassholderen i samme slot som oppstartsbadgen, før dato er valgt */
 .s0-badge-velg {
   display: inline-flex; align-items: center;
   padding: 5px 13px; border-radius: 999px;
   font-size: 13px; font-weight: 500; line-height: 1.2;
-  background: #fff; color: #121212;
-  border: 1.5px solid #c7c8ca; cursor: pointer;
+  background: #fff; color: #0A4FB8;
+  border: 1.5px solid #0A4FB8; cursor: pointer;
   font-family: 'Graphik', sans-serif;
 }
-.s0-badge-velg:hover { border-color: #4e0000; color: #4e0000; }
-.s0-badge-city { background: #eaf1ff; border-color: #1f6feb; color: #1258d3; }
-.s0-program-name { font-size: 18px; font-weight: 700; color: #121212; margin-bottom: 4px; }
-.s0-program-meta { font-size: 13px; color: #888; }
+.s0-badge-velg:hover { border-color: #083D8F; color: #083D8F; }
+.s0-badge-city { background: #0A4FB8; color: #fff; }
+.s0-program-name { font-size: 17px; font-weight: 600; color: #1A1A1A; }
+.s0-program-meta { font-size: 14px; color: #5C5C5C; margin-top: 10px; }
 .s0-legg-til-btn {
   display: flex; align-items: center; gap: 6px;
-  color: #06f; font-size: 15px; font-weight: 500;
+  color: #0A4FB8; font-size: 15px; font-weight: 500;
   background: none; border: none; cursor: pointer;
   padding: 14px 0 4px; font-family: 'Graphik', sans-serif;
 }
@@ -677,12 +660,12 @@ body {
 /* Inline studieprogram-søk (steg 0) */
 .s0-search-wrap { position: relative; }
 .s0-search-wrap input {
-  width: 100%; border: 1.5px solid #c7c8ca; border-radius: 8px;
-  padding: 13px 44px 13px 16px; font-size: 15px; color: #121212;
+  width: 100%; border: 1.5px solid #767676; border-radius: 8px;
+  padding: 13px 44px 13px 16px; font-size: 15px; color: #1A1A1A;
   background: #fff; font-family: 'Graphik', sans-serif; outline: none;
   transition: border-color .15s;
 }
-.s0-search-wrap input:focus { border-color: #06f; }
+.s0-search-wrap input:focus { border-color: #0A4FB8; }
 .s0-search-clear {
   position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
   background: none; border: none; cursor: pointer; padding: 6px;
@@ -690,121 +673,122 @@ body {
 }
 .s0-search-filters {
   display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px;
-  margin-top: 14px; padding-bottom: 14px; border-bottom: 1px solid #ececec;
+  margin-top: 14px; padding-bottom: 14px; border-bottom: 1px solid #E6E6E6;
 }
-.s0-search-filter-opt { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 14px; color: #333; cursor: pointer; }
-.s0-search-filter-opt input { width: 16px; height: 16px; accent-color: #4e0000; cursor: pointer; }
+.s0-search-filter-opt { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 14px; color: #1A1A1A; cursor: pointer; }
+.s0-search-filter-opt input { width: 16px; height: 16px; accent-color: #0A4FB8; cursor: pointer; }
 .s0-search-results { max-height: 320px; overflow-y: auto; margin-top: 4px; }
 .s0-search-result {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 13px 4px; border-bottom: 1px solid #f0f0f0; cursor: pointer;
+  padding: 13px 4px; border-bottom: 1px solid #E6E6E6; cursor: pointer;
 }
 .s0-search-result:last-child { border-bottom: none; }
-.s0-search-result:hover { background: #fafafa; }
+.s0-search-result:hover { background: #F5F5F5; }
 .s0-search-result.added { cursor: default; }
 .s0-search-result.added:hover { background: none; }
-.s0-search-result-name { font-size: 15px; font-weight: 600; color: #121212; }
-.s0-search-result-meta { font-size: 13px; color: #888; margin-top: 2px; }
+.s0-search-result-name { font-size: 15px; font-weight: 600; color: #1A1A1A; }
+.s0-search-result-meta { font-size: 13px; color: #5C5C5C; margin-top: 2px; }
 .s0-badge-valgt {
   display: inline-flex; align-items: center; margin-left: 6px;
-  padding: 2px 9px; border-radius: 20px; border: 1px solid #ccc;
-  font-size: 11px; font-weight: 500; color: #555;
+  padding: 4px 11px; border-radius: 999px; border: none; background: #0A4FB8;
+  font-size: 12px; font-weight: 600; color: #fff;
 }
 .s0-btn-primary {
   display: block; width: 100%; text-align: center;
-  padding: 16px; border-radius: 40px; font-size: 16px; font-weight: 700;
-  background: #06f; color: #fff; border: none; cursor: pointer;
+  padding: 16px; border-radius: 999px; font-size: 16px; font-weight: 600;
+  background: #0A4FB8; color: #fff; border: none; cursor: pointer;
   font-family: 'Graphik', sans-serif; margin-top: 24px;
 }
-.s0-btn-primary:hover { background: #0052cc; }
+.s0-btn-primary:hover { background: #083D8F; }
 
 /* Redigerbare kort for program/emner — delt mellom Studievalg og Betaling */
-.s0-invoice-note { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #888; }
+.s0-invoice-note { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5C5C5C; }
 
 /* Betaling (steg 4) */
-.bt-section-title { font-size: 19px; font-weight: 700; color: #4e0000; margin: 28px 0 12px; }
-.bt-trust-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; font-size: 13.5px; color: #7a4a4a; flex-wrap: wrap; }
-.bt-fineprint { font-size: 13px; color: #8a6a6a; margin-top: 14px; }
+.bt-section-title { font-size: 19px; font-weight: 600; color: #46000A; margin: 28px 0 12px; }
+.bt-trust-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 24px; font-size: 13.5px; color: #5C5C5C; flex-wrap: wrap; }
+.bt-fineprint { font-size: 13px; color: #5C5C5C; margin-top: 16px; }
+.bt-fineprint:empty { display: none; margin: 0; }
 
 /* Kort på betalingssiden: studieprogram og nettemner */
-.bt-card { border: 1.5px solid #eee; border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
-.bt-card-header { background: #f4eae6; padding: 16px 22px; }
-.bt-card-header-title { display: block; font-size: 15px; font-weight: 700; color: #4e0000; margin-bottom: 3px; }
-.bt-card-header-sub { font-size: 14px; color: #8a6a63; }
+.bt-card { border: 1.5px solid #E6E6E6; border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+.bt-card-header { background: #FCF8F5; padding: 16px 22px; }
+.bt-card-header-title { display: block; font-size: 15px; font-weight: 600; color: #46000A; margin-bottom: 3px; }
+.bt-card-header-sub { font-size: 14px; color: #5C5C5C; }
 .bt-prog { padding: 18px 22px; }
-.bt-prog + .bt-prog { border-top: 1px solid #eee; }
-.bt-prog-name { font-size: 18px; font-weight: 700; color: #121212; margin-bottom: 6px; }
+.bt-prog + .bt-prog { border-top: 1px solid #E6E6E6; }
+.bt-prog-name { font-size: 18px; font-weight: 600; color: #1A1A1A; margin-bottom: 6px; }
 .bt-prog-meta-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-.bt-prog-meta { font-size: 14px; color: #7a5c56; }
-.bt-prog-price { font-size: 14px; font-weight: 500; color: #121212; white-space: nowrap; }
-.bt-invoice-note { display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; padding: 14px 16px; border-radius: 10px; background: #eef4fd; font-size: 13.5px; color: #1f3350; line-height: 1.5; }
-.bt-invoice-note svg { flex-shrink: 0; margin-top: 1px; color: #1f6feb; }
-.s0-badge-filled { background: #4e0000; border-color: #4e0000; color: #fff; }
-.bt-lanekassen { display: flex; align-items: flex-start; gap: 12px; margin-top: 18px; padding: 16px 18px; border: 1.5px solid #eee; border-radius: 12px; }
-.bt-lanekassen svg { flex-shrink: 0; margin-top: 2px; color: #4e0000; }
-.bt-lanekassen-title { font-size: 15px; font-weight: 700; color: #4e0000; margin: 0 0 4px; }
-.bt-lanekassen p { font-size: 14px; color: #5a4a46; line-height: 1.55; margin: 0; }
-.bt-lanekassen a { color: #06f; }
+.bt-prog-meta { font-size: 14px; color: #5C5C5C; }
+.bt-prog-price { font-size: 14px; font-weight: 500; color: #1A1A1A; white-space: nowrap; }
+.bt-invoice-note { display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; padding: 14px 16px; border-radius: 8px; background: #F2F7FF; font-size: 13.5px; color: #1A1A1A; line-height: 1.5; }
+.bt-invoice-note svg { flex-shrink: 0; margin-top: 1px; color: #0A4FB8; }
+.s0-badge-filled { background: #0A4FB8; color: #fff; }
+.bt-lanekassen { display: flex; align-items: flex-start; gap: 12px; margin-top: 18px; padding: 16px 18px; border: 1.5px solid #E6E6E6; border-radius: 8px; }
+.bt-lanekassen svg { flex-shrink: 0; margin-top: 2px; color: #46000A; }
+.bt-lanekassen-title { font-size: 15px; font-weight: 600; color: #46000A; margin: 0 0 4px; }
+.bt-lanekassen p { font-size: 14px; color: #5C5C5C; line-height: 1.55; margin: 0; }
+.bt-lanekassen a { color: #0A4FB8; }
 /* Emnekortets metalinje står nederst i raden, ikke som egen blokk over navnet */
 .s0-emne-row-bottom .s0-emne-meta { margin: 0; padding: 0; }
 
 .s0-card-actions { display: flex; align-items: center; gap: 2px; }
-.s0-reorder-btn { background: none; border: none; cursor: pointer; padding: 4px 6px; color: #888; border-radius: 6px; display: flex; align-items: center; }
-.s0-reorder-btn:hover { background: #f5f5f5; color: #121212; }
-.s0-reorder-btn-disabled { padding: 4px 6px; color: #ddd; display: flex; align-items: center; }
-.s0-remove-btn { background: none; border: none; cursor: pointer; padding: 4px 6px; color: #888; border-radius: 6px; display: flex; align-items: center; }
-.s0-remove-btn:hover { background: #f5f5f5; color: #b60202; }
+.s0-reorder-btn { background: none; border: none; cursor: pointer; padding: 4px 6px; color: #5C5C5C; border-radius: 999px; display: flex; align-items: center; }
+.s0-reorder-btn:hover { background: #F5F5F5; color: #1A1A1A; }
+.s0-reorder-btn-disabled { padding: 4px 6px; color: #D4D4D4; display: flex; align-items: center; }
+.s0-remove-btn { background: none; border: none; cursor: pointer; padding: 4px 6px; color: #5C5C5C; border-radius: 999px; display: flex; align-items: center; }
+.s0-remove-btn:hover { background: #F5F5F5; color: #AF0018; }
 
-.s0-emnegroup { border: 1.5px solid #eee; border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
-.s0-emnegroup-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #f4eae6; padding: 16px 22px; cursor: pointer; }
-.s0-emnegroup-name { font-weight: 700; font-size: 15px; color: #4e0000; display: block; margin-bottom: 3px; }
-.s0-emnegroup-count { font-size: 14px; color: #8a6a63; }
+.s0-emnegroup { border: 1.5px solid #E6E6E6; border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+.s0-emnegroup-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #FCF8F5; padding: 16px 22px; cursor: pointer; }
+.s0-emnegroup-name { font-weight: 600; font-size: 15px; color: #46000A; display: block; margin-bottom: 3px; }
+.s0-emnegroup-count { font-size: 14px; color: #5C5C5C; }
 .s0-emnegroup-chevron { flex-shrink: 0; transition: transform 0.2s; }
 .s0-emnegroup-chevron.open { transform: rotate(180deg); }
 .s0-emnegroup-list { display: none; }
 .s0-emnegroup-list.open { display: block; }
-.s0-emne-row { padding: 18px 22px; border-top: 1px solid #eee; position: relative; }
+.s0-emne-row { padding: 18px 22px; border-top: 1px solid #E6E6E6; position: relative; }
 .s0-emnegroup-list > .s0-emne-row:first-of-type { border-top: none; }
 .s0-badge-nett {
   display: inline-flex; align-items: center;
-  padding: 5px 13px; border-radius: 999px;
-  font-size: 13px; font-weight: 500; line-height: 1.2;
-  background: #f7eefd; border: 1.5px solid #7b2fbf; color: #6a25a8;
+  padding: 4px 11px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; line-height: 1.2;
+  background: #7A3FD1; border: none; color: #fff;
 }
-.s0-emne-change { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; background: none; border: none; padding: 0; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 500; color: #4e0000; text-decoration: underline; text-underline-offset: 3px; }
-.s0-emne-change:hover { color: #7a1010; }
-.s0-emne-remove { position: absolute; top: 16px; right: 18px; background: none; border: none; cursor: pointer; padding: 4px; color: #888; border-radius: 6px; }
-.s0-emne-remove:hover { background: #f5f5f5; color: #b60202; }
-.s0-emne-name { font-size: 18px; font-weight: 700; color: #121212; margin-bottom: 4px; padding-right: 32px; }
+.s0-emne-change { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; background: none; border: none; padding: 0; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 500; color: #0A4FB8; text-decoration: underline; text-underline-offset: 3px; }
+.s0-emne-change:hover { color: #083D8F; }
+.s0-emne-remove { position: absolute; top: 16px; right: 18px; background: none; border: none; cursor: pointer; padding: 4px; color: #5C5C5C; border-radius: 999px; }
+.s0-emne-remove:hover { background: #F5F5F5; color: #AF0018; }
+.s0-emne-name { font-size: 18px; font-weight: 600; color: #1A1A1A; margin-bottom: 4px; padding-right: 32px; }
 .s0-emne-row-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px; }
-.s0-emne-meta { display: block; font-size: 14px; color: #7a5c56; margin-bottom: 2px; padding-right: 32px; }
-.s0-emne-oppstart { font-size: 14px; color: #7a5c56; }
-.s0-emne-oppstart strong { color: #121212; font-weight: 600; }
-.s0-emne-price { font-size: 18px; font-weight: 700; color: #121212; }
-.s0-emne-price-strike { text-decoration: line-through; color: #aaa; font-weight: 400; margin-right: 6px; }
+.s0-emne-meta { display: block; font-size: 14px; color: #5C5C5C; margin-bottom: 2px; padding-right: 32px; }
+.s0-emne-oppstart { font-size: 14px; color: #5C5C5C; }
+.s0-emne-oppstart strong { color: #1A1A1A; font-weight: 600; }
+.s0-emne-price { font-size: 18px; font-weight: 600; color: #1A1A1A; }
+.s0-emne-price-strike { text-decoration: line-through; color: #5C5C5C; font-weight: 400; margin-right: 6px; }
 
-.s0-rabatt-heading { display: flex; align-items: center; gap: 8px; margin: 22px 0 0; color: #121212; font-size: 15px; font-weight: 600; }
+.s0-rabatt-heading { display: flex; align-items: center; gap: 8px; margin: 0; color: #1A1A1A; font-size: 15px; font-weight: 600; }
 .s0-rabatt-row { display: flex; gap: 12px; margin-top: 12px; }
-.s0-rabatt-row input { flex: 1; border: 1.5px solid #c7c8ca; border-radius: 8px; padding: 10px 12px; font-size: 14px; font-family: 'Graphik', sans-serif; outline: none; }
-.s0-rabatt-row input:focus { border-color: #06f; }
-.s0-rabatt-row button { padding: 0 22px; background: #fff; color: #06f; border: 1.5px solid #06f; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Graphik', sans-serif; transition: background .15s; }
-.s0-rabatt-row button:hover { background: #f2f7ff; }
-.s0-rabatt-feedback { font-size: 13px; margin-top: 10px; }
-.s0-rabatt-hint { font-size: 14px; color: #121212; line-height: 1.4; margin: 12px 0 22px; }
-.s0-rabatt-applied { display: inline-flex; align-items: center; gap: 10px; margin: 22px 0; padding: 9px 14px; border-radius: 8px; background: #f6f0ec; font-size: 14px; color: #333; }
-.s0-rabatt-applied-remove { background: none; border: none; color: #06f; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Graphik', sans-serif; padding: 0; }
+.s0-rabatt-row input { flex: 1; border: 1.5px solid #767676; border-radius: 8px; padding: 10px 12px; font-size: 14px; font-family: 'Graphik', sans-serif; outline: none; }
+.s0-rabatt-row input:focus { border-color: #0A4FB8; }
+.s0-rabatt-row button { padding: 0 22px; background: #fff; color: #0A4FB8; border: 1.5px solid #0A4FB8; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Graphik', sans-serif; transition: background .15s; }
+.s0-rabatt-row button:hover { background: #F2F7FF; }
+.s0-rabatt-feedback { font-size: 13px; margin-top: 8px; }
+.s0-rabatt-hint { font-size: 14px; color: #1A1A1A; line-height: 1.4; margin: 8px 0 0; }
+.s0-rabatt-applied { display: inline-flex; align-items: center; gap: 10px; margin: 0; padding: 9px 14px; border-radius: 8px; background: #FCF8F5; font-size: 14px; color: #1A1A1A; }
+.s0-rabatt-applied-remove { background: none; border: none; color: #0A4FB8; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Graphik', sans-serif; padding: 0; }
 
-.s0-summary-betnow-title { font-size: 15px; font-weight: 700; color: #121212; margin-bottom: 10px; }
-.s0-summary-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 15px; color: #121212; padding: 5px 0; }
-.s0-summary-discount { color: #121212; }
-.s0-summary-divider { height: 1px; background: #eee; margin: 12px 0; }
-.s0-summary-sum-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 15px; font-weight: 700; color: #121212; }
+.s0-summary-betnow-title { font-size: 15px; font-weight: 600; color: #1A1A1A; margin-bottom: 10px; }
+.s0-summary-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 15px; color: #1A1A1A; padding: 5px 0; }
+.s0-summary-discount { color: #1A1A1A; }
+.s0-summary-divider { height: 1px; background: #E6E6E6; margin: 12px 0; }
+.s0-summary-sum-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 15px; font-weight: 600; color: #1A1A1A; }
 .s0-summary-sum-row strong { font-size: 22px; }
-.s0-summary-strike { text-decoration: line-through; color: #aaa; font-weight: 400; font-size: 15px; margin-right: 6px; }
-.s0-help-card { display: flex; align-items: center; gap: 12px; background: #f7f2ea; border-radius: 10px; padding: 14px 16px; margin-top: 22px; }
-.s0-help-avatar { width: 38px; height: 38px; border-radius: 50%; background: #06f; color: #fff; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.s0-help-title { font-size: 14px; font-weight: 700; color: #121212; }
-.s0-help-sub { font-size: 13px; color: #666; }
+.s0-summary-strike { text-decoration: line-through; color: #5C5C5C; font-weight: 400; font-size: 15px; margin-right: 6px; }
+.s0-help-card { display: flex; align-items: center; gap: 12px; background: #FCF8F5; border-radius: 8px; padding: 14px 16px; margin-top: 22px; }
+.s0-help-avatar { width: 38px; height: 38px; border-radius: 50%; background: #0A4FB8; color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.s0-help-title { font-size: 14px; font-weight: 600; color: #1A1A1A; }
+.s0-help-sub { font-size: 13px; color: #5C5C5C; }
 
 @media (max-width: 1023px) {
   .s0-layout { grid-template-columns: 1fr; padding: 24px 16px; }
@@ -812,78 +796,75 @@ body {
 }
 /* Sidebar priority labels and rediger link */
 .sidebar-prioritet-label {
-  font-size: 12px; color: #888; margin-bottom: 4px;
+  font-size: 12px; color: #5C5C5C; margin-bottom: 4px;
 }
 .sidebar-rediger-link {
   display: inline-block; font-size: 14px; font-weight: 500;
-  color: #121212; text-decoration: underline; cursor: pointer;
+  color: #1A1A1A; text-decoration: underline; cursor: pointer;
   margin-top: 14px; background: none; border: none;
   font-family: 'Graphik', sans-serif; padding: 0;
 }
-.sidebar-rediger-link:hover { color: #4e0000; }
+.sidebar-rediger-link:hover { color: #083D8F; }
 /* FEIDE login badge (step 5 summary) */
 .feide-login-badge {
   display: inline-flex; align-items: center; gap: 5px;
-  font-size: 12px; font-weight: 500; color: #4e0000;
-  border: 1px solid #e0c4c4; border-radius: 20px;
-  padding: 3px 10px 3px 6px; background: #fdf5f5;
+  font-size: 12px; font-weight: 500; color: #46000A;
+  border: 1px solid #F9CCD2; border-radius: 999px;
+  padding: 3px 10px 3px 6px; background: #FCF8F5;
   white-space: nowrap;
 }
 
 /* FEIDE user card */
-.feide-user-card { display:flex; align-items:center; gap:12px; background:#f5f5f5; border-radius:10px; padding:12px 14px; margin-bottom:14px; }
-.feide-user-avatar { width:40px; height:40px; border-radius:50%; background:#d8d8d8; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; color:#333; flex-shrink:0; }
+.feide-user-card { display:flex; align-items:center; gap:12px; background:#F5F5F5; border-radius:8px; padding:12px 14px; margin-bottom:14px; }
+.feide-user-avatar { width:40px; height:40px; border-radius:50%; background:#D4D4D4; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:600; color:#1A1A1A; flex-shrink:0; }
 .feide-user-info { display:flex; flex-direction:column; gap:2px; }
-.feide-user-name { font-size:15px; font-weight:500; color:#121212; }
-.feide-user-source { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:#4e0000; font-weight:500; }
+.feide-user-name { font-size:15px; font-weight:500; color:#1A1A1A; }
+.feide-user-source { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:#46000A; font-weight:500; }
 
 /* Person edit form */
-.person-info-view { display:flex; flex-direction:column; gap:8px; font-size:14px; color:#555; padding-top:2px; }
-.person-edit-btn { margin-top:14px; font-size:13px; font-weight:500; color:#4e0000; background:none; border:none; cursor:pointer; font-family:'Graphik',sans-serif; padding:0; text-decoration:underline; }
+.person-info-view { display:flex; flex-direction:column; gap:8px; font-size:14px; color:#5C5C5C; padding-top:2px; }
+.person-edit-btn { margin-top:14px; font-size:13px; font-weight:500; color:#0A4FB8; background:none; border:none; cursor:pointer; font-family:'Graphik',sans-serif; padding:0; text-decoration:underline; }
 .person-edit-form { display:flex; flex-direction:column; gap:12px; padding-top:4px; }
-.person-edit-label { font-size:12px; color:#888; margin-bottom:3px; }
+.person-edit-label { font-size:12px; color:#5C5C5C; margin-bottom:3px; }
 .person-edit-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.person-edit-input { width:100%; border:1.5px solid #c7c8ca; border-radius:8px; padding:10px 12px; font-size:14px; color:#121212; font-family:'Graphik',sans-serif; outline:none; box-sizing:border-box; }
-.person-edit-input:focus { border-color:#4e0000; }
+.person-edit-input { width:100%; border:1.5px solid #767676; border-radius:8px; padding:10px 12px; font-size:14px; color:#1A1A1A; font-family:'Graphik',sans-serif; outline:none; box-sizing:border-box; }
+.person-edit-input:focus { border-color:#46000A; }
 .person-edit-actions { display:flex; align-items:center; gap:16px; margin-top:4px; }
-.person-save-btn { padding:9px 22px; background:#4e0000; color:#fff; border:none; border-radius:24px; font-size:14px; font-weight:600; cursor:pointer; font-family:'Graphik',sans-serif; }
-.person-save-btn:hover { background:#3d0000; }
-.person-cancel-btn { font-size:14px; color:#888; background:none; border:none; cursor:pointer; font-family:'Graphik',sans-serif; }
-.person-cancel-btn:hover { color:#121212; }
+.person-save-btn { padding:9px 22px; background:#0A4FB8; color:#fff; border:none; border-radius:999px; font-size:14px; font-weight:600; cursor:pointer; font-family:'Graphik',sans-serif; }
+.person-save-btn:hover { background:#083D8F; }
+.person-cancel-btn { font-size:14px; color:#5C5C5C; background:none; border:none; cursor:pointer; font-family:'Graphik',sans-serif; }
+.person-cancel-btn:hover { color:#1A1A1A; }
 
 /* Steg 3: read-only personopplysninger for FEIDE-innloggede */
 /* Innlogget-kort med «Logg ut» (Opplysninger) */
-.auth-card { display:flex; align-items:center; gap:16px; background:#f5f5f5; border-radius:12px; padding:16px 20px; margin-bottom:20px; }
-.auth-card-avatar { width:48px; height:48px; border-radius:50%; background:#dcdcdc; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; color:#444; flex-shrink:0; }
+.auth-card { display:flex; align-items:center; gap:16px; background:#F5F5F5; border-radius:8px; padding:16px 20px; margin-bottom:20px; }
+.auth-card-avatar { width:48px; height:48px; border-radius:50%; background:#D4D4D4; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:600; color:#5C5C5C; flex-shrink:0; }
 .auth-card-info { flex:1; min-width:0; }
-.auth-card-name { font-size:17px; color:#121212; margin-bottom:3px; }
-.auth-card-method { display:flex; align-items:center; gap:6px; font-size:14px; color:#4e0000; }
-.auth-card-logout { background:none; border:1.5px solid #4e0000; color:#4e0000; border-radius:40px; padding:11px 24px; font-size:15px; font-weight:700; cursor:pointer; font-family:'Graphik',sans-serif; flex-shrink:0; }
-.auth-card-logout:hover { background:#4e0000; color:#fff; }
+.auth-card-name { font-size:17px; color:#1A1A1A; margin-bottom:3px; }
+.auth-card-method { display:flex; align-items:center; gap:6px; font-size:14px; color:#46000A; }
+.auth-card-logout { background:none; border:1.5px solid #46000A; color:#46000A; border-radius:999px; padding:11px 24px; font-size:15px; font-weight:600; cursor:pointer; font-family:'Graphik',sans-serif; flex-shrink:0; }
+.auth-card-logout:hover { background:#46000A; color:#fff; }
 
-.person-profile-card { display:flex; align-items:center; gap:14px; background:#fff; border:1.5px solid #e5e5e5; border-radius:12px; padding:18px 20px; margin-bottom:16px; }
-.person-profile-avatar { width:48px; height:48px; border-radius:50%; background:#eef0f6; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#1a3fb0; }
-.person-profile-name { font-size:16px; font-weight:700; color:#121212; }
-.person-profile-badge { display:flex; align-items:center; gap:5px; font-size:13px; color:#666; margin-top:3px; }
-.person-info-card { background:#fff; border:1.5px solid #e5e5e5; border-radius:12px; padding:20px; margin-bottom:16px; }
+.person-profile-card { display:flex; align-items:center; gap:14px; background:#fff; border:1.5px solid #D4D4D4; border-radius:8px; padding:18px 20px; margin-bottom:16px; }
+.person-profile-avatar { width:48px; height:48px; border-radius:50%; background:#F2F7FF; display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#083D8F; }
+.person-profile-name { font-size:16px; font-weight:600; color:#1A1A1A; }
+.person-profile-badge { display:flex; align-items:center; gap:5px; font-size:13px; color:#5C5C5C; margin-top:3px; }
+.person-info-card { background:#fff; border:1.5px solid #D4D4D4; border-radius:8px; padding:20px; margin-bottom:16px; }
 .person-info-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
-.person-info-card-title { font-size:16px; font-weight:700; color:#121212; }
-.person-info-edit-link { display:flex; align-items:center; gap:4px; background:none; border:none; color:#06f; font-size:14px; font-weight:600; cursor:pointer; font-family:'Graphik',sans-serif; padding:0; }
-.person-info-row { display:flex; align-items:baseline; justify-content:space-between; gap:16px; padding:12px 0; border-top:1px solid #eee; }
+.person-info-card-title { font-size:16px; font-weight:600; color:#1A1A1A; }
+.person-info-edit-link { display:flex; align-items:center; gap:4px; background:none; border:none; color:#0A4FB8; font-size:14px; font-weight:600; cursor:pointer; font-family:'Graphik',sans-serif; padding:0; }
+.person-info-row { display:flex; align-items:baseline; justify-content:space-between; gap:16px; padding:12px 0; border-top:1px solid #E6E6E6; }
 .person-info-row:first-child { border-top:none; padding-top:0; }
-.person-info-label { font-size:13px; color:#888; flex-shrink:0; }
-.person-info-value { font-size:14px; font-weight:500; color:#121212; text-align:right; }
-.step3-tilbake-link { background:none; border:none; color:#555; font-size:15px; font-weight:500; cursor:pointer; font-family:'Graphik',sans-serif; padding:0; }
-.step3-tilbake-link:hover { color:#121212; }
+.person-info-label { font-size:13px; color:#5C5C5C; flex-shrink:0; }
+.person-info-value { font-size:14px; font-weight:500; color:#1A1A1A; text-align:right; }
 
 /* Faktureres-tooltip */
 .s0-info-wrap { position: relative; display: inline-flex; align-items: center; }
 .s0-info-btn { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; line-height: 0; }
 .s0-tooltip {
   position: absolute; right: 0; top: calc(100% + 8px);
-  background: #1c1c1c; color: #fff; font-size: 13px; line-height: 1.5;
-  border-radius: 10px; padding: 12px 14px; width: 220px; z-index: 60;
-  box-shadow: 0 8px 24px rgba(0,0,0,.28);
+  background: #1A1A1A; color: #fff; font-size: 13px; line-height: 1.5;
+  border-radius: 8px; padding: 12px 14px; width: 220px; z-index: 60;
   opacity: 0; pointer-events: none;
   transform: translateY(-4px);
   transition: opacity 0.15s, transform 0.15s;
@@ -891,14 +872,14 @@ body {
 .s0-tooltip.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
 .s0-tooltip::before {
   content: ''; position: absolute; top: -5px; right: 10px;
-  width: 10px; height: 10px; background: #1c1c1c;
+  width: 10px; height: 10px; background: #1A1A1A;
   transform: rotate(45deg); border-radius: 2px;
 }
 
 /* FAQ accordion */
-.s0-faq { background: #fdf6f2; border: 1.5px solid #f0d5d5; border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+.s0-faq { background: #FCF8F5; border: 1.5px solid #F9CCD2; border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
 .s0-faq-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; background: none; width: 100%; border: none; font-family: 'Graphik', sans-serif; text-align: left; }
-.s0-faq-question { font-size: 14px; font-weight: 700; color: #121212; }
+.s0-faq-question { font-size: 14px; font-weight: 600; color: #1A1A1A; }
 .s0-faq-chevron { width: 20px; height: 20px; flex-shrink: 0; transition: transform 0.2s; }
 .s0-faq-chevron.open { transform: rotate(180deg); }
 .s0-faq-body { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
@@ -906,14 +887,14 @@ body {
 /* Oppstart-informasjonen har flere avsnitt enn FAQ-en på studievalg */
 .s0-faq-body-tall.open { max-height: 500px; }
 .s0-faq-body-xtall.open { max-height: 900px; }
-.s0-faq-answer { padding: 0 18px 12px 32px; font-size: 14px; color: #555; line-height: 1.55; }
-.s0-faq-list { margin: 0; padding: 0 18px 12px 50px; font-size: 14px; color: #555; line-height: 1.55; }
+.s0-faq-answer { padding: 0 18px 12px 32px; font-size: 14px; color: #5C5C5C; line-height: 1.55; }
+.s0-faq-list { margin: 0; padding: 0 18px 12px 50px; font-size: 14px; color: #5C5C5C; line-height: 1.55; }
 .s0-faq-list li { margin-bottom: 6px; }
-.s0-faq-link { display: inline-block; padding: 0 18px 18px 32px; font-size: 14px; font-weight: 500; color: #4e0000; }
+.s0-faq-link { display: inline-block; padding: 0 18px 18px 32px; font-size: 14px; font-weight: 500; color: #46000A; }
 .s0-faq-answer:last-child { padding-bottom: 18px; }
 
 /* ── Felles konvolutt ── */
-.env-svg { overflow: visible; filter: drop-shadow(0 14px 30px rgba(60,30,10,.18)); }
+.env-svg { overflow: visible; filter: drop-shadow(0 14px 30px rgba(0,0,0,.18)); }
 .env-wrap { transition: transform 0.85s cubic-bezier(.5,0,.75,.25), opacity 0.7s ease; }
 .env-wrap.fly { transform: translate(150px,-360px) rotate(14deg) scale(0.45); opacity: 0; }
 .env-paper { transform: translateY(60px); transition: transform 0.75s cubic-bezier(.45,0,.2,1); }
@@ -926,12 +907,12 @@ body {
 /* ── Send overlay ── */
 .snd-ov {
   position: fixed; inset: 0; z-index: 3000;
-  background: #faf6ef; display: flex; align-items: center; justify-content: center;
+  background: #FCF8F5; display: flex; align-items: center; justify-content: center;
   opacity: 0; transition: opacity 0.4s ease;
 }
 .snd-ov.visible { opacity: 1; }
 .snd-center { display: flex; flex-direction: column; align-items: center; gap: 30px; position: relative; }
-.snd-title2 { font-size: 20px; font-weight: 700; color: #4e0000; transition: opacity 0.35s ease; }
+.snd-title2 { font-size: 20px; font-weight: 600; color: #46000A; transition: opacity 0.35s ease; }
 .snd-title2.hide { opacity: 0; }
 .snd-done {
   position: absolute; inset: 0; display: flex; flex-direction: column;
@@ -942,28 +923,28 @@ body {
 }
 .snd-done.show { opacity: 1; transform: scale(1); }
 .snd-done-ring {
-  width: 76px; height: 76px; background: #4e0000; border-radius: 50%;
+  width: 76px; height: 76px; background: #46000A; border-radius: 50%;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.snd-done-label { font-size: 22px; font-weight: 700; color: #121212; }
+.snd-done-label { font-size: 22px; font-weight: 600; color: #1A1A1A; }
 
 
 /* Oppstart section */
-.opp-velg-link { font-size:13px; color:#06f; background:none; border:none; cursor:pointer; font-family:'Graphik',sans-serif; padding:0; white-space:nowrap; }
+.opp-velg-link { font-size:13px; color:#0A4FB8; background:none; border:none; cursor:pointer; font-family:'Graphik',sans-serif; padding:0; white-space:nowrap; }
 .opp-velg-link:hover { text-decoration:underline; }
-.opp-date-done { font-size:13px; color:#15a34a; font-weight:500; white-space:nowrap; }
-.opp-inline-picker { display:none; width:100%; padding:16px; border-top:1px solid #e5e5e5; background:#f8f8f8; }
+.opp-date-done { font-size:13px; color:#166600; font-weight:500; white-space:nowrap; }
+.opp-inline-picker { display:none; width:100%; padding:16px; border-top:1px solid #D4D4D4; background:#F5F5F5; }
 .opp-inline-picker.open { display:block; }
-.opp-date-option { display:flex; gap:14px; align-items:flex-start; padding:14px 16px; border:1.5px solid #e5e5e5; border-radius:10px; margin-bottom:10px; cursor:pointer; transition:border-color .15s,background .15s; }
+.opp-date-option { display:flex; gap:14px; align-items:flex-start; padding:14px 16px; border:1.5px solid #D4D4D4; border-radius:8px; margin-bottom:10px; cursor:pointer; transition:border-color .15s,background .15s; }
 .opp-date-option:last-child { margin-bottom:0; }
-.opp-date-option:hover { border-color:#c7c8ca; }
-.opp-date-option.selected { border-color:#06f; background:#f0f7ff; }
-.opp-date-label { font-size:16px; font-weight:700; color:#121212; margin-bottom:4px; }
-.opp-date-sub { font-size:13px; color:#555; line-height:1.5; margin-bottom:6px; }
-.opp-date-meta { font-size:13px; color:#888; display:flex; align-items:center; gap:5px; }
-.opp-section-title { font-size:15px; font-weight:600; color:#121212; margin-bottom:14px; }
-.opp-intro { font-size:15px; color:#555; line-height:1.55; margin:0 0 20px; max-width:60ch; }
-.opp-err { display:none; font-size:13px; color:#b60202; margin-top:8px; }
+.opp-date-option:hover { border-color:#D4D4D4; }
+.opp-date-option.selected { border-color:#0A4FB8; background:#F2F7FF; }
+.opp-date-label { font-size:16px; font-weight:600; color:#1A1A1A; margin-bottom:4px; }
+.opp-date-sub { font-size:13px; color:#5C5C5C; line-height:1.5; margin-bottom:6px; }
+.opp-date-meta { font-size:13px; color:#5C5C5C; display:flex; align-items:center; gap:5px; }
+.opp-section-title { font-size:15px; font-weight:600; color:#1A1A1A; margin-bottom:14px; }
+.opp-intro { font-size:15px; color:#5C5C5C; line-height:1.55; margin:0 0 20px; max-width:60ch; }
+.opp-err { display:none; font-size:13px; color:#AF0018; margin-top:8px; }
 .opp-err.show { display:block; }
 
 /* Responsive */
@@ -978,10 +959,89 @@ body {
   .summary-page-grid { padding: 16px; }
   .summary-page-card { padding: 24px 20px; }
   .topbar-inner { padding: 0 16px; }
-  .otp-input { width: 56px; height: 56px; }
+  .otp-input { width:60px; height:60px; }
   .btn-row { flex-direction: column-reverse; }
   .btn-row .btn-secondary { width: 100%; }
-  .s0-card { padding: 20px 16px; }
+
+}
+
+/* ── Priser og beløp: sekundærfont per DESIGN_SPEC ── */
+.price, .sum, .bt-prog-price, .pay-summary-amount, .s0-emne-price,
+.s0-emne-price-strike, .s0-summary-strike, .s0-summary-discount,
+.sb-section-price, .sb-section-amount, .sb-total-amount {
+  font-family: 'Produkt','Source Serif 4',Georgia,serif;
+}
+
+/* ── Fokusring per DESIGN_SPEC: 3px #580F0F med 3px offset ── */
+*:focus-visible { outline: 3px solid #580F0F; outline-offset: 3px; }
+
+/* ── Betaling: vertikal rytme (24px seksjon · 12px i gruppe · 32px før handling) ── */
+#betalingRabattSection { margin-top: 24px; }
+/* Samtykkene er én gruppe, skilt fra innholdet over med en hårstrek */
+.bt-consent {
+  display: flex; flex-direction: column; gap: 12px;
+  margin-top: 24px; padding-top: 24px; border-top: 1px solid #E6E6E6;
+}
+.bt-consent .error-msg { margin-top: 0; }
+
+/* ── Studievalg: programrader (design.md §3.1) ──
+   Én ramme med hårstrek-skilte rader — ingen kort i kort. */
+.s0-prio-row { position: relative; display: flex; align-items: flex-start; gap: 14px; padding: 18px 24px; border-bottom: 1px solid #E6E6E6; background: #fff; }
+.s0-prio-row:last-child { border-bottom: none; }
+.s0-prio-row.dragging { opacity: .5; }
+.s0-prio-row.drop-target { background: #F2F7FF; }
+/* 2px Action innskuddslinje på toppen av målraden */
+.s0-prio-row.drop-target::before {
+  content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 2px; background: #0A4FB8;
+}
+.s0-drag-handle { display: inline-flex; align-items: center; color: #5C5C5C; cursor: grab; flex-shrink: 0; padding-top: 2px; }
+.s0-drag-handle:active { cursor: grabbing; }
+.s0-prio-main { flex: 1; min-width: 0; }
+.s0-prio-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.s0-icon-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: none; background: none;
+  color: #5C5C5C; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .15s, color .15s;
+}
+.s0-icon-btn:hover { background: #F2F7FF; color: #0A4FB8; }
+.s0-icon-btn[disabled] { color: #D4D4D4; cursor: default; }
+.s0-icon-btn[disabled]:hover { background: none; color: #D4D4D4; }
+.s0-prio-price { font-family: 'Produkt','Source Serif 4',Georgia,serif; }
+/* Nivåtagger: Dark-Red for Bachelor/Master, Light-Red kun for fagskole */
+.s0-badge-niva { background: #46000A; color: #fff; }
+.s0-badge-fagskole { background: #F9CCD2; color: #46000A; }
+@media (max-width: 700px) {
+  .s0-icon-btn { width: 44px; height: 44px; }
+}
+
+.s0-intro { font-size: 15px; color: #5C5C5C; line-height: 1.5; max-width: 624px; margin: 0 0 24px; text-wrap: pretty; }
+
+/* ── Mobil: strammere sidepadding i studievalgkortet.
+      Ligger sist fordi media queries ikke gir ekstra spesifisitet. ── */
+@media (max-width: 700px) {
+  .s0-prio-row { padding: 16px; }
+  .s0-section-header { padding: 14px 16px; }
+}
+
+/* ── Topbar: «Søknad»-knapp som sekundærknapp med antallbadge (mockup) ── */
+.topbar-soknad-btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  height: 44px; padding: 0 20px; border-radius: 999px;
+  border: 1px solid #0A4FB8; background: #fff; color: #0A4FB8;
+  font-family: 'Graphik', sans-serif; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: background .15s;
+}
+.topbar-soknad-btn:hover { background: #F2F7FF; }
+.topbar-soknad-btn svg { display: block; }
+/* updateBasketCount() setter display:block inline, så badgen sentreres med
+   line-height framfor flex. */
+.topbar-soknad-btn #topbar-basket-count {
+  min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px;
+  background: #0A4FB8; color: #fff; font-size: 12px; font-weight: 600;
+  line-height: 22px; text-align: center; box-sizing: border-box;
+}
+@media (max-width: 700px) {
+  .topbar-soknad-btn { padding: 0 14px; gap: 7px; }
 }
 </style>
 </head>
@@ -994,9 +1054,10 @@ body {
       <img src="topbar/Kristiania_logo_22_sort.svg" height="36" alt="Kristiania logo">
     </a>
     <div style="display:flex;align-items:center;gap:8px;">
-      <button class="topbar-icon-btn" onclick="gaVidere(0)" aria-label="Handlekurv">
-        <img src="topbar/Basket.svg" width="24" height="24" alt="">
-        <span id="topbar-basket-count" style="display:none;position:absolute;top:2px;right:2px;background:#b60202;color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:700;line-height:16px;text-align:center;"></span>
+      <button class="topbar-soknad-btn" onclick="openSoknaderPanel()" aria-label="Åpne søknaden din">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span>Søknad</span>
+        <span id="topbar-basket-count"></span>
       </button>
     </div>
   </div>
@@ -1015,47 +1076,51 @@ body {
   <div id="step0Page">
     <div class="s0-page">
       <h1 class="s0-title">Søknad</h1>
+      <p class="s0-intro">Du søker på hele studieprogram og enkeltemner i samme søknad.
+        Rekkefølgen på programmene er prioriteringen din — dra dem, eller bruk pilene.</p>
       <div class="s0-card">
         <div class="s0-section-header">
           <span class="s0-section-label">Hele program</span>
-        </div>
-        <div class="s0-faq">
-          <button class="s0-faq-header" onclick="toggleS0Faq(this)">
-            <span class="s0-faq-question">Kan jeg endre rekkefølgen senere?</span>
-            <svg class="s0-faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#121212" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <div class="s0-faq-body">
-            <p class="s0-faq-answer">Ja, i Mitt Kristiania kan du omprioritere søknadsvalgene dine, legge til nye valg eller trekke søknaden når du ønsker.</p>
-          </div>
+          <span class="payment-section-meta">Faktureres per semester</span>
         </div>
         <div id="step0PrioritetList"></div>
-        <button class="s0-legg-til-btn" onclick="toggleProgramSearch()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#06f" stroke-width="2.5" stroke-linecap="round"/></svg>
-          <span id="addProgramBtnLabel">Legg til studieprogram</span>
-        </button>
+      </div>
+      <button class="s0-legg-til-btn" onclick="toggleProgramSearch()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#0A4FB8" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <span id="addProgramBtnLabel">Legg til studieprogram</span>
+      </button>
+      <div id="step0ProgramSearch" style="display:none;margin-top:12px;">
+        <div class="s0-search-wrap">
+          <input type="text" id="programSearchInput" placeholder="Søk etter studieprogram" oninput="renderProgramSearchResults()" autocomplete="off">
+          <button class="s0-search-clear" onclick="clearProgramSearch()" aria-label="Tøm søk" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="#5C5C5C" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="s0-search-filters" id="programSearchFilters"></div>
+        <div class="s0-search-results" id="programSearchResults"></div>
+      </div>
 
-        <div id="step0ProgramSearch" style="display:none;margin-top:12px;">
-          <div class="s0-search-wrap">
-            <input type="text" id="programSearchInput" placeholder="Søk etter studieprogram" oninput="renderProgramSearchResults()" autocomplete="off">
-            <button class="s0-search-clear" onclick="clearProgramSearch()" aria-label="Tøm søk" type="button">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="#888" stroke-width="2" stroke-linecap="round"/></svg>
-            </button>
-          </div>
-          <div class="s0-search-filters" id="programSearchFilters"></div>
-          <div class="s0-search-results" id="programSearchResults"></div>
+<div class="s0-faq">
+        <button class="s0-faq-header" onclick="toggleS0Faq(this)">
+          <span class="s0-faq-question">Kan jeg endre rekkefølgen senere?</span>
+          <svg class="s0-faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="s0-faq-body">
+          <p class="s0-faq-answer">Ja, i Mitt Kristiania kan du omprioritere søknadsvalgene dine, legge til nye valg eller trekke søknaden når du ønsker.</p>
         </div>
       </div>
+
       <div class="s0-card" id="step0EmnerCard" style="display:none;margin-top:16px;">
         <div class="s0-section-header">
           <span class="s0-section-label">Emner</span>
           <span class="payment-section-meta" id="step0EmnerMeta"></span>
         </div>
         <div id="step0EmnerList"></div>
-        <button class="s0-legg-til-btn" onclick="window.location.href='/utdanning'">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#06f" stroke-width="2.5" stroke-linecap="round"/></svg>
-          Legg til emner
-        </button>
       </div>
+      <button class="s0-legg-til-btn" id="step0AddEmnerBtn" onclick="window.location.href='/utdanning'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="#0A4FB8" stroke-width="2.5" stroke-linecap="round"/></svg>
+        Legg til emner
+      </button>
       <button class="s0-btn-primary" onclick="gaVidereFraSteg0()">Gå videre</button>
     </div>
   </div>
@@ -1067,7 +1132,7 @@ body {
       <div class="step" id="step1">
         <div class="form-col">
           <h1 class="step-title">Har du studert ved Kristiania før?</h1>
-          <p style="font-size:15px;color:#555;margin-bottom:20px;">Svaret avgjør bare hvordan du logger inn. Det påvirker ikke søknaden.</p>
+          <p style="font-size:15px;color:#5C5C5C;margin-bottom:20px;">Svaret avgjør bare hvordan du logger inn. Det påvirker ikke søknaden.</p>
 
           <div id="studentBeforeGroup">
             <div class="opp-date-option" data-value="nei" onclick="selectStudentBefore('nei')">
@@ -1115,7 +1180,7 @@ body {
                 </div>
                 <div class="error-msg" id="err-telefon-step1">Oppgi et gyldig telefonnummer</div>
               </div>
-              <p style="font-size:14px;color:#4e0000;">Du får en bekreftelseskode på SMS.</p>
+              <p style="font-size:14px;color:#46000A;">Du får en bekreftelseskode på SMS.</p>
               <div class="checkbox-row">
                 <div class="checkbox-box" id="cb-kontakt" onclick="this.classList.toggle('checked')">
                   <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1137,15 +1202,15 @@ body {
       <div class="step" id="feide-step">
         <div class="form-col">
           <h1 class="step-title" style="margin-bottom:8px;">Logg inn med Feide</h1>
-          <p style="font-size:15px;color:#555;margin-bottom:24px;line-height:1.5;">Du må logge deg på via Feide for å få tilgang til Dataporten.</p>
+          <p style="font-size:15px;color:#5C5C5C;margin-bottom:24px;line-height:1.5;">Du må logge deg på via Feide for å få tilgang til Dataporten.</p>
 
-          <div style="font-size:13px;color:#888;margin-bottom:8px;font-weight:500;letter-spacing:.2px;">Din tilhørighet</div>
+          <div style="font-size:13px;color:#5C5C5C;margin-bottom:8px;font-weight:500;letter-spacing:.2px;">Din tilhørighet</div>
           <div class="feide-tilhorighet-row">
             <div style="display:flex;align-items:center;gap:12px;">
               <div class="feide-k-avatar">K</div>
-              <span style="font-size:15px;font-weight:500;color:#121212;">Kristiania</span>
+              <span style="font-size:15px;font-weight:500;color:#1A1A1A;">Kristiania</span>
             </div>
-            <button style="background:none;border:none;font-size:14px;color:#06f;cursor:pointer;text-decoration:underline;font-family:'Graphik',sans-serif;padding:0;">Endre tilhørighet</button>
+            <button style="background:none;border:none;font-size:14px;color:#0A4FB8;cursor:pointer;text-decoration:underline;font-family:'Graphik',sans-serif;padding:0;">Endre tilhørighet</button>
           </div>
 
           <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
@@ -1157,14 +1222,14 @@ body {
               Bruk arbeids- eller skolekonto
             </button>
             <button class="feide-option-btn" onclick="simulateFeideLogin()">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><rect x="2" y="2" width="20" height="20" rx="3" stroke="#222" stroke-width="1.5"/><path d="M7 8h10M7 12h10M7 16h6" stroke="#222" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><rect x="2" y="2" width="20" height="20" rx="3" stroke="#1A1A1A" stroke-width="1.5"/><path d="M7 8h10M7 12h10M7 16h6" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/></svg>
               Logg inn med ID-porten
             </button>
           </div>
 
           <button class="feide-hjelp-row" onclick="this.querySelector('.feide-hjelp-icon').textContent = this.querySelector('.feide-hjelp-icon').textContent === '+' ? '−' : '+'">
             <span>Trenger du hjelp?</span>
-            <span class="feide-hjelp-icon" style="font-size:22px;font-weight:300;color:#888;line-height:1;">+</span>
+            <span class="feide-hjelp-icon" style="font-size:22px;font-weight:400;color:#5C5C5C;line-height:1;">+</span>
           </button>
 
           <div class="btn-row" style="margin-top:24px;">
@@ -1179,7 +1244,7 @@ body {
           <h1 class="step-title">Fullfør søknaden</h1>
           <div>
             <h2 class="step-subtitle" style="margin-bottom:12px;">Bekreftelseskode</h2>
-            <p style="font-size:14px;color:#555;">Vi har sendt deg en kode på <span class="otp-phone" id="otpPhoneDisplay">999 99 999</span>.</p>
+            <p style="font-size:14px;color:#5C5C5C;">Vi har sendt deg en kode på <span class="otp-phone" id="otpPhoneDisplay">999 99 999</span>.</p>
           </div>
           <div class="otp-group" id="otpGroup">
             <input type="tel" class="otp-input" maxlength="1" inputmode="numeric" oninput="otpNext(this,0)" onkeydown="otpBack(event,0)">
@@ -1189,7 +1254,7 @@ body {
           </div>
           <button class="btn-primary" onclick="bekreftKode()">Bekreft</button>
           <div>
-            <p style="font-size:14px;color:#555;">Har du problemer med å motta koden via SMS, kan du få den på e-post.</p>
+            <p style="font-size:14px;color:#5C5C5C;">Har du problemer med å motta koden via SMS, kan du få den på e-post.</p>
             <button class="btn-ghost" style="margin-top:12px;" onclick="alert('En bekreftelseskode er sendt til din e-post.')">Send koden på e-post</button>
           </div>
         </div>
@@ -1258,7 +1323,7 @@ body {
                 <option value="Annet">Annet land</option>
               </select>
               <label for="land">Land</label>
-              <svg class="select-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#4e0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg class="select-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#46000A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
           </div>
 
@@ -1315,7 +1380,7 @@ body {
           </div>
 
           <div class="btn-row" id="step3BottomReadonly" style="display:none;">
-            <button class="step3-tilbake-link" onclick="gaVidere(0)">Tilbake til studievalg</button>
+            <button class="btn-secondary" onclick="gaVidere(0)">Tilbake til studievalg</button>
             <button class="btn-primary" style="width:auto;padding:0 28px;flex:none;margin-left:auto;" onclick="gaVidereStep3()">
               Neste steg
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="margin-left:8px;"><path d="M5 12h14M13 6l6 6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1373,7 +1438,7 @@ body {
               <h2 class="bt-section-title">Betalingsmåte for nettemner</h2>
               <div class="emner-payment-box">
                 <div id="betalingMetoderSection">
-                  <div class="payment-options" id="betalingGroup" style="overflow:visible;border-radius:10px;">
+                  <div class="payment-options" id="betalingGroup" style="overflow:visible;border-radius:8px;">
 
                 <!-- Kortbetaling -->
                 <div class="payment-option-group">
@@ -1387,13 +1452,13 @@ body {
                     <div class="card-input-wrap">
                       <input type="text" id="card-number" placeholder="" inputmode="numeric" maxlength="19" oninput="formatCardNumber(this)">
                       <div class="card-input-icon">
-                        <svg width="22" height="16" viewBox="0 0 22 16" fill="none"><rect x="1" y="1" width="20" height="14" rx="2" stroke="#888" stroke-width="1.5"/><path d="M1 5h20" stroke="#888" stroke-width="1.5"/></svg>
+                        <svg width="22" height="16" viewBox="0 0 22 16" fill="none"><rect x="1" y="1" width="20" height="14" rx="2" stroke="#5C5C5C" stroke-width="1.5"/><path d="M1 5h20" stroke="#5C5C5C" stroke-width="1.5"/></svg>
                       </div>
                     </div>
                     <div class="card-logos">
-                      <svg class="card-logo" width="38" height="24" viewBox="0 0 38 24"><rect width="38" height="24" rx="3" fill="#fff" stroke="#e0e0e0"/><circle cx="15" cy="12" r="7" fill="#EB001B"/><circle cx="23" cy="12" r="7" fill="#F79E1B"/><path d="M19 6.8a7 7 0 010 10.4A7 7 0 0119 6.8z" fill="#FF5F00"/></svg>
-                      <svg class="card-logo" width="38" height="24" viewBox="0 0 38 24"><rect width="38" height="24" rx="3" fill="#1A1F71" stroke="#e0e0e0"/><text x="19" y="16" fill="#fff" font-size="9" font-weight="700" text-anchor="middle" font-family="Arial">VISA</text></svg>
-                      <svg class="card-logo" width="38" height="24" viewBox="0 0 38 24"><rect width="38" height="24" rx="3" fill="#fff" stroke="#e0e0e0"/><circle cx="15" cy="12" r="7" fill="#0099DF"/><circle cx="23" cy="12" r="7" fill="#E2001A"/><path d="M19 6.8a7 7 0 010 10.4A7 7 0 0119 6.8z" fill="#6C2C91"/></svg>
+                      <svg class="card-logo" width="38" height="24" viewBox="0 0 38 24"><rect width="38" height="24" rx="3" fill="#fff" stroke="#D4D4D4"/><circle cx="15" cy="12" r="7" fill="#EB001B"/><circle cx="23" cy="12" r="7" fill="#F79E1B"/><path d="M19 6.8a7 7 0 010 10.4A7 7 0 0119 6.8z" fill="#FF5F00"/></svg>
+                      <svg class="card-logo" width="38" height="24" viewBox="0 0 38 24"><rect width="38" height="24" rx="3" fill="#1A1F71" stroke="#D4D4D4"/><text x="19" y="16" fill="#fff" font-size="9" font-weight="700" text-anchor="middle" font-family="Arial">VISA</text></svg>
+                      <svg class="card-logo" width="38" height="24" viewBox="0 0 38 24"><rect width="38" height="24" rx="3" fill="#fff" stroke="#D4D4D4"/><circle cx="15" cy="12" r="7" fill="#0099DF"/><circle cx="23" cy="12" r="7" fill="#E2001A"/><path d="M19 6.8a7 7 0 010 10.4A7 7 0 0119 6.8z" fill="#6C2C91"/></svg>
                     </div>
                     <div class="card-row">
                       <div>
@@ -1453,13 +1518,13 @@ body {
                   </label>
                   <div class="payment-expand" id="expand-arbeidsgiver">
                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
-                      <span style="font-size:16px;font-weight:700;color:#121212;">EHF-faktura</span>
+                      <span style="font-size:16px;font-weight:600;color:#1A1A1A;">EHF-faktura</span>
                       <div class="tooltip-wrap">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
                           <g clip-path="url(#clip-ehf-info)">
-                            <path d="M7.99984 7.33342C8.36803 7.33342 8.6665 7.63189 8.6665 8.00008V10.6667C8.6665 11.0349 8.36803 11.3334 7.99984 11.3334C7.63165 11.3334 7.33317 11.0349 7.33317 10.6667V8.00008C7.33317 7.63189 7.63165 7.33342 7.99984 7.33342Z" fill="#888"/>
-                            <path d="M7.99652 4.66675C7.63016 4.66675 7.33317 4.96523 7.33317 5.33342C7.33317 5.7016 7.63016 6.00008 7.99652 6.00008H8.00315C8.36951 6.00008 8.6665 5.7016 8.6665 5.33342C8.6665 4.96523 8.36951 4.66675 8.00315 4.66675H7.99652Z" fill="#888"/>
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M0.666504 8.00008C0.666504 3.94999 3.94975 0.666748 7.99984 0.666748C12.0499 0.666748 15.3332 3.94999 15.3332 8.00008C15.3332 12.0502 12.0499 15.3334 7.99984 15.3334C3.94975 15.3334 0.666504 12.0502 0.666504 8.00008ZM7.99984 2.00008C4.68613 2.00008 1.99984 4.68637 1.99984 8.00008C1.99984 11.3138 4.68613 14.0001 7.99984 14.0001C11.3135 14.0001 13.9998 11.3138 13.9998 8.00008C13.9998 4.68637 11.3135 2.00008 7.99984 2.00008Z" fill="#888"/>
+                            <path d="M7.99984 7.33342C8.36803 7.33342 8.6665 7.63189 8.6665 8.00008V10.6667C8.6665 11.0349 8.36803 11.3334 7.99984 11.3334C7.63165 11.3334 7.33317 11.0349 7.33317 10.6667V8.00008C7.33317 7.63189 7.63165 7.33342 7.99984 7.33342Z" fill="#5C5C5C"/>
+                            <path d="M7.99652 4.66675C7.63016 4.66675 7.33317 4.96523 7.33317 5.33342C7.33317 5.7016 7.63016 6.00008 7.99652 6.00008H8.00315C8.36951 6.00008 8.6665 5.7016 8.6665 5.33342C8.6665 4.96523 8.36951 4.66675 8.00315 4.66675H7.99652Z" fill="#5C5C5C"/>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M0.666504 8.00008C0.666504 3.94999 3.94975 0.666748 7.99984 0.666748C12.0499 0.666748 15.3332 3.94999 15.3332 8.00008C15.3332 12.0502 12.0499 15.3334 7.99984 15.3334C3.94975 15.3334 0.666504 12.0502 0.666504 8.00008ZM7.99984 2.00008C4.68613 2.00008 1.99984 4.68637 1.99984 8.00008C1.99984 11.3138 4.68613 14.0001 7.99984 14.0001C11.3135 14.0001 13.9998 11.3138 13.9998 8.00008C13.9998 4.68637 11.3135 2.00008 7.99984 2.00008Z" fill="#5C5C5C"/>
                           </g>
                           <defs><clipPath id="clip-ehf-info"><rect width="16" height="16" fill="white"/></clipPath></defs>
                         </svg>
@@ -1470,7 +1535,7 @@ body {
                       <div class="ehf-checkbox checked" id="ehf-cb">
                         <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l2.5 2.5L9 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                       </div>
-                      <span style="font-size:14px;color:#121212;line-height:1.4;">Bruk elektronisk handelskformat (EHF) hvis det er mulig</span>
+                      <span style="font-size:14px;color:#1A1A1A;line-height:1.4;">Bruk elektronisk handelskformat (EHF) hvis det er mulig</span>
                     </div>
                     <div class="fields-row" style="margin-top:16px;">
                       <div class="ag-input-wrap">
@@ -1503,7 +1568,8 @@ body {
               <div id="betalingRabattSection"></div>
             </div><!-- /betalingEmnerSection -->
 
-            <div class="checkbox-row" style="margin-top:20px;">
+            <div class="bt-consent">
+            <div class="checkbox-row">
               <div class="checkbox-box" id="cb-personvern" onclick="this.classList.toggle('checked')">
                 <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
@@ -1511,7 +1577,7 @@ body {
                 Jeg bekrefter og aksepterer <a href="#" onclick="event.stopPropagation()">Kristianias personvern-erklæring</a>
               </span>
             </div>
-            <div class="checkbox-row" style="margin-top:10px;">
+            <div class="checkbox-row">
               <div class="checkbox-box" id="cb-betingelser" onclick="this.classList.toggle('checked')">
                 <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
@@ -1519,12 +1585,13 @@ body {
                 Jeg bekrefter og aksepterer <a href="#" onclick="event.stopPropagation()">Kristianias studiebetingelser</a>
               </span>
             </div>
-            <div class="error-msg" id="err-samtykke" style="display:none;margin-top:8px;">Du må godta personvernerklæringen og studiebetingelsene for å gå videre</div>
+            <div class="error-msg" id="err-samtykke" style="display:none;">Du må godta personvernerklæringen og studiebetingelsene for å gå videre</div>
+            </div><!-- /bt-consent -->
 
             <p class="bt-fineprint" id="step4CommitNote"></p>
 
-            <div class="btn-row" style="margin-top:24px;">
-              <button class="btn-outline" onclick="gaVidere(3)">Tilbake til personopplysninger</button>
+            <div class="btn-row" style="margin-top:32px;">
+              <button class="btn-secondary" onclick="gaVidere(3)">Tilbake til personopplysninger</button>
               <button class="btn-primary" onclick="gaVidereStep4()">Gå videre</button>
             </div>
           </div>
@@ -1537,7 +1604,7 @@ body {
           <h1 class="step-title" id="pd-title">Betaling</h1>
           <div id="pd-body" style="margin-top:24px;"></div>
           <p class="bt-fineprint" id="pd-charge-note" style="display:none;">Kortet blir ikke belastet nå — beløpet trekkes først når du sender inn søknaden i neste steg.</p>
-          <div class="btn-row" style="margin-top:24px;">
+          <div class="btn-row" style="margin-top:32px;">
             <button class="btn-secondary" onclick="gaVidere(4)">Tilbake til betaling</button>
             <button class="btn-primary" id="pd-cta" onclick="confirmPaymentDetail()">Gå videre</button>
           </div>
@@ -1552,7 +1619,7 @@ body {
       <div class="s0-faq">
         <button class="s0-faq-header" onclick="toggleS0Faq(this)">
           <span class="s0-faq-question">Hvilken startdato bør jeg velge?</span>
-          <svg class="s0-faq-chevron open" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#121212" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="s0-faq-chevron open" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <div class="s0-faq-body s0-faq-body-tall open">
           <p class="s0-faq-answer">Startdatoen kan maksimalt settes tre måneder frem i tid og avgjør når du får tilgang til studiet.</p>
@@ -1563,7 +1630,7 @@ body {
       <div class="s0-faq">
         <button class="s0-faq-header" onclick="toggleS0Faq(this)">
           <span class="s0-faq-question">Når får jeg tilgang til emnet?</span>
-          <svg class="s0-faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#121212" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="s0-faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <div class="s0-faq-body s0-faq-body-tall">
           <p class="s0-faq-answer">Du får en e-post når emnet er klart i læringsportalen Canvas.</p>
@@ -1573,7 +1640,7 @@ body {
       <div class="s0-faq">
         <button class="s0-faq-header" onclick="toggleS0Faq(this)">
           <span class="s0-faq-question">Viktig informasjon om Lånekassen</span>
-          <svg class="s0-faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#121212" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="s0-faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <div class="s0-faq-body s0-faq-body-xtall">
           <p class="s0-faq-answer">Du kan søke om lån/stipend hos Lånekassen når du har meldt deg på ett eller flere emner hos oss. Når man bestiller emner på nett, anbefales det at man er tidlig ute med bestilling, da Lånekassen har periodevis lang behandlingstid.</p>
@@ -1591,7 +1658,7 @@ body {
       <div class="summary-header" onclick="toggleDesktopSummary()">
         <span class="summary-header-label" id="summaryHeaderLabel">Sammendrag av søknad</span>
         <svg id="desktopChevron" width="24" height="24" viewBox="0 0 24 24" fill="none" style="transition:transform .2s;transform:rotate(180deg);">
-          <path d="M6 9l6 6 6-6" stroke="#4e0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6 9l6 6 6-6" stroke="#46000A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
       <div class="summary-body" id="desktopSummaryBody">
@@ -1614,7 +1681,7 @@ body {
           <div class="summary-accordion-header" onclick="toggleAccordion('personAccordion')">
             <span class="summary-accordion-label">Personopplysninger</span>
             <svg class="summary-accordion-chevron" id="personAccordionChevron" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M6 9l6 6 6-6" stroke="#4e0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6 9l6 6 6-6" stroke="#46000A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
           <div class="summary-accordion-body" id="personAccordion">
@@ -1687,11 +1754,12 @@ var STEPPER_CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"
    Innlogging har ikke eget punkt – den hører til Opplysninger. */
 /* Oppstart er ikke lenger et steg her – studiestart velges i søknadspanelet
    når emnet legges til, så datoen er satt lenge før utsjekk. */
+/* design.md §2: stepperen har tre faste steg. Sammendrag er en egen skjerm,
+   men deler punkt med Betaling og får ingen egen node. */
 var ALL_PHASES = [
   { key: 'studievalg',   label: 'Studievalg' },
   { key: 'opplysninger', label: 'Opplysninger' },
-  { key: 'betaling',     label: 'Betaling' },
-  { key: 'sammendrag',   label: 'Sammendrag' }
+  { key: 'betaling',     label: 'Betaling' }
 ];
 
 // Betaling vises kun når kurven inneholder nettemner
@@ -1704,23 +1772,20 @@ function basketHasEmner() {
 // Betaling handler bare om emner. Siste fase er commit-punktet:
 // Betaling når det er noe å betale, ellers Sammendrag.
 function getActivePhases() {
-  var harEmner = basketHasEmner();
-  return ALL_PHASES.filter(function(p) {
-    if (p.key === 'betaling' && !harEmner) return false;
-    if (p.key === 'sammendrag' && harEmner) return false;
-    return true;
-  });
+  /* Alle tre punktene vises alltid, slik at stepperen ikke endrer lengde
+     underveis. Hvilke skjermer som faktisk besøkes styres av gaVidere(). */
+  return ALL_PHASES;
 }
 
 function stepToPhaseKey(n) {
   /* Innlogging (1 og 2) er veien inn til Opplysninger, og deler punkt med den. */
   if (n === 1 || n === 2 || n === 3) return 'opplysninger';
   if (n === 4) return 'betaling';
-  if (n === 5) return 'sammendrag';
+  if (n === 5) return 'betaling';   /* Sammendrag deler punkt med Betaling */
   return 'studievalg';
 }
 
-var PHASE_TO_STEP = { studievalg: 0, opplysninger: 3, betaling: 4, sammendrag: 5 };
+var PHASE_TO_STEP = { studievalg: 0, opplysninger: 3, betaling: 4 };
 
 /* Én kilde til sannhet for «hvor går vi etter Studievalg»: innlogging hoppes over
    når brukeren allerede er innlogget. Brukes både av «Gå videre» på Studievalg og
@@ -1924,34 +1989,34 @@ function gaVidereFraSteg0() {
 /* Felles illustrert konvolutt brukt av begge animasjonene */
 var ENV_SVG = '<svg class="env-svg" viewBox="0 0 260 210" width="268" height="217" xmlns="http://www.w3.org/2000/svg">'
   // interior back wall (cream)
-  + '<rect x="30" y="92" width="200" height="100" rx="6" fill="#f7f2e8" stroke="#1c1c1c" stroke-width="3"/>'
+  + '<rect x="30" y="92" width="200" height="100" rx="6" fill="#f7f2e8" stroke="#1A1A1A" stroke-width="3"/>'
   // open flap (behind paper, points up) — cream with periwinkle lining
-  + '<path class="env-flap-open" d="M28 92 L130 26 L232 92 Z" fill="#f7f2e8" stroke="#1c1c1c" stroke-width="3" stroke-linejoin="round"/>'
+  + '<path class="env-flap-open" d="M28 92 L130 26 L232 92 Z" fill="#f7f2e8" stroke="#1A1A1A" stroke-width="3" stroke-linejoin="round"/>'
   + '<path class="env-flap-open" d="M54 92 L130 51 L206 92 Z" fill="#b9bdee"/>'
   // letter (slides up/down)
   + '<g class="env-paper">'
-  + '<rect x="64" y="34" width="132" height="96" rx="4" fill="#f5f1e7" stroke="#1c1c1c" stroke-width="2.5"/>'
-  + '<rect x="80" y="48" width="46" height="6" rx="3" fill="#1c1c1c"/>'
-  + '<rect x="80" y="60" width="28" height="6" rx="3" fill="#1c1c1c"/>'
+  + '<rect x="64" y="34" width="132" height="96" rx="4" fill="#f5f1e7" stroke="#1A1A1A" stroke-width="2.5"/>'
+  + '<rect x="80" y="48" width="46" height="6" rx="3" fill="#1A1A1A"/>'
+  + '<rect x="80" y="60" width="28" height="6" rx="3" fill="#1A1A1A"/>'
   + '<rect x="66" y="80" width="128" height="30" fill="#bcc0ed"/>'
-  + '<rect x="80" y="89" width="92" height="5" rx="2.5" fill="#1c1c1c"/>'
-  + '<rect x="80" y="99" width="72" height="5" rx="2.5" fill="#1c1c1c"/>'
-  + '<rect x="80" y="118" width="96" height="5" rx="2.5" fill="#1c1c1c"/>'
+  + '<rect x="80" y="89" width="92" height="5" rx="2.5" fill="#1A1A1A"/>'
+  + '<rect x="80" y="99" width="72" height="5" rx="2.5" fill="#1A1A1A"/>'
+  + '<rect x="80" y="118" width="96" height="5" rx="2.5" fill="#1A1A1A"/>'
   + '</g>'
   // front pocket (kraft), top edge dips to center
-  + '<path class="env-front" d="M30 92 L30 190 L230 190 L230 92 L130 150 Z" fill="#cf8b43" stroke="#1c1c1c" stroke-width="3" stroke-linejoin="round"/>'
+  + '<path class="env-front" d="M30 92 L30 190 L230 190 L230 92 L130 150 Z" fill="#cf8b43" stroke="#1A1A1A" stroke-width="3" stroke-linejoin="round"/>'
   // address dashes (lower-left)
-  + '<rect x="58" y="120" width="42" height="6" rx="3" fill="#1c1c1c"/>'
-  + '<rect x="58" y="133" width="56" height="6" rx="3" fill="#1c1c1c"/>'
-  + '<rect x="58" y="146" width="30" height="6" rx="3" fill="#1c1c1c"/>'
+  + '<rect x="58" y="120" width="42" height="6" rx="3" fill="#1A1A1A"/>'
+  + '<rect x="58" y="133" width="56" height="6" rx="3" fill="#1A1A1A"/>'
+  + '<rect x="58" y="146" width="30" height="6" rx="3" fill="#1A1A1A"/>'
   // postmark squiggles
-  + '<path d="M150 134 q6 -5 12 0 t12 0" fill="none" stroke="#1c1c1c" stroke-width="2"/>'
-  + '<path d="M150 141 q6 -5 12 0 t12 0" fill="none" stroke="#1c1c1c" stroke-width="2"/>'
+  + '<path d="M150 134 q6 -5 12 0 t12 0" fill="none" stroke="#1A1A1A" stroke-width="2"/>'
+  + '<path d="M150 141 q6 -5 12 0 t12 0" fill="none" stroke="#1A1A1A" stroke-width="2"/>'
   // red stamp (right)
-  + '<rect class="env-stamp" x="174" y="127" width="34" height="40" rx="2" fill="#d9534f" stroke="#1c1c1c" stroke-width="2.5"/>'
+  + '<rect class="env-stamp" x="174" y="127" width="34" height="40" rx="2" fill="#d9534f" stroke="#1A1A1A" stroke-width="2.5"/>'
   + '<rect x="180" y="133" width="22" height="28" rx="1" fill="none" stroke="#fff" stroke-opacity="0.55" stroke-width="1.5" stroke-dasharray="3 3"/>'
   // closed flap (kraft, covers opening)
-  + '<path class="env-flap-closed" d="M30 92 L130 150 L230 92 Z" fill="#c47e37" stroke="#1c1c1c" stroke-width="3" stroke-linejoin="round"/>'
+  + '<path class="env-flap-closed" d="M30 92 L130 150 L230 92 Z" fill="#c47e37" stroke="#1A1A1A" stroke-width="3" stroke-linejoin="round"/>'
   + '</svg>';
 
 /* Inline søk etter studieprogram (steg 0) */
@@ -2026,7 +2091,7 @@ function renderProgramSearchResults() {
 
   var html = '';
   if (results.length === 0) {
-    html = '<p style="font-size:14px;color:#888;padding:12px 4px;">Ingen studieprogram matcher søket.</p>';
+    html = '<p style="font-size:14px;color:#5C5C5C;padding:12px 4px;">Ingen studieprogram matcher søket.</p>';
   } else {
     results.forEach(function(item) {
       var already = addedIds.indexOf(item.id) > -1;
@@ -2061,7 +2126,7 @@ function renderStep0() {
   // --- Hele program ---
   if (programs.length === 0) {
     document.getElementById('step0PrioritetList').innerHTML =
-      '<p style="font-size:14px;color:#888;padding:16px 0;">Ingen studieprogram lagt til ennå.</p>';
+      '<p style="font-size:14px;color:#5C5C5C;padding:16px 0;">Ingen studieprogram lagt til ennå.</p>';
   } else {
     document.getElementById('step0PrioritetList').innerHTML = programs.map(function(p, idx) {
       return buildPrioritetCardHtml(p, idx, programs.length, 's0RemoveProgram', 'moveProgram');
@@ -2072,6 +2137,10 @@ function renderStep0() {
   var emnerCard = document.getElementById('step0EmnerCard');
   var hasEmner = nettPrograms.length > 0 || looseEmner.length > 0;
   emnerCard.style.display = hasEmner ? '' : 'none';
+  /* Tertiærknappen ligger nå utenfor kortet (design.md §3.1), så den må følge
+     kortets synlighet eksplisitt. */
+  var addEmnerBtn = document.getElementById('step0AddEmnerBtn');
+  if (addEmnerBtn) addEmnerBtn.style.display = hasEmner ? '' : 'none';
   if (!hasEmner) document.getElementById('step0EmnerList').innerHTML = '';
 
   if (hasEmner) {
@@ -2081,7 +2150,7 @@ function renderStep0() {
     });
     looseEmner.forEach(function(e) { emnerCount++; emnerTotal += (e.price || 0); });
     var emnerMetaEl = document.getElementById('step0EmnerMeta');
-    if (emnerMetaEl) emnerMetaEl.textContent = emnerCount + ' emne' + (emnerCount !== 1 ? 'r' : '') + ' · ' + emnerTotal.toLocaleString('nb-NO') + ' kr';
+    if (emnerMetaEl) emnerMetaEl.textContent = emnerCount + ' emne' + (emnerCount !== 1 ? 'r' : '') + ' \u00b7 betales n\u00e5';
 
     var emnerHtml = '';
     nettPrograms.forEach(function(p) {
@@ -2127,40 +2196,122 @@ function s0RemoveEmne(programId, code, isLoose) {
 
 var ICON_UP    = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 var ICON_DOWN  = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M19 12l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var ICON_DRAG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
+var ICON_TRASH = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 var ICON_X_PLAIN = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
-var ICON_INFO_SB = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="display:block;"><circle cx="12" cy="12" r="9.2" stroke="#4e0000" stroke-width="1.7"/><path d="M12 11v5.2" stroke="#4e0000" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="7.9" r="1.05" fill="#4e0000"/></svg>';
+var ICON_INFO_SB = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="display:block;"><circle cx="12" cy="12" r="9.2" stroke="#46000A" stroke-width="1.7"/><path d="M12 11v5.2" stroke="#46000A" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="7.9" r="1.05" fill="#46000A"/></svg>';
 
 /* Delt kort-oppbygging for redigerbare program/emner-lister (Studievalg + Betaling) */
-function buildPrioritetCardHtml(p, idx, total, removeFn, moveFn) {
-  var badges = '';
-  if (p.startSemester) badges += '<span class="s0-badge">' + p.startSemester + '</span>';
-  if (p.city) badges += '<span class="s0-badge s0-badge-city">' + p.city + '</span>';
+function nivaBadgeHtml(level) {
+  if (!level) return '';
+  var cls = level === 'Fagskole' ? 's0-badge s0-badge-fagskole' : 's0-badge s0-badge-niva';
+  return '<span class="' + cls + '">' + level + '</span>';
+}
 
+/* Én rad per program, hårstrek-skilt i felles ramme (design.md §3.1).
+   Nivået ligger i en tagg, så navnet står uten nivåprefiks. */
+function buildPrioritetCardHtml(p, idx, total, removeFn, moveFn) {
+  var badges = nivaBadgeHtml(p.level);
+  if (p.city) badges += '<span class="s0-badge s0-badge-city">' + p.city + '</span>';
+  if (p.startSemester) badges += '<span class="s0-badge">' + p.startSemester + '</span>';
+
+  /* Metalinjen i mockupen er «studiepoeng · varighet gjennomforing» – ingen pris. */
   var meta = '';
   if (p.points) meta += studiepoengTekst(p.points);
-  if (p.level === 'Bachelor') meta += (meta ? ' · ' : '') + '3 år';
-  else if (p.level === 'Master') meta += (meta ? ' · ' : '') + '2 år';
+  var varighet = p.level === 'Bachelor' ? '3 \u00e5r' : (p.level === 'Master' ? '2 \u00e5r' : '');
+  var gjf = (p.studyForm || p.gjennomforing || 'heltid').toString().toLowerCase();
+  if (varighet) meta += (meta ? ' \u00b7 ' : '') + varighet + ' ' + gjf;
+  else meta += (meta ? ' \u00b7 ' : '') + gjf;
 
-  var displayName = programVisningsnavn(p);
   var safeId = p.id ? p.id.toString().replace(/'/g, "\\'") : idx.toString();
-  var upBtn = idx > 0
-    ? '<button class="s0-reorder-btn" onclick="' + moveFn + '(\'' + safeId + '\',\'up\')" aria-label="Flytt opp">' + ICON_UP + '</button>'
-    : '<span class="s0-reorder-btn-disabled">' + ICON_UP + '</span>';
-  var downBtn = idx < total - 1
-    ? '<button class="s0-reorder-btn" onclick="' + moveFn + '(\'' + safeId + '\',\'down\')" aria-label="Flytt ned">' + ICON_DOWN + '</button>'
-    : '<span class="s0-reorder-btn-disabled">' + ICON_DOWN + '</span>';
+  var navn = p.name;
 
-  return '<div class="s0-prioritet-card">'
-    + '<div class="s0-prioritet-header">'
-    + '<span class="s0-prioritet-label">' + (idx + 1) + '. prioritet</span>'
-    + '<div class="s0-card-actions">' + upBtn + downBtn
-    + '<button class="s0-remove-btn" onclick="' + removeFn + '(\'' + safeId + '\')" aria-label="Fjern">' + ICON_X_PLAIN + '</button>'
-    + '</div>'
-    + '</div>'
+  function icon(dis, dir, label, svg) {
+    return '<button class="s0-icon-btn"' + (dis ? ' disabled' : '')
+      + ' onclick="' + moveFn + '(\'' + safeId + '\',\'' + dir + '\')" aria-label="' + label + '">' + svg + '</button>';
+  }
+
+  return '<div class="s0-prio-row" draggable="true" data-progid="' + safeId + '"'
+    + ' ondragstart="s0DragStart(event,\'' + safeId + '\')" ondragover="s0DragOver(event)"'
+    + ' ondragleave="s0DragLeave(event)" ondrop="s0Drop(event)" ondragend="s0DragEnd(event)">'
+    + '<span class="s0-drag-handle">' + ICON_DRAG + '</span>'
+    + '<div class="s0-prio-main">'
+    + '<div class="s0-prioritet-label">' + (idx + 1) + '. prioritet</div>'
+    + '<div class="s0-program-name">' + navn + '</div>'
     + (badges ? '<div class="s0-badges">' + badges + '</div>' : '')
-    + '<div class="s0-program-name">' + displayName + '</div>'
     + (meta ? '<div class="s0-program-meta">' + meta + '</div>' : '')
+    + '</div>'
+    + '<div class="s0-prio-actions">'
+    + icon(idx === 0, 'up', 'Flytt ' + navn + ' opp', ICON_UP)
+    + icon(idx === total - 1, 'down', 'Flytt ' + navn + ' ned', ICON_DOWN)
+    + '<button class="s0-icon-btn" onclick="' + removeFn + '(\'' + safeId + '\')" aria-label="Fjern ' + navn + ' fra s\u00f8knaden">' + ICON_TRASH + '</button>'
+    + '</div>'
     + '</div>';
+}
+
+/* ── Drag-and-drop for prioritering (design.md §3.1) ──
+   Fungerer i tillegg til pilene; nummereringen oppdateres umiddelbart fordi
+   renderStep0()/renderSidebar() kjører rett etter at rekkefølgen er skrevet. */
+var _s0DragId = null;
+
+function s0ClearDropMarks() {
+  var rows = document.querySelectorAll('.s0-prio-row.drop-target');
+  for (var i = 0; i < rows.length; i++) rows[i].classList.remove('drop-target');
+}
+
+function s0DragStart(ev, id) {
+  _s0DragId = id;
+  if (ev.dataTransfer) {
+    ev.dataTransfer.effectAllowed = 'move';
+    try { ev.dataTransfer.setData('text/plain', id); } catch (e) {}
+  }
+  var row = ev.currentTarget;
+  setTimeout(function () { row.classList.add('dragging'); }, 0);
+}
+
+function s0DragOver(ev) {
+  if (!_s0DragId) return;
+  ev.preventDefault();
+  if (ev.dataTransfer) ev.dataTransfer.dropEffect = 'move';
+  var row = ev.currentTarget;
+  if (row.getAttribute('data-progid') === _s0DragId) return;
+  s0ClearDropMarks();
+  row.classList.add('drop-target');
+}
+
+function s0DragLeave(ev) { ev.currentTarget.classList.remove('drop-target'); }
+
+function s0Drop(ev) {
+  ev.preventDefault();
+  var targetId = ev.currentTarget.getAttribute('data-progid');
+  s0ClearDropMarks();
+  if (_s0DragId && targetId !== _s0DragId) moveProgramToId(_s0DragId, targetId);
+  _s0DragId = null;
+}
+
+function s0DragEnd(ev) {
+  _s0DragId = null;
+  s0ClearDropMarks();
+  if (ev && ev.currentTarget) ev.currentTarget.classList.remove('dragging');
+}
+
+/* Flytt et program til posisjonen til et annet. Nettprogrammene beholder
+   sine plasser i den fulle listen — bare campus-plassene omrokkeres. */
+function moveProgramToId(dragId, targetId) {
+  var b = getBasket();
+  var all = b.programs || [];
+  var campus = all.filter(function (p) { return p.type !== 'nett'; });
+  var from = campus.findIndex(function (p) { return p.id === dragId; });
+  var to = campus.findIndex(function (p) { return p.id === targetId; });
+  if (from === -1 || to === -1 || from === to) return;
+  campus.splice(to, 0, campus.splice(from, 1)[0]);
+  var slots = [];
+  all.forEach(function (p, i) { if (p.type !== 'nett') slots.push(i); });
+  slots.forEach(function (slot, i) { all[slot] = campus[i]; });
+  b.programs = all;
+  saveBasket(b);
+  renderStep0();
+  renderSidebar();
 }
 
 /* Emnekortene skal se like ut overalt: emnekode og studiepoeng, navn, oppstart,
@@ -2209,7 +2360,7 @@ function buildEmnegroupHtml(label, meta, emner, groupId, isLoose, removeFn, show
   return '<div class="s0-emnegroup">'
     + '<div class="s0-emnegroup-header" onclick="toggleS0EmnegroupOpen(this)">'
     + '<div><span class="s0-emnegroup-name">' + label + '</span><span class="s0-emnegroup-count">' + meta + '</span></div>'
-    + '<svg class="s0-emnegroup-chevron open" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    + '<svg class="s0-emnegroup-chevron open" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#5C5C5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
     + '</div>'
     + '<div class="s0-emnegroup-list open">' + rows + '</div>'
     + '</div>';
@@ -2331,9 +2482,9 @@ function formatPhoneWithPrefix(num) {
 /* Steg 3: read-only personopplysninger når innlogget med FEIDE */
 var _step3Editing = false;
 
-var PERSON_AVATAR_SVG = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#1a3fb0" stroke-width="1.8"/><path d="M4 20c0-4 3.5-6 8-6s8 2 8 6" stroke="#1a3fb0" stroke-width="1.8" stroke-linecap="round"/></svg>';
-var FEIDE_BADGE_CHECK_SVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#666" stroke-width="1.6"/><path d="M8.5 12.5l2.3 2.3 4.7-5.6" stroke="#666" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-var PERSON_EDIT_PENCIL_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 20h4L19.5 8.5a2.1 2.1 0 000-3L18 4a2.1 2.1 0 00-3 0L4 15v5z" stroke="#06f" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+var PERSON_AVATAR_SVG = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#083D8F" stroke-width="1.8"/><path d="M4 20c0-4 3.5-6 8-6s8 2 8 6" stroke="#083D8F" stroke-width="1.8" stroke-linecap="round"/></svg>';
+var FEIDE_BADGE_CHECK_SVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#5C5C5C" stroke-width="1.6"/><path d="M8.5 12.5l2.3 2.3 4.7-5.6" stroke="#5C5C5C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var PERSON_EDIT_PENCIL_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M4 20h4L19.5 8.5a2.1 2.1 0 000-3L18 4a2.1 2.1 0 00-3 0L4 15v5z" stroke="#0A4FB8" stroke-width="1.8" stroke-linejoin="round"/></svg>';
 var AUTH_LOCK_SVG = '<svg width="13" height="13" viewBox="0 0 32 32" fill="none" style="flex-shrink:0;"><circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="2.2"/><rect x="11" y="15" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.8"/><path d="M13 15v-2.5a3 3 0 016 0V15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="16" cy="19" r="1.2" fill="currentColor"/></svg>';
 
 function renderStep3Person() {
@@ -2498,8 +2649,8 @@ var _sharedDateIdx = null;
 var _individualDates = {};
 var _activeEmneIdx = 0;
 
-var CLOCK_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0"><circle cx="12" cy="12" r="9" stroke="#888" stroke-width="1.8"/><path d="M12 7v5l3 3" stroke="#888" stroke-width="1.8" stroke-linecap="round"/></svg>';
-var CHECK_SVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="flex-shrink:0"><path d="M20 6L9 17l-5-5" stroke="#15a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var CLOCK_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0"><circle cx="12" cy="12" r="9" stroke="#5C5C5C" stroke-width="1.8"/><path d="M12 7v5l3 3" stroke="#5C5C5C" stroke-width="1.8" stroke-linecap="round"/></svg>';
+var CHECK_SVG = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="flex-shrink:0"><path d="M20 6L9 17l-5-5" stroke="#166600" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function getAllCartEmner() {
   var b = getBasket();
@@ -2544,7 +2695,7 @@ function renderOppstartEmnerList(emner) {
     return '<div class="s0-emnegroup">'
       + '<div class="s0-emnegroup-header" onclick="toggleS0EmnegroupOpen(this)">'
       + '<div><span class="s0-emnegroup-name">' + g.label + '</span><span class="s0-emnegroup-count">' + meta + '</span></div>'
-      + '<svg class="s0-emnegroup-chevron open" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      + '<svg class="s0-emnegroup-chevron open" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#5C5C5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
       + '</div>'
       + '<div class="s0-emnegroup-list open">' + rows + '</div>'
       + '</div>';
@@ -2931,7 +3082,7 @@ function renderBetalingRabattSection() {
     var total = allEmner.reduce(function(s, e) { return s + (e.price || 0); }, 0);
     var discountAmt = Math.round(total * _rabattPercent / 100);
     el.innerHTML = '<div class="s0-rabatt-applied">'
-      + '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" stroke="#7a5c56" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="7" r="1" fill="#7a5c56"/></svg>'
+      + '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" stroke="#5C5C5C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="7" r="1" fill="#5C5C5C"/></svg>'
       + '<span><strong style="font-weight:600;">' + _rabattCode.toLowerCase() + '</strong> &nbsp;&minus;' + discountAmt.toLocaleString('nb-NO') + ',-</span>'
       + '<button class="s0-rabatt-applied-remove" onclick="clearRabattkode()">Fjern</button></div>';
   } else {
@@ -2961,7 +3112,7 @@ function applyRabattkode() {
 
   if (!valid) {
     var fb = document.getElementById('rabattkodeFeedback');
-    if (fb) { fb.style.display = 'block'; fb.innerHTML = '<span style="color:#b60202;">Ugyldig rabattkode.</span>'; }
+    if (fb) { fb.style.display = 'block'; fb.innerHTML = '<span style="color:#AF0018;">Ugyldig rabattkode.</span>'; }
   }
 }
 
@@ -3171,7 +3322,7 @@ function renderPersonReadOnly() {
   var feideCard = '';
   if (_feideLoggedIn) {
     var initials = ((fornavn[0] || '') + (etternavn[0] || '')).toUpperCase();
-    var lockIcon = '<svg width="11" height="11" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="#4e0000" stroke-width="2.2"/><rect x="11" y="15" width="10" height="7" rx="1.5" stroke="#4e0000" stroke-width="1.8"/><path d="M13 15v-2.5a3 3 0 016 0V15" stroke="#4e0000" stroke-width="1.8" stroke-linecap="round"/><circle cx="16" cy="19" r="1.2" fill="#4e0000"/></svg>';
+    var lockIcon = '<svg width="11" height="11" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="#46000A" stroke-width="2.2"/><rect x="11" y="15" width="10" height="7" rx="1.5" stroke="#46000A" stroke-width="1.8"/><path d="M13 15v-2.5a3 3 0 016 0V15" stroke="#46000A" stroke-width="1.8" stroke-linecap="round"/><circle cx="16" cy="19" r="1.2" fill="#46000A"/></svg>';
     feideCard = '<div class="feide-user-card">'
       + '<div class="feide-user-avatar">' + initials + '</div>'
       + '<div class="feide-user-info">'
@@ -3183,9 +3334,9 @@ function renderPersonReadOnly() {
   el.innerHTML =
     feideCard
     + '<div class="person-info-view">'
-    + '<div><span style="color:#888;">Navn: </span><span>' + (fornavn + ' ' + etternavn).trim() + '</span></div>'
-    + '<div><span style="color:#888;">Fødselsnummer: </span><span>' + fnr + '</span></div>'
-    + '<div><span style="color:#888;">Adresse: </span><span>' + adr + '</span></div>'
+    + '<div><span style="color:#5C5C5C;">Navn: </span><span>' + (fornavn + ' ' + etternavn).trim() + '</span></div>'
+    + '<div><span style="color:#5C5C5C;">Fødselsnummer: </span><span>' + fnr + '</span></div>'
+    + '<div><span style="color:#5C5C5C;">Adresse: </span><span>' + adr + '</span></div>'
     + '</div>'
     + '<button class="person-edit-btn" onclick="renderPersonEdit()">Rediger</button>';
 }
@@ -3265,7 +3416,7 @@ function renderStep5() {
 
   var progHtml = '';
   if (campusPrograms.length > 0) {
-    var ICON_INFO = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g clip-path="url(#clip0_s0_info)"><path d="M7.99984 7.33342C8.36803 7.33342 8.6665 7.63189 8.6665 8.00008V10.6667C8.6665 11.0349 8.36803 11.3334 7.99984 11.3334C7.63165 11.3334 7.33317 11.0349 7.33317 10.6667V8.00008C7.33317 7.63189 7.63165 7.33342 7.99984 7.33342Z" fill="#888"/><path d="M7.99652 4.66675C7.63016 4.66675 7.33317 4.96523 7.33317 5.33342C7.33317 5.7016 7.63016 6.00008 7.99652 6.00008H8.00315C8.36951 6.00008 8.6665 5.7016 8.6665 5.33342C8.6665 4.96523 8.36951 4.66675 8.00315 4.66675H7.99652Z" fill="#888"/><path fill-rule="evenodd" clip-rule="evenodd" d="M0.666504 8.00008C0.666504 3.94999 3.94975 0.666748 7.99984 0.666748C12.0499 0.666748 15.3332 3.94999 15.3332 8.00008C15.3332 12.0502 12.0499 15.3334 7.99984 15.3334C3.94975 15.3334 0.666504 12.0502 0.666504 8.00008ZM7.99984 2.00008C4.68613 2.00008 1.99984 4.68637 1.99984 8.00008C1.99984 11.3138 4.68613 14.0001 7.99984 14.0001C11.3135 14.0001 13.9998 11.3138 13.9998 8.00008C13.9998 4.68637 11.3135 2.00008 7.99984 2.00008Z" fill="#888"/></g><defs><clipPath id="clip0_s0_info"><rect width="16" height="16" fill="white"/></clipPath></defs></svg>';
+    var ICON_INFO = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><g clip-path="url(#clip0_s0_info)"><path d="M7.99984 7.33342C8.36803 7.33342 8.6665 7.63189 8.6665 8.00008V10.6667C8.6665 11.0349 8.36803 11.3334 7.99984 11.3334C7.63165 11.3334 7.33317 11.0349 7.33317 10.6667V8.00008C7.33317 7.63189 7.63165 7.33342 7.99984 7.33342Z" fill="#5C5C5C"/><path d="M7.99652 4.66675C7.63016 4.66675 7.33317 4.96523 7.33317 5.33342C7.33317 5.7016 7.63016 6.00008 7.99652 6.00008H8.00315C8.36951 6.00008 8.6665 5.7016 8.6665 5.33342C8.6665 4.96523 8.36951 4.66675 8.00315 4.66675H7.99652Z" fill="#5C5C5C"/><path fill-rule="evenodd" clip-rule="evenodd" d="M0.666504 8.00008C0.666504 3.94999 3.94975 0.666748 7.99984 0.666748C12.0499 0.666748 15.3332 3.94999 15.3332 8.00008C15.3332 12.0502 12.0499 15.3334 7.99984 15.3334C3.94975 15.3334 0.666504 12.0502 0.666504 8.00008ZM7.99984 2.00008C4.68613 2.00008 1.99984 4.68637 1.99984 8.00008C1.99984 11.3138 4.68613 14.0001 7.99984 14.0001C11.3135 14.0001 13.9998 11.3138 13.9998 8.00008C13.9998 4.68637 11.3135 2.00008 7.99984 2.00008Z" fill="#5C5C5C"/></g><defs><clipPath id="clip0_s0_info"><rect width="16" height="16" fill="white"/></clipPath></defs></svg>';
     var faktorBadge = '<div class="s0-faktor-badge">Faktureres per semester<div class="s0-info-wrap"><button class="s0-info-btn" onclick="toggleFaktorTooltip(event)" aria-label="Mer informasjon">' + ICON_INFO + '</button><div class="s0-tooltip" id="faktorTooltip">Studieavgiften deles i to like betalinger — én ved semesterstart om høsten og én om våren.</div></div></div>';
     progHtml += '<div class="summary-section-header" style="margin-bottom:16px;"><span class="summary-label">Hele program</span>' + faktorBadge + '</div>';
     campusPrograms.forEach(function(p, idx) {
@@ -3427,7 +3578,7 @@ function buildEmnerGroup(label, emner) {
   var html = '<div class="summary-emner-group" style="margin-bottom:8px;">'
     + '<div class="summary-emner-header" onclick="toggleSummaryGroup(this)">'
     + '<div><span class="seg-label">' + label + '</span><br><span class="summary-emner-count">' + emner.length + ' emne' + (emner.length > 1 ? 'r' : '') + '</span></div>'
-    + '<svg class="seg-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    + '<svg class="seg-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#5C5C5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
     + '</div><div class="summary-emner-list">';
   emner.forEach(function(e) {
     html += '<div class="summary-emne-row"><div class="summary-emne-info">'
@@ -3634,7 +3785,7 @@ function renderSidebar() {
     var total = allEmner.reduce(function(s, e) { return s + (e.price || 0); }, 0);
     var after = _rabattPercent > 0 ? total - Math.round(total * _rabattPercent / 100) : total;
     var priceStr = _rabattPercent > 0
-      ? '<span style="text-decoration:line-through;color:#aaa;">' + total.toLocaleString('nb-NO') + '</span> <strong>' + after.toLocaleString('nb-NO') + '</strong>'
+      ? '<span style="text-decoration:line-through;color:#5C5C5C;">' + total.toLocaleString('nb-NO') + '</span> <strong>' + after.toLocaleString('nb-NO') + '</strong>'
       : total.toLocaleString('nb-NO');
     if (progHtml) emnerHtml += '<div class="sb-divider"></div>';
     var emneOrd = allEmner.length === 1 ? ' emne' : ' emner';
@@ -3688,7 +3839,7 @@ function buildSidebarGroup(label, emner) {
     + '<div class="summary-emner-header" onclick="toggleSummaryGroup(this)">'
     + '<div><span class="seg-label" style="display:block;font-size:15px;font-weight:400;margin-bottom:2px;">' + label + '</span>'
     + '<span class="summary-emner-count">' + emner.length + ' emne' + (emner.length > 1 ? 'r' : '') + '</span></div>'
-    + '<svg class="seg-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    + '<svg class="seg-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#5C5C5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
     + '</div><div class="summary-emner-list">'
     + emner.map(function(e) {
         return '<div class="summary-emne-row"><div class="summary-emne-info">'
