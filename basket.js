@@ -668,6 +668,8 @@ function shortPts(str) {
 function gjennomforingSuffix(o) {
   if (!o || !o.studieform) return '';
   var kode = o.programCode || o.studiekode;
+  /* Studiekoden vises bevisst: studentene trenger den når de søker
+     utdanningsstøtte hos Lånekassen. */
   return ' · ' + o.studieform + (kode ? ' [' + kode + ']' : '');
 }
 

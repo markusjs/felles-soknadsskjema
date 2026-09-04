@@ -718,7 +718,7 @@ body {
 .s0-emnegroup-chevron.open { transform: rotate(180deg); }
 .s0-emnegroup-list { display: none; }
 .s0-emnegroup-list.open { display: block; }
-.s0-emne-row { padding: 18px 22px; border-top: 1px solid #E6E6E6; position: relative; }
+.s0-emne-row { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 18px 44px 18px 24px; border-top: 1px solid #E6E6E6; }
 .s0-emnegroup-list > .s0-emne-row:first-of-type { border-top: none; }
 .s0-badge-nett {
   display: inline-flex; align-items: center;
@@ -726,7 +726,7 @@ body {
   font-size: 12px; font-weight: 600; line-height: 1.2;
   background: #7A3FD1; border: none; color: #fff;
 }
-.s0-emne-change { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; background: none; border: none; padding: 0; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 500; color: #0A4FB8; text-decoration: underline; text-underline-offset: 3px; }
+.s0-emne-change { display: inline-flex; align-items: center; gap: 6px; background: none; border: none; padding: 0; cursor: pointer; font-family: 'Graphik', sans-serif; font-size: 14px; font-weight: 500; color: #0A4FB8; text-decoration: underline; }
 .s0-emne-change:hover { color: #083D8F; }
 .s0-emne-remove { position: absolute; top: 16px; right: 18px; background: none; border: none; cursor: pointer; padding: 4px; color: #5C5C5C; border-radius: 999px; }
 .s0-emne-remove:hover { background: #F5F5F5; color: #AF0018; }
@@ -1050,6 +1050,9 @@ body {
 .sbx-total-label { font-size: 14px; font-weight: 600; color: #1A1A1A; }
 .sbx-total-sum { font-family: 'Produkt','Source Serif 4',Georgia,serif; font-size: 22px; font-weight: 600; color: #46000A; }
 .sbx-note { font-size: 13px; color: #5C5C5C; margin: 8px 4px 4px; }
+
+/* Skjermspesifikke tillegg i emneraden (oppstart-tagg, «Endre …»-knapp) */
+.s0-emne-extras { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
 </style>
 </head>
 <body>
@@ -1084,6 +1087,15 @@ body {
       <h1 class="s0-title">Søknad</h1>
       <p class="s0-intro">Du søker på hele studieprogram og enkeltemner i samme søknad.
         Rekkefølgen på programmene er prioriteringen din — dra dem, eller bruk pilene.</p>
+      <div class="s0-faq">
+        <button class="s0-faq-header" onclick="toggleS0Faq(this)">
+          <span class="s0-faq-question">Kan jeg endre rekkefølgen senere?</span>
+          <svg class="s0-faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="s0-faq-body">
+          <p class="s0-faq-answer">Ja, i Mitt Kristiania kan du omprioritere søknadsvalgene dine, legge til nye valg eller trekke søknaden når du ønsker.</p>
+        </div>
+      </div>
       <div class="s0-card">
         <div class="s0-section-header">
           <span class="s0-section-label">Hele program</span>
@@ -1106,15 +1118,6 @@ body {
         <div class="s0-search-results" id="programSearchResults"></div>
       </div>
 
-        <div class="s0-faq">
-        <button class="s0-faq-header" onclick="toggleS0Faq(this)">
-          <span class="s0-faq-question">Kan jeg endre rekkefølgen senere?</span>
-          <svg class="s0-faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-        <div class="s0-faq-body">
-          <p class="s0-faq-answer">Ja, i Mitt Kristiania kan du omprioritere søknadsvalgene dine, legge til nye valg eller trekke søknaden når du ønsker.</p>
-        </div>
-      </div>
 
       <div class="s0-card" id="step0EmnerCard" style="display:none;margin-top:16px;">
         <div class="s0-section-header">
@@ -2166,10 +2169,10 @@ function renderStep0() {
       var safeId = p.id ? p.id.toString().replace(/'/g, "\\'") : '';
       var meta = (p.points ? studiepoengTekst(p.points) + ' · ' : '') + (p.emner || []).length + ' emne' + ((p.emner || []).length !== 1 ? 'r' : '')
         + gjennomforingSuffix(p);
-      emnerHtml += buildEmnegroupHtml(p.name, meta, p.emner || [], safeId, false, 's0RemoveEmne', false, 's0EndreProgram');
+      emnerHtml += buildEmnegroupHtml(p.name, meta, p.emner || [], safeId, false, 's0RemoveEmne', true, 's0EndreProgram');
     });
     if (looseEmner.length > 0) {
-      emnerHtml += buildEmnegroupHtml('Emner uten tilknytning til studieprogram', looseEmner.length + ' emne' + (looseEmner.length !== 1 ? 'r' : ''), looseEmner, null, true, 's0RemoveEmne', false, 's0EndreProgram');
+      emnerHtml += buildEmnegroupHtml('Emner uten tilknytning til studieprogram', looseEmner.length + ' emne' + (looseEmner.length !== 1 ? 'r' : ''), looseEmner, null, true, 's0RemoveEmne', true, 's0EndreProgram');
     }
     document.getElementById('step0EmnerList').innerHTML = emnerHtml;
   }
@@ -2340,28 +2343,37 @@ function emneKortPrisHtml(e) {
     : '<span class="s0-emne-price">' + price.toLocaleString('nb-NO') + ',-</span>';
 }
 
-function emneKortInnholdHtml(e, oppstartHtml, priceHtml) {
-  return '<div class="s0-badges">'
-    + '<span class="s0-badge-nett">Nett</span>'
-    + (oppstartHtml || '')
+/* Én felles emnerad for hele appen: «#kode · studiepoeng · tilknytning» over
+   navnet, med Nett-tagg og pris til høyre — samme form som på Betaling.
+   extrasHtml er skjermspesifikt tillegg (oppstart-tagg, «Endre …»-knapp). */
+function emneKortInnholdHtml(e, extrasHtml, priceHtml, tilknytning) {
+  var label = [];
+  if (e.code) label.push('#' + e.code);
+  var pts = e.points || e.pts;
+  if (pts) label.push(studiepoengTekst(pts));
+  if (tilknytning) label.push(tilknytning);
+
+  return '<div class="bt-emne-main">'
+    + '<div class="bt-emne-label">' + label.join(' \u00b7 ') + '</div>'
+    + '<div class="bt-emne-name">' + (e.name || '') + '</div>'
+    + (extrasHtml ? '<div class="s0-emne-extras">' + extrasHtml + '</div>' : '')
     + '</div>'
-    + '<div class="s0-emne-name">' + e.name + '</div>'
-    + '<div class="s0-emne-row-bottom">'
-    + '<span class="s0-emne-meta">' + (e.code ? '#' + e.code + ' · ' : '') + (e.pts || '7,5')
-    + ' studiepoeng' + gjennomforingSuffix(e) + '</span>'
+    + '<div class="bt-emne-right">'
+    + '<span class="s0-badge s0-badge-nett">Nett</span>'
     + (priceHtml || '')
     + '</div>';
 }
 
-function buildEmneRowHtml(e, removeFnCall, showPrice, changeFnCall) {
+function buildEmneRowHtml(e, removeFnCall, showPrice, changeFnCall, tilknytning) {
   var oppstart = e.startDate ? e.startDate : (e.startSemester ? e.startSemester : '');
-  /* Oppstart står som merke ved siden av «Nett», ikke som egen linje. */
-  var oppstartHtml = oppstart ? '<span class="s0-badge">Oppstart ' + oppstart + '</span>' : '';
+  var extras = oppstart ? '<span class="s0-badge">Oppstart ' + oppstart + '</span>' : '';
+  if (changeFnCall) {
+    extras += '<button class="s0-emne-change" onclick="' + changeFnCall + '">Endre studieprogram</button>';
+  }
   /* Sletting finnes bare i handlekurven/Søknad-panelet og på Studievalg. */
   return '<div class="s0-emne-row">'
     + (removeFnCall ? '<button class="s0-emne-remove" onclick="' + removeFnCall + '" aria-label="Fjern">' + ICON_X_PLAIN + '</button>' : '')
-    + emneKortInnholdHtml(e, oppstartHtml, showPrice ? emneKortPrisHtml(e) : '')
-    + (changeFnCall ? '<button class="s0-emne-change" onclick="' + changeFnCall + '">Endre studieprogram</button>' : '')
+    + emneKortInnholdHtml(e, extras, showPrice ? emneKortPrisHtml(e) : '', tilknytning)
     + '</div>';
 }
 
@@ -2372,7 +2384,8 @@ function buildEmnegroupHtml(label, meta, emner, groupId, isLoose, removeFn, show
     var safeCode = e.code ? e.code.toString().replace(/'/g, "\\'") : '';
     var args = "(" + (groupId ? "'" + groupId + "'" : 'null') + ",'" + safeCode + "'," + (isLoose ? 'true' : 'false') + ")";
     var removeFnCall = removeFn + args;
-    return buildEmneRowHtml(e, removeFnCall, showPrice, changeFn ? changeFn + args : null);
+    return buildEmneRowHtml(e, removeFnCall, showPrice, changeFn ? changeFn + args : null,
+      isLoose ? 'enkeltemne' : label);
   }).join('');
   return '<div class="s0-emnegroup">'
     + '<div class="s0-emnegroup-header" onclick="toggleS0EmnegroupOpen(this)">'
@@ -2998,14 +3011,9 @@ function btEmneRowHtml(x) {
   label.push(x.loose ? 'enkeltemne' : (x.groupName || ''));
 
   return '<div class="bt-emne-row">'
-    + '<div class="bt-emne-main">'
-    + '<div class="bt-emne-label">' + label.filter(Boolean).join(' \u00b7 ') + '</div>'
-    + '<div class="bt-emne-name">' + (e.name || '') + '</div>'
-    + '</div>'
-    + '<div class="bt-emne-right">'
-    + '<span class="s0-badge s0-badge-nett">Nett</span>'
-    + '<span class="bt-emne-price">' + (e.price || 0).toLocaleString('nb-NO') + ' kr</span>'
-    + '</div>'
+    + emneKortInnholdHtml(e, '',
+        '<span class="bt-emne-price">' + (e.price || 0).toLocaleString('nb-NO') + ' kr</span>',
+        x.loose ? 'enkeltemne' : (x.groupName || ''))
     + '</div>';
 }
 
