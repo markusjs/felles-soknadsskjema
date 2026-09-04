@@ -431,15 +431,9 @@ body {
    radioknappen og ned binder de to sammen. */
 .payment-expand { display: none; position: relative; background: #FCF8F5; border-top: 1px solid #F9CCD2; padding: 18px 20px 20px 48px; }
 .payment-expand.open { display: block; }
-.payment-expand.open::before {
-  content: ''; position: absolute; left: 25px; top: 16px; bottom: 20px;
-  width: 2px; border-radius: 2px; background: #F9CCD2;
-}
 #pd-body .payment-expand.open { background: transparent; border-top: none; padding: 0; }
-#pd-body .payment-expand.open::before { display: none; }
 @media (max-width: 520px) {
   .payment-expand { padding-left: 40px; }
-  .payment-expand.open::before { left: 21px; }
 }
 
 /* Card fields */
