@@ -38,7 +38,9 @@ var COMPLETED_BY_PROGRAM = [
     level: 'Bachelor', totalCredits: 180,
     studieform: 'Deltid',
     completed: [{ code: '6277', pts: 7.5 }, { code: '6024', pts: 7.5 },
-                { code: '6340', pts: 7.5 }, { code: '6336', pts: 7.5 }] },
+                { code: '6340', pts: 7.5 }, { code: '6336', pts: 7.5 }],
+    /* Emner studenten er påmeldt, men ikke ferdig med. */
+    active: [{ code: '6025', pts: 7.5 }] },
   { id: 'anvendt-psykologi-nett',
     name: 'Anvendt psykologi',
     href: '/studier/nettstudier/bachelor/bachelor-i-anvendt-psykologi/',
@@ -60,8 +62,27 @@ var COMPLETED_COURSE_CODES = COMPLETED_BY_PROGRAM.reduce(function(acc, p) {
   return acc.concat(p.codes);
 }, []);
 
+/* Emner studenten alt er aktiv i – kan ikke bestilles på nytt. */
+var ACTIVE_COURSE_CODES = COMPLETED_BY_PROGRAM.reduce(function(acc, p) {
+  return acc.concat((p.active || []).map(function(e) { return e.code; }));
+}, []);
+
 function isCompletedCourse(code) {
   return COMPLETED_COURSE_CODES.indexOf(String(code)) > -1;
+}
+
+function isActiveCourse(code) {
+  return ACTIVE_COURSE_CODES.indexOf(String(code)) > -1;
+}
+
+/* Emner som blokkerer søknaden: bestått eller allerede påbegynt. Returnerer
+   'bestatt' | 'aktiv' | null. Gjelder bare innloggede – vi kjenner ikke
+   studiehistorikken til anonyme besøkende. */
+function emneKonflikt(code) {
+  if (!getAuthState()) return null;
+  if (isCompletedCourse(code)) return 'bestatt';
+  if (isActiveCourse(code)) return 'aktiv';
+  return null;
 }
 
 /* Studieprogrammer studenten har påbegynt: har minst ett bestått emne.
@@ -142,14 +163,49 @@ var BASKET_CSS = '\
 .hk-card-right{display:flex;align-items:center;gap:8px;flex-shrink:0}\
 .hk-badge{font-size:12px;font-weight:600;padding:4px 11px;border-radius:999px;white-space:nowrap;line-height:16px;border:none;color:#fff}\
 .hk-badge-sem{background:#3D3D3D;color:#fff}\
-.hk-badge-city{background:#0A4FB8;color:#fff}\
+.hk-badge-city{background:#AF0018;color:#fff}\
 .hk-badge-nett{background:#7A3FD1;color:#fff}\
-.hk-trash{background:#F2F7FF;border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;color:#0A4FB8;transition:background .15s,color .15s;flex-shrink:0}\
-.hk-trash:hover{background:#E0EBFE;color:#083D8F}\
+.hk-step{display:flex;flex-direction:column;gap:16px;padding:4px 0}\
+.hk-step-back{display:inline-flex;align-items:center;gap:8px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-size:17px;color:#1A1A1A;align-self:flex-start}\
+.hk-step-back:hover{color:#AF0018}\
+.hk-step-question{font-size:22px;font-weight:600;color:#1A1A1A;line-height:1.25;margin-bottom:6px}\
+.hk-step-sub{font-size:15px;color:#5C5C5C;line-height:1.4;margin:0}\
+.hk-step-cards{display:flex;flex-direction:column;gap:8px}\
+.hk-step-card{border:1.5px solid #D4D4D4;border-radius:8px;padding:18px 20px;cursor:pointer;display:flex;align-items:flex-start;gap:14px;transition:border-color .15s,background .15s}\
+.hk-step-card:hover{background:#F5F5F5}\
+.hk-step-card.selected{border-color:#0A4FB8;border-width:2px;padding:17px 19px;background:#F2F7FF}\
+.hk-step-dot{width:22px;height:22px;border:2px solid #767676;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px}\
+.hk-step-card.selected .hk-step-dot{border-color:#0A4FB8;border-width:2.5px}\
+.hk-step-card.selected .hk-step-dot::after{content:"";width:12px;height:12px;background:#0A4FB8;border-radius:50%}\
+.hk-step-title{font-size:18px;font-weight:600;color:#1A1A1A;line-height:1.25}\
+.hk-step-desc{font-size:14px;color:#5C5C5C;margin:4px 0 0;line-height:1.45}\
+.hk-step-feil{color:#AF0018;font-size:14px;margin:0;line-height:1.4}\
+.hk-step-h2{font-size:18px;font-weight:600;color:#1A1A1A;margin:0 0 12px}\
+.hk-phone-row{display:flex;gap:8px;align-items:stretch}\
+.hk-phone-prefix{display:flex;align-items:center;padding:0 14px;border:1px solid #767676;border-radius:8px;font-size:15px;color:#1A1A1A;flex-shrink:0}\
+.hk-input{flex:1;border:1px solid #767676;border-radius:8px;padding:12px 14px;font-size:15px;font-family:inherit;outline:none;min-height:48px;box-sizing:border-box;width:100%}\
+.hk-input:focus{border-color:#0A4FB8}\
+.hk-input.feil{border-color:#AF0018;background:#FCF8F5}\
+.hk-step-note{font-size:14px;color:#46000A;margin:0}\
+.hk-cb-row{display:flex;align-items:flex-start;gap:10px;cursor:pointer}\
+.hk-cb{width:22px;height:22px;border:2px solid #767676;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}\
+.hk-cb.checked{background:#0A4FB8;border-color:#0A4FB8}\
+.hk-cb-label{font-size:14px;color:#1A1A1A;line-height:1.45}\
+.hk-otp{display:flex;gap:10px}\
+.hk-otp input{width:56px;height:56px;border:1.5px solid #767676;border-radius:50%;font-size:22px;font-weight:600;text-align:center;font-family:inherit;outline:none;background:#fff}\
+.hk-otp input:focus{border-color:#0A4FB8}\
+.hk-feide-opt{display:flex;align-items:center;gap:12px;width:100%;border:1.5px solid #D4D4D4;border-radius:8px;padding:16px 18px;background:#fff;cursor:pointer;font-family:inherit;font-size:15px;font-weight:500;color:#1A1A1A;text-align:left}\
+.hk-feide-opt:hover{background:#F5F5F5}\
+.hk-feide-row{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #D4D4D4;border-radius:8px;padding:14px 16px}\
+.hk-feide-avatar{width:32px;height:32px;border-radius:50%;background:#46000A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15px;flex-shrink:0}\
+.k-delete{background:#F2F7FF;border:none;border-radius:50%;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;color:#0A4FB8;transition:background .15s,color .15s;flex-shrink:0}\
+.k-delete:hover{background:#E0EBFE;color:#083D8F}\
 .hk-chevron{background:none;border:none;cursor:pointer;padding:4px;transition:transform .2s;color:#1A1A1A}\
 .hk-emner-list{border-top:1px solid #E6E6E6;display:none}\
 .hk-emner-list.open{display:block}\
 .hk-card:has(.hk-emner-list.open) .hk-emner-list{border-top-color:#F9CCD2}\
+/* Alle emner i s\u00f8knaden har samme status \u2013 de er lagt til. Derfor b\u00e6rer\
+   hver rad den bl\u00e5 «lagt til»-markeringen, ikke bare den sist tilf\u00f8yde. */\
 .hk-emne-row{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid #E6E6E6;gap:8px;background:#fff}\
 .hk-emne-left{flex:1;min-width:0}\
 .hk-emne-oppstart{font-size:14px;font-weight:400;color:#1A1A1A;line-height:17.5px;margin-top:2px}\
@@ -161,7 +217,9 @@ var BASKET_CSS = '\
 .hk-emne-row:last-child{border-bottom:none}\
 .hk-card:has(.hk-emner-list.open) .hk-emne-row{border-bottom-color:#F9CCD2}\
 .hk-emner-list{overflow:hidden}\
-@keyframes hkEmneAdded{0%{background:#E0EBFE;box-shadow:inset 3px 0 0 #0A4FB8}70%{background:#E0EBFE;box-shadow:inset 3px 0 0 #0A4FB8}100%{background:transparent;box-shadow:inset 3px 0 0 transparent}}\
+/* Pulsen peker ut emnet som nettopp ble lagt til, og lander tilbake p\u00e5\
+   radens vanlige bl\u00e5 \u2013 den skrur ikke statusen av. */\
+@keyframes hkEmneAdded{0%{background:#E0EBFE}70%{background:#E0EBFE}100%{background:#fff}}\
 .hk-emne-row.hk-emne-added{animation:hkEmneAdded 2s ease}\
 .hk-emne-meta{font-size:14px;font-weight:400;color:#1A1A1A;line-height:17.5px}\
 .hk-emne-name{font-size:18px;font-weight:600;color:#1A1A1A;line-height:1.3}\
@@ -181,8 +239,8 @@ var BASKET_CSS = '\
 .hk-btn-small{display:inline-block !important;width:auto !important;padding:8px 16px !important;font-size:13px !important;white-space:nowrap;flex-shrink:0;text-decoration:none}\
 .hk-btn-outline{display:block;width:100%;text-align:center;padding:13px;border-radius:999px;font-size:16px;font-weight:600;cursor:pointer;border:1px solid #0A4FB8;color:#0A4FB8;background:none;font-family:inherit}\
 .hk-btn-outline:hover{background:#F2F7FF}\
-.hk-btn-primary{display:block;width:100%;text-align:center;padding:13px;border-radius:999px;font-size:16px;font-weight:600;cursor:pointer;border:none;background:#0A4FB8;color:#fff;text-decoration:none;font-family:inherit}\
-.hk-btn-primary:hover{background:#083D8F}\
+.hk-btn-primary{display:block;width:100%;text-align:center;padding:13px;border-radius:999px;font-size:16px;font-weight:600;cursor:pointer;border:none;background:#AF0018;color:#fff;text-decoration:none;font-family:inherit}\
+.hk-btn-primary:hover{background:#8C0013}\
 .hk-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:24px;padding:64px 16px 16px;color:#5C5C5C}\
 .hk-save-card{background:#FCF8F5;border:1px solid #F9CCD2;border-radius:8px;margin-bottom:16px;overflow:hidden}\
 #hk-save-slot .hk-save-card{margin-bottom:0}\
@@ -422,7 +480,7 @@ function injectSidebarPanel() {
     + '<div id="hk-save-slot"></div>'
     + '<div id="hk-auth-slot"></div>'
     // Fra handlekurven er studievalget allerede gjort → hopp rett til innlogging
-    + '<a href="' + getSokSkjemaPath() + '?steg=login" id="hk-cta-btn" class="hk-btn-primary" style="display:none;">Gå videre</a>'
+    + '<a href="' + getSokSkjemaPath() + '" id="hk-cta-btn" class="hk-btn-primary" style="display:none;">Gå videre</a>'
     + '</div>'
     + '</div>';
   document.body.insertAdjacentHTML('beforeend', html);
@@ -455,8 +513,8 @@ function closeSoknaderPanel() {
 }
 
 /* ─── Trash SVG ─── */
-var TRASH_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
-var LOCK_SVG_SMALL = '<svg width="11" height="11" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="#46000A" stroke-width="2.2"/><rect x="11" y="15" width="10" height="7" rx="1.5" stroke="#46000A" stroke-width="1.8"/><path d="M13 15v-2.5a3 3 0 016 0V15" stroke="#46000A" stroke-width="1.8" stroke-linecap="round"/><circle cx="16" cy="19" r="1.2" fill="#46000A"/></svg>';
+var TRASH_SVG = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';
+var LOCK_SVG_SMALL = '<svg width="11" height="11" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="13" stroke="#46000A" stroke-width="2.6"/><rect x="11" y="15" width="10" height="7" rx="1.5" stroke="#46000A" stroke-width="1.8"/><path d="M13 15v-2.5a3 3 0 016 0V15" stroke="#46000A" stroke-width="1.8" stroke-linecap="round"/><circle cx="16" cy="19" r="1.2" fill="#46000A"/></svg>';
 
 /* Innloggingsrad i bunnen av Søknader-panelet — vises alltid, uansett kurvinnhold */
 function buildAuthFooterRow(awaitingChoice) {
@@ -468,7 +526,7 @@ function buildAuthFooterRow(awaitingChoice) {
        forlate emnet. Det er også det fotnoten lover. */
     var loginBtn = awaitingChoice
       ? '<button class="hk-btn-outline hk-btn-small" onclick="hkLoginAndRetryChoice()">Logg inn</button>'
-      : '<a href="' + getSokSkjemaPath() + '?steg=login" class="hk-btn-outline hk-btn-small">Logg inn</a>';
+      : '<button class="hk-btn-outline hk-btn-small" onclick="hkVisLoggInn()">Logg inn</button>';
     return '<div class="hk-auth-row">'
       + '<p class="hk-auth-prompt">' + prompt + '</p>'
       + loginBtn
@@ -483,7 +541,7 @@ function buildAuthFooterRow(awaitingChoice) {
     + '<div class="hk-auth-info"><span class="hk-auth-name">' + auth.name + '</span>'
     + '<span class="hk-auth-source">' + LOCK_SVG_SMALL + methodLabel + '</span></div>'
     + '</div>'
-    + '<button class="hk-btn-outline hk-btn-small" onclick="clearAuthState()">Logg ut</button>'
+    /* Utlogging hører hjemme i søknadsskjemaet, ikke i panelet. */
     + '</div>';
 }
 var CHEVRON_DOWN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -681,7 +739,7 @@ function renderCampusCard(prog) {
     + '<div><div class="hk-card-meta">' + (prog.level || '') + (prog.points ? ' · ' + shortPts(prog.points) : '') + '</div>'
     + '<div class="hk-card-name">' + prog.name + '</div></div>'
     + '<div class="hk-card-right">' + badges
-    + '<button class="hk-trash" onclick="hkRemoveProgram(\'' + prog.id + '\')" aria-label="Fjern">' + TRASH_SVG + '</button>'
+    + '<button class="k-delete" onclick="hkRemoveProgram(\'' + prog.id + '\')" aria-label="Fjern">' + TRASH_SVG + '</button>'
     + '</div></div></div>';
 }
 
@@ -702,7 +760,7 @@ function renderNettCard(prog) {
         + (e.startDate ? '<div class="hk-emne-oppstart">Oppstart: <strong>' + e.startDate + '</strong></div>' : '')
         + '<span class="hk-badge hk-badge-nett hk-emne-nett">Nett</span></div>'
         + '<div class="hk-emne-right">'
-        + '<button class="hk-trash" onclick="hkRemoveEmne(\'' + prog.id + '\',\'' + e.code + '\')" aria-label="Fjern">' + TRASH_SVG + '</button>'
+        + '<button class="k-delete" onclick="hkRemoveEmne(\'' + prog.id + '\',\'' + e.code + '\')" aria-label="Fjern">' + TRASH_SVG + '</button>'
         + '</div></div>';
     });
   }
@@ -712,7 +770,7 @@ function renderNettCard(prog) {
     + '<div class="hk-card-name">' + prog.name + '</div></div>'
     + '<div class="hk-card-right">'
     + '<button class="hk-chevron">' + CHEVRON_DOWN + '</button>'
-    + '<button class="hk-trash" onclick="event.stopPropagation();hkRemoveProgram(\'' + prog.id + '\')" aria-label="Fjern hele studieprogrammet">' + TRASH_SVG + '</button>'
+    + '<button class="k-delete" onclick="event.stopPropagation();hkRemoveProgram(\'' + prog.id + '\')" aria-label="Fjern hele studieprogrammet">' + TRASH_SVG + '</button>'
     + '</div></div>'
     + '<div class="hk-emner-list">' + emnerHtml + '</div></div>';
 }
@@ -731,7 +789,7 @@ function renderLooseEmner(emner) {
       + (e.startDate ? '<div class="hk-emne-oppstart">Oppstart: <strong>' + e.startDate + '</strong></div>' : '')
       + '<span class="hk-badge hk-badge-nett hk-emne-nett">Nett</span></div>'
       + '<div class="hk-emne-right">'
-      + '<button class="hk-trash" onclick="hkRemoveLooseEmne(\'' + e.code + '\')" aria-label="Fjern">' + TRASH_SVG + '</button>'
+      + '<button class="k-delete" onclick="hkRemoveLooseEmne(\'' + e.code + '\')" aria-label="Fjern">' + TRASH_SVG + '</button>'
       + '</div></div>';
   });
   return '<div class="hk-card" data-prog-id="' + HK_LOOSE_CARD_ID + '"><div class="hk-card-header hk-clickable" onclick="toggleHkEmner(this)">'
@@ -1007,6 +1065,12 @@ function getEmneIncludedPrograms(root) {
 
 /* Åpne riktig program-kort, scroll til den nye emne-raden og fremhev den */
 function revealEmne(programId, code) {
+  revealEmner(programId, [code]);
+}
+
+/* Markerer alle emnene som nettopp ble lagt til – ikke bare det siste. Listen
+   åpnes én gang, og vi ruller til den første raden. */
+function revealEmner(programId, codes) {
   setTimeout(function() {
     var card = document.querySelector('#hk-body .hk-card[data-prog-id="' + programId + '"]');
     if (!card) return;
@@ -1016,14 +1080,22 @@ function revealEmne(programId, code) {
       list.classList.add('open');
       if (chev) chev.innerHTML = CHEVRON_UP;
     }
-    var row = card.querySelector('.hk-emne-row[data-code="' + code + '"]');
-    if (!row) return;
-    row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    // Restart animasjonen om raden allerede har klassen
-    row.classList.remove('hk-emne-added');
-    void row.offsetWidth;
-    row.classList.add('hk-emne-added');
-    setTimeout(function() { row.classList.remove('hk-emne-added'); }, 2100);
+
+    var rader = (codes || []).map(function(c) {
+      return card.querySelector('.hk-emne-row[data-code="' + c + '"]');
+    }).filter(Boolean);
+    if (!rader.length) return;
+
+    rader[0].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    rader.forEach(function(row) {
+      // Restart animasjonen om raden allerede har klassen
+      row.classList.remove('hk-emne-added');
+      void row.offsetWidth;
+      row.classList.add('hk-emne-added');
+    });
+    setTimeout(function() {
+      rader.forEach(function(row) { row.classList.remove('hk-emne-added'); });
+    }, 2100);
   }, 120);
 }
 
@@ -1596,6 +1668,187 @@ function showEmneAlreadyCompleted(emne, program) {
     + '</div></div>';
 }
 
+
+/* ─── Logg inn som steg i panelet ───
+   Svaret styrer bare innloggingsmåten – FEIDE for dem som har studert her før,
+   telefon for de andre. Selve søknaden er upåvirket. */
+var HK_LOGIN_VALG = [
+  { verdi: 'nei',     tittel: 'Nei, dette er første gang',         sub: 'Du bekrefter deg med telefonnummer' },
+  { verdi: 'ja',      tittel: 'Ja, jeg er eller har vært student', sub: 'Du logger inn med FEIDE-brukeren din' },
+  { verdi: 'usikker', tittel: 'Jeg er usikker',                    sub: 'Vi sjekker det for deg med telefonnummeret' }
+];
+var _hkLoginValg = null;
+
+function hkVisLoggInn() {
+  var body = document.getElementById('hk-body');
+  if (!body) return;
+  _hkLoginValg = null;
+  if (typeof refreshSokPanelFooter === 'function') refreshSokPanelFooter(true);
+
+  var title = document.getElementById('hk-title');
+  if (title) title.textContent = 'Logg inn';
+
+  var pil = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  body.innerHTML = '<div class="hk-step">'
+    + '<button class="hk-step-back" onclick="hkLoggInnTilbake()">' + pil + 'Tilbake</button>'
+    + '<div>'
+    + '<div class="hk-step-question">Har du studert ved Kristiania f\u00f8r?</div>'
+    + '<p class="hk-step-sub">Svaret avgj\u00f8r bare hvordan du logger inn. Det p\u00e5virker ikke s\u00f8knaden.</p>'
+    + '</div>'
+    + '<div class="hk-step-cards">'
+    + HK_LOGIN_VALG.map(function(v) {
+        return '<div class="hk-step-card" onclick="hkVelgLoggInn(this,\'' + v.verdi + '\')">'
+          + '<div class="hk-step-dot"></div>'
+          + '<div><div class="hk-step-title">' + v.tittel + '</div>'
+          + '<p class="hk-step-desc">' + v.sub + '</p></div>'
+          + '</div>';
+      }).join('')
+    + '</div>'
+    + '<p class="hk-step-feil" id="hk-login-feil" hidden></p>'
+    + '<button class="hk-btn-primary" onclick="hkLoggInnBekreft()">G\u00e5 videre</button>'
+    + '</div>';
+}
+
+function hkVelgLoggInn(kort, verdi) {
+  _hkLoginValg = verdi;
+  kort.parentNode.querySelectorAll('.hk-step-card').forEach(function(c) { c.classList.remove('selected'); });
+  kort.classList.add('selected');
+  var feil = document.getElementById('hk-login-feil');
+  if (feil) feil.hidden = true;
+}
+
+function hkLoggInnTilbake() {
+  if (typeof refreshSokPanelFooter === 'function') refreshSokPanelFooter(false);
+  renderBasketPanel();
+}
+
+function hkLoggInnBekreft() {
+  var feil = document.getElementById('hk-login-feil');
+  if (!_hkLoginValg) {
+    if (feil) { feil.textContent = 'Velg et alternativ for å gå videre.'; feil.hidden = false; }
+    return;
+  }
+  /* Samme forgrening som i søknadsskjemaet: FEIDE for tidligere studenter,
+     telefon + bekreftelseskode for de andre. */
+  if (_hkLoginValg === 'ja') hkVisFeide();
+  else hkVisTelefon();
+}
+
+/* ── Skall rundt hvert steg, så tittel og tilbake-knapp behandles ett sted ── */
+var HK_PIL = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function hkStegSkall(tittel, tilbakeFn, innhold) {
+  var body = document.getElementById('hk-body');
+  if (!body) return;
+  if (typeof refreshSokPanelFooter === 'function') refreshSokPanelFooter(true);
+  var t = document.getElementById('hk-title');
+  if (t) t.textContent = tittel;
+  body.innerHTML = '<div class="hk-step">'
+    + '<button class="hk-step-back" onclick="' + tilbakeFn + '">' + HK_PIL + 'Tilbake</button>'
+    + innhold
+    + '</div>';
+}
+
+/* ── Logg inn med Feide ── */
+function hkVisFeide() {
+  var msIkon = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink:0"><rect width="9.5" height="9.5" fill="#F25022"/><rect x="10.5" width="9.5" height="9.5" fill="#7FBA00"/><rect y="10.5" width="9.5" height="9.5" fill="#00A4EF"/><rect x="10.5" y="10.5" width="9.5" height="9.5" fill="#FFB900"/></svg>';
+  var idIkon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="flex-shrink:0"><rect x="2" y="2" width="20" height="20" rx="3" stroke="#1A1A1A" stroke-width="1.5"/><path d="M7 8h10M7 12h10M7 16h6" stroke="#1A1A1A" stroke-width="1.5" stroke-linecap="round"/></svg>';
+
+  hkStegSkall('Logg inn med Feide', 'hkVisLoggInn()',
+    '<div>'
+    + '<div class="hk-step-question">Logg inn med Feide</div>'
+    + '<p class="hk-step-sub">Du må logge deg på via Feide for å få tilgang til Dataporten.</p>'
+    + '</div>'
+    + '<div>'
+    + '<p class="hk-step-sub" style="margin-bottom:8px">Din tilhørighet</p>'
+    + '<div class="hk-feide-row">'
+    + '<div style="display:flex;align-items:center;gap:12px"><div class="hk-feide-avatar">K</div>'
+    + '<span style="font-size:15px;font-weight:500">Kristiania</span></div>'
+    + '</div></div>'
+    + '<div class="hk-step-cards">'
+    + '<button class="hk-feide-opt" onclick="hkFullforInnlogging(\'feide\')">' + msIkon + 'Bruk arbeids- eller skolekonto</button>'
+    + '<button class="hk-feide-opt" onclick="hkFullforInnlogging(\'feide\')">' + idIkon + 'Logg inn med ID-porten</button>'
+    + '</div>');
+}
+
+/* ── Telefonnummer ── */
+var _hkTelefon = '';
+
+function hkVisTelefon() {
+  hkStegSkall('Opprett søknad', 'hkVisLoggInn()',
+    '<div>'
+    + '<div class="hk-step-question">Opprett søknad</div>'
+    + '<p class="hk-step-sub">Ny bruker</p>'
+    + '</div>'
+    + '<div>'
+    + '<div class="hk-phone-row"><div class="hk-phone-prefix">+47</div>'
+    + '<input type="tel" class="hk-input" id="hk-telefon" inputmode="numeric" autocomplete="tel" placeholder="Telefonnummer"></div>'
+    + '<p class="hk-step-feil" id="hk-tlf-feil" hidden></p>'
+    + '</div>'
+    + '<p class="hk-step-note">Du får en bekreftelseskode på SMS.</p>'
+    + '<div class="hk-cb-row" onclick="this.querySelector(\'.hk-cb\').classList.toggle(\'checked\')">'
+    + '<span class="hk-cb"><svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'
+    + '<span class="hk-cb-label">Jeg samtykker til å bli kontaktet av en studierådgiver og har lest personvernerklæringen.</span>'
+    + '</div>'
+    + '<button class="hk-btn-primary" onclick="hkVidereFraTelefon()">Gå videre</button>');
+}
+
+function hkVidereFraTelefon() {
+  var felt = document.getElementById('hk-telefon');
+  var feil = document.getElementById('hk-tlf-feil');
+  var nr = (felt.value || '').replace(/\s/g, '');
+  if (nr.length < 8) {
+    felt.classList.add('feil');
+    if (feil) { feil.textContent = 'Oppgi et gyldig telefonnummer.'; feil.hidden = false; }
+    return;
+  }
+  felt.classList.remove('feil');
+  _hkTelefon = nr;
+  hkVisKode();
+}
+
+/* ── Bekreftelseskode ── */
+function hkVisKode() {
+  var felter = '';
+  for (var i = 0; i < 4; i++) {
+    felter += '<input type="tel" maxlength="1" inputmode="numeric" oninput="hkOtpNeste(this)">';
+  }
+  var vist = _hkTelefon.replace(/(\d{3})(\d{2})(\d{3})/, '$1 $2 $3');
+  hkStegSkall('Fullfør søknaden', 'hkVisTelefon()',
+    '<div>'
+    + '<div class="hk-step-question">Bekreftelseskode</div>'
+    + '<p class="hk-step-sub">Vi har sendt deg en kode på <strong>' + vist + '</strong>.</p>'
+    + '</div>'
+    + '<div class="hk-otp" id="hk-otp">' + felter + '</div>'
+    + '<p class="hk-step-feil" id="hk-kode-feil" hidden></p>'
+    + '<button class="hk-btn-primary" onclick="hkBekreftKode()">Bekreft</button>'
+    + '<button class="hk-btn-outline" onclick="alert(\'En bekreftelseskode er sendt til din e-post.\')">Send koden på e-post</button>');
+}
+
+function hkOtpNeste(felt) {
+  if (!felt.value) return;
+  var neste = felt.nextElementSibling;
+  if (neste) neste.focus();
+}
+
+function hkBekreftKode() {
+  var siffer = [].slice.call(document.querySelectorAll('#hk-otp input'))
+    .map(function(i) { return i.value; }).join('');
+  var feil = document.getElementById('hk-kode-feil');
+  if (siffer.length < 4) {
+    if (feil) { feil.textContent = 'Fyll inn hele koden for å gå videre.'; feil.hidden = false; }
+    return;
+  }
+  hkFullforInnlogging('telefon');
+}
+
+function hkFullforInnlogging(metode) {
+  setAuthState(metode, 'Lars Juster Eilefsen');
+  _hkLoginValg = null;
+  _hkTelefon = '';
+  if (typeof refreshSokPanelFooter === 'function') refreshSokPanelFooter(false);
+  renderBasketPanel();
+}
 
 /* Logg inn uten å forlate valget, og bygg panelet på nytt – nå med «Studie
    pågår» på de programmene studenten alt holder på med. */

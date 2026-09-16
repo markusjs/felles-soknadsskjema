@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+<script>
+(function () {
+  var n = new URLSearchParams(location.search).get('n') || '0';
+
+  // Fetch the full prototype page
+  fetch('/sok')
+    .then(function (r) { return r.text(); })
+    .then(function (html) {
+      var parser = new DOMParser();
+      var doc = parser.parseFromString(html, 'text/html');
+
+      // Copy all <style> blocks to current head
+      doc.querySelectorAll('head style').forEach(function (s) {
+        var clone = document.createElement('style');
+        clone.textContent = s.textContent;
+        document.head.appendChild(clone);
+      });
+
+      // Inject body HTML (scripts won't auto-execute from innerHTML)
+      document.body.innerHTML = doc.body.innerHTML;
+
+      // Collect script descriptors in DOM order, then remove the static elements
+      var scriptInfos = [];
+      document.body.querySelectorAll('script').forEach(function (s) {
+        // Skip the figma capture.js — already in our head
+        if (s.src && s.src.indexOf('capture.js') !== -1) { s.remove(); return; }
+        scriptInfos.push({ src: s.src || null, text: s.textContent });
+        s.remove();
+      });
+
+      // Execute scripts sequentially; wait for external ones before continuing
+      function runNext(i) {
+        if (i >= scriptInfos.length) {
+          // All scripts executed — initialise & navigate
+          navigate();
+          return;
+        }
+        var info = scriptInfos[i];
+        var s = document.createElement('script');
+        if (info.src) {
+          s.src = info.src;
+          s.onload  = function () { runNext(i + 1); };
+          s.onerror = function () { runNext(i + 1); };
+          document.head.appendChild(s);
+        } else {
+          s.textContent = info.text;
+          document.body.appendChild(s); // synchronous execution
+          runNext(i + 1);
+        }
+      }
+
+      runNext(0);
+    });
+
+  function navigate() {
+    // Manually trigger what DOMContentLoaded would have done
+    if (typeof renderSidebar === 'function') renderSidebar();
+
+    switch (n) {
+      case '0':
+        if (typeof gaVidere === 'function') gaVidere(0);
+        break;
+      case '1':
+        if (typeof gaVidere === 'function') gaVidere(1);
+        break;
+      case '1b':
+        if (typeof gaVidere === 'function') gaVidere(1);
+        // Then switch to the sign-up sub-step
+        document.getElementById('step1').classList.remove('active');
+        document.getElementById('step1b').classList.add('active');
+        break;
+      case 'feide':
+        if (typeof gaVidere === 'function') gaVidere(1);
+        document.getElementById('step1').classList.remove('active');
+        document.getElementById('feide-step').classList.add('active');
+        break;
+      case '2':
+        if (typeof gaVidere === 'function') gaVidere(2);
+        break;
+      case '3':
+        if (typeof gaVidere === 'function') gaVidere(3);
+        break;
+      case '3b':
+        if (typeof gaVidere === 'function') gaVidere(3);
+        document.getElementById('step3').classList.remove('active');
+        document.getElementById('step3b').classList.add('active');
+        break;
+      case '4':
+        if (typeof gaVidere === 'function') gaVidere(4);
+        break;
+      case '4b':
+        if (typeof gaVidere === 'function') gaVidere(4);
+        document.getElementById('step4').classList.remove('active');
+        document.getElementById('step4b').classList.add('active');
+        break;
+      case '5':
+        if (typeof gaVidere === 'function') gaVidere(5);
+        break;
+      case 'receipt':
+        if (typeof gaVidere === 'function') gaVidere(5);
+        // Show receipt overlay
+        var cp = document.getElementById('checkoutPage');
+        var rp = document.getElementById('receiptPage');
+        if (cp) cp.style.display = 'none';
+        if (rp) rp.style.display = 'flex';
+        break;
+      default:
+        if (typeof gaVidere === 'function') gaVidere(parseInt(n) || 0);
+    }
+    window.scrollTo(0, 0);
+  }
+})();
+</script>
+</body>
+</html>

@@ -287,15 +287,23 @@ window.spBestillAlle = function(btn) {
   spRenderSummary();
 };
 
-/* Logger studenten seg inn, kan emner i sammendraget vise seg å være bestått
-   fra før. Da skal de ut av valget, ikke bare gråes ut i planleggeren. */
+/* Beståtte emner merkes ikke lenger i planleggeren, og fjernes ikke automatisk.
+   Konflikten vises i søknaden, der studenten selv kan ta emnet ut. */
 var _origApplyCompleted = window.spApplyCompletedState;
 window.spApplyCompletedState = function() {
   _origApplyCompleted();
-  var beståtte = (typeof spCompletedCourses !== 'undefined') ? spCompletedCourses : [];
-  beståtte.forEach(function(code) {
-    var c = spCart[code];
-    if (c && !c.program && !c.loose) delete spCart[code];
+  document.querySelectorAll('.sp-completed-row').forEach(function(row) {
+    row.classList.remove('sp-completed-row');
+    var btn = row.querySelector('.sp-add-btn.completed');
+    if (btn) {
+      btn.classList.remove('completed');
+      btn.removeAttribute('aria-disabled');
+      btn.removeAttribute('title');
+      btn.setAttribute('aria-label', 'Legg til');
+      btn.textContent = btn.classList.contains('added') ? '\u2713' : '+';
+    }
+    var badge = row.querySelector('.sp-badge-bestatt');
+    if (badge) badge.remove();
   });
   spRenderSummary();
 };
@@ -378,21 +386,40 @@ function spVisStudiestart(pending) {
   if (!body || typeof renderStudiestartStep !== 'function') { spLeggISoknaden(pending, ''); return; }
   if (typeof refreshSokPanelFooter === 'function') refreshSokPanelFooter(true);
 
+  var valgt = window.spValgtProgram || SP_SIDENS_PROGRAM;
   renderStudiestartStep(body, spStudiestartScenario(), {
-    /* Lånekassen-spørsmålet er ute – studenten går rett på datovalget. */
-    skipStudiestotte: true,
+    /* Emnene følger med så studenten kan sette dato per emne. */
+    emner: pending.map(function(e) { return { code: e.code, name: e.name, pts: e.pts }; }),
+    /* Tilbake fra første steg går til programvalget. */
+    onBack: function() { window.spGaVidere(); },
+    gruppe: { navn: (valgt && valgt.name) || 'Emner', meta: spGruppeMeta(pending, valgt) },
     onTitle: function(tekst) {
       var el = document.getElementById('hk-title');
       if (el) el.textContent = tekst;
     },
-    onConfirm: function(datoStr) { spLeggISoknaden(pending, datoStr); },
+    onConfirm: function(datoStr, perEmne) { spLeggISoknaden(pending, datoStr, perEmne); },
     onNotify: function(epost) { spVisVarselKvittering(epost); }
   });
 }
 
-function spLeggISoknaden(pending, datoStr) {
+/* «Bachelor · 30 stp. · 4 emner · Heltid [BAL]» – linjen over programnavnet. */
+function spGruppeMeta(pending, valgt) {
+  var stp = pending.reduce(function(sum, e) { return sum + (parseFloat(e.pts) || 0); }, 0);
+  var d = [];
+  var niva = (valgt && valgt.level)
+    || (typeof deriveLevelFromPage === 'function' ? deriveLevelFromPage() : '');
+  if (niva) d.push(niva);
+  if (stp) d.push(String(stp).replace('.', ',') + ' stp.');
+  d.push(pending.length + ' emne' + (pending.length !== 1 ? 'r' : ''));
+  var gj = (valgt && valgt.studieform) || spAktivGjennomforing();
+  d.push(gj.charAt(0).toUpperCase() + gj.slice(1) + (valgt && valgt.code ? ' [' + valgt.code + ']' : ''));
+  return d.join(' · ');
+}
+
+function spLeggISoknaden(pending, datoStr, perEmne) {
   pending.forEach(function(e) {
-    if (spCart[e.code]) spCart[e.code].startDate = datoStr || '';
+    var egen = perEmne ? perEmne[String(e.code)] : null;
+    if (spCart[e.code]) spCart[e.code].startDate = egen || datoStr || '';
   });
 
   _spCommitting = true;
@@ -401,12 +428,12 @@ function spLeggISoknaden(pending, datoStr) {
   spRenderSummary();
   if (typeof renderBasketPanel === 'function') renderBasketPanel();
 
-  var siste = pending[pending.length - 1];
   var kortId = window.spValgtLoose
     ? (typeof HK_LOOSE_CARD_ID !== 'undefined' ? HK_LOOSE_CARD_ID : '__loose')
     : ((window.spValgtProgram && window.spValgtProgram.id) || SP_SIDENS_PROGRAM.id);
-  if (siste && typeof revealEmne === 'function') {
-    setTimeout(function() { revealEmne(kortId, siste.code); }, 150);
+  var koder = pending.map(function(e) { return e.code; });
+  if (koder.length && typeof revealEmner === 'function') {
+    setTimeout(function() { revealEmner(kortId, koder); }, 150);
   }
 }
 

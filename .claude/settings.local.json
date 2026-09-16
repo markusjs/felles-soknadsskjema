@@ -101,7 +101,14 @@
       "Bash(python3 -c \"import requests\")",
       "Bash(python3 localize_study_css.py)",
       "Bash(rm -f localize_study_css.py)",
-      "Bash(python3 fix_study_css.py)"
+      "Bash(python3 fix_study_css.py)",
+      "mcp__figma__use_figma",
+      "Bash(curl -s --max-time 3 http://localhost:3000/)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(curl -s --max-time 5 http://localhost:3000/)",
+      "mcp__figma__generate_figma_design",
+      "Bash(ls /Users/markus.sorem/Documents/GitHub/fremtidensopptak-utv/*.html)",
+      "Bash(curl:*)"
     ]
   },
   "enabledMcpjsonServers": [

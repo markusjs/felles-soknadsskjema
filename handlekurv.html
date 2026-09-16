@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="no">
-<head>
+<head><script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Handlekurv &ndash; S&oslash;knader</title>
@@ -160,23 +160,27 @@
     }
 
     .tag-semester { background: #3D3D3D; color: #fff; }
-    .tag-location { background: #0A4FB8; color: #fff; }
+    .tag-location { background: #AF0018; color: #fff; }
     .tag-nett     { background: #7A3FD1; color: #fff; }
 
     /* ── Delete button ───────────────────────────── */
+    /* Slettknapp – én utforming i hele appen: blå X på lys blå sirkel */
     .delete-btn {
-      background: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
       border: none;
-      cursor: pointer;
-      padding: 2px;
-      color: #5C5C5C;
-      display: flex;
-      align-items: center;
+      padding: 0;
+      background: #F2F7FF;
+      color: #0A4FB8;
       flex-shrink: 0;
-      border-radius: 999px;
-      transition: color 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
     }
-    .delete-btn:hover { color: #AF0018; }
+    .delete-btn:hover { background: #E0EBFE; color: #083D8F; }
 
     /* ── Expandable card ─────────────────────────── */
     .expandable-card {
@@ -297,13 +301,13 @@
     .btn:active { opacity: 0.76; }
 
     .btn-secondary {
-      border: 1px solid #0A4FB8;
+      border: 1px solid #AF0018;
       background: transparent;
-      color: #0A4FB8;
+      color: #AF0018;
     }
 
     .btn-primary {
-      background: #0A4FB8;
+      background: #AF0018;
       color: #fff;
     }
   
@@ -364,8 +368,8 @@
             <span class="tag tag-semester">H&oslash;st 26</span>
             <span class="tag tag-location">Oslo</span>
             <button class="delete-btn" aria-label="Fjern s&oslash;knad">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
               </svg>
             </button>
           </div>
@@ -383,8 +387,8 @@
             <span class="tag tag-semester">H&oslash;st 26</span>
             <span class="tag tag-location">Oslo</span>
             <button class="delete-btn" aria-label="Fjern s&oslash;knad">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
               </svg>
             </button>
           </div>
@@ -414,9 +418,7 @@
             <div class="subject-right">
               <span class="subject-date">16.08.26</span>
               <button class="delete-btn" aria-label="Fjern emne">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
               </button>
             </div>
           </div>
@@ -428,9 +430,7 @@
             <div class="subject-right">
               <span class="subject-date">16.08.26</span>
               <button class="delete-btn" aria-label="Fjern emne">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
               </button>
             </div>
           </div>
@@ -442,9 +442,7 @@
             <div class="subject-right">
               <span class="subject-date">16.08.26</span>
               <button class="delete-btn" aria-label="Fjern emne">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
               </button>
             </div>
           </div>
@@ -456,9 +454,7 @@
             <div class="subject-right">
               <span class="subject-date">16.08.26</span>
               <button class="delete-btn" aria-label="Fjern emne">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
               </button>
             </div>
           </div>
@@ -487,9 +483,7 @@
             <div class="subject-right">
               <span class="subject-date">01.09.26</span>
               <button class="delete-btn" aria-label="Fjern emne">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
               </button>
             </div>
           </div>

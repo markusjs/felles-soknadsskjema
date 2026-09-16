@@ -11,6 +11,16 @@ var _ssStyleInjected = false;
 var _ssCalYear, _ssCalMonth, _ssCalSelected = null;
 var _ssCalMin, _ssCalMax;
 var _ssWantsLanekassen = null;
+var _ssEksamen = null;         /* valgt eksamensperiode, f.eks. '2026-12' */
+var _ssSammeDato = true;       /* «Samme oppstartsdato for alle emner» */
+var _ssEmner = [];             /* emnene valget gjelder, for per-emne-visningen */
+var _ssGruppe = null;          /* {meta, navn} – studieprogrammet emnene hører til */
+var _ssPerEmne = {};           /* emnekode → 'semester' | 'custom' */
+var _ssPerEmneDato = {};       /* emnekode → Date for valgfri oppstart */
+var _ssAktivtEmne = null;      /* emnet som har kalenderen åpen */
+var _ssSteg = 'startdato';     /* 'lanekassen' | 'eksamen' | 'startdato' */
+var _ssOnBack = null;          /* tilbake fra første steg – eies av kalleren */
+var _ssEmneIdx = 0;            /* emnet vi står på når hvert emne får egen dato */
 /* Satt når studiestart-steget rendres inne i søknadspanelet i stedet for i skuffen. */
 var _ssInline = null;
 
@@ -32,25 +42,25 @@ function injectStyles() {
 .ss-body > *{flex-shrink:0}\
 .ss-footer{padding:16px 24px calc(20px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #E6E6E6;flex-shrink:0}\
 .ss-radio-group{display:flex;flex-direction:column;gap:8px}\
-.ss-radio-card{border:1.5px solid #D4D4D4;border-radius:8px;padding:18px 20px;cursor:pointer;display:flex;align-items:flex-start;gap:14px;transition:border-color .15s,background .15s}\
+.ss-radio-card{border:1.5px solid #D4D4D4;border-radius:8px;padding:18px 20px;cursor:pointer;display:flex;flex-wrap:wrap;align-items:flex-start;gap:14px;transition:border-color .15s,background .15s}\
 .ss-radio-card:hover{background:#F5F5F5}\
-.ss-radio-card.selected{border-color:#0A4FB8;background:#F2F7FF}\
-.ss-radio-dot{width:22px;height:22px;border:2px solid #D4D4D4;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:border-color .15s}\
-.ss-radio-card.selected .ss-radio-dot{border-color:#0A4FB8}\
+.ss-radio-card.selected{border-color:#0A4FB8;border-width:2px;padding:17px 19px;background:#F2F7FF}\
+.ss-radio-dot{width:22px;height:22px;border:2px solid #767676;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:2px;transition:border-color .15s}\
+.ss-radio-card.selected .ss-radio-dot{border-color:#0A4FB8;border-width:2.5px}\
 .ss-radio-card.selected .ss-radio-dot::after{content:"";width:12px;height:12px;background:#0A4FB8;border-radius:50%}\
 .ss-radio-main{font-size:18px;font-weight:600;color:#1A1A1A;line-height:1.25}\
 .ss-radio-desc{font-size:14px;color:#5C5C5C;margin:4px 0 0;line-height:1.45}\
-.ss-radio-sub{font-size:13px;color:#5C5C5C;margin-top:18px;display:flex;align-items:center;gap:8px}\
+.ss-radio-sub{font-size:15px;color:#5C5C5C;margin-top:6px;line-height:1.35}\
 .ss-radio-sub svg{flex-shrink:0}\
 .ss-radio-sub strong{color:#1A1A1A;font-weight:600}\
 .ss-radio-link{color:#0A4FB8;text-decoration:underline;font-size:13px}\
-.ss-calendar-wrap{display:none;padding:4px 0 0}\
+.ss-calendar-wrap{display:none;padding:4px 0 0;flex-basis:100%}\
 .ss-calendar-wrap.open{display:block}\
 .ss-date-input{width:100%;border:1.5px solid #767676;border-radius:8px;padding:14px 16px;font-size:16px;font-family:inherit;outline:none;transition:border-color .15s;cursor:pointer;box-sizing:border-box;min-height:48px}\
 .ss-date-input:focus{border-color:#0A4FB8}\
 .ss-hint{font-size:13px;color:#5C5C5C;margin-top:6px}\
 .ss-checkbox-row{display:flex;align-items:flex-start;gap:10px;cursor:pointer}\
-.ss-checkbox-box{width:22px;height:22px;border:1.5px solid #767676;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}\
+.ss-checkbox-box{width:22px;height:22px;border:2px solid #767676;border-radius:4px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}\
 .ss-checkbox-box.checked{background:#0A4FB8;border-color:#0A4FB8}\
 .ss-checkbox-label{font-size:14px;color:#1A1A1A;line-height:22px}\
 .ss-warning{background:#FCF8F5;border:1px solid #FFCA00;border-radius:8px;padding:16px;margin-top:4px}\
@@ -62,28 +72,28 @@ function injectStyles() {
 .ss-warning-email{width:100%;border:1.5px solid #D4D4D4;border-radius:8px;padding:12px 14px;font-size:16px;font-family:inherit;outline:none;background:#fff;box-sizing:border-box;min-height:44px}\
 .ss-warning-email:focus{border-color:#0A4FB8}\
 .ss-or-text{font-size:13px;color:#5C5C5C}\
-.ss-btn{display:flex;align-items:center;justify-content:center;gap:8px;height:44px;background:#0A4FB8;color:#fff;font-family:inherit;font-size:16px;font-weight:600;border:none;border-radius:999px;cursor:pointer;width:100%;transition:background .15s}\
-.ss-btn:hover{background:#083D8F}\
+.ss-btn{display:flex;align-items:center;justify-content:center;gap:8px;height:44px;background:#AF0018;color:#fff;font-family:inherit;font-size:16px;font-weight:600;border:none;border-radius:999px;cursor:pointer;width:100%;transition:background .15s}\
+.ss-btn:hover{background:#8C0013}\
 .ss-btn:disabled{background:#D4D4D4;cursor:not-allowed}\
 .ss-btn svg{flex-shrink:0}\
 .ss-cal{background:#fff;border-radius:8px;padding:16px;border:1px solid #E6E6E6}\
 .ss-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}\
 .ss-cal-month{font-size:16px;font-weight:600;color:#1A1A1A}\
-.ss-cal-arrows{display:flex;gap:4px}\
-.ss-cal-arrow{width:32px;height:32px;border:none;background:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#5C5C5C;font-size:18px;transition:background .15s}\
-.ss-cal-arrow:hover{background:#E6E6E6}\
+.ss-cal-arrows{display:flex;gap:8px}\
+.ss-cal-arrow{width:44px;height:44px;border:none;background:#F5F5F5;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#1A1A1A;transition:background .15s;flex-shrink:0;padding:0}\
+.ss-cal-arrow:hover:not(:disabled){background:#E6E6E6}\
 .ss-cal-arrow:disabled{opacity:.3;cursor:not-allowed}\
 .ss-cal-arrow:disabled:hover{background:none}\
-.ss-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}\
-.ss-cal-dow{font-size:12px;font-weight:600;color:#5C5C5C;padding:4px 0 8px;text-transform:capitalize}\
-.ss-cal-dow.ss-weekend{color:#8C1D18}\
-.ss-cal-day{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:none;background:none;font-size:14px;color:#1A1A1A;cursor:pointer;margin:0 auto;transition:background .12s,color .12s;font-family:inherit}\
+.ss-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px 2px;text-align:center}\
+.ss-cal-dow{font-size:16px;font-weight:600;color:#5C5C5C;padding:0 0 12px;text-transform:capitalize}\
+.ss-cal-dow.ss-weekend{color:#E03131}\
+.ss-cal-day{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:50%;border:none;background:none;font-size:15px;color:#1A1A1A;cursor:pointer;margin:0;transition:background .12s,color .12s;font-family:inherit}\
 .ss-cal-day:hover:not(:disabled):not(.ss-cal-today){background:#E6E6E6}\
 .ss-cal-day:disabled{color:#D4D4D4;cursor:not-allowed}\
-.ss-cal-day.ss-weekend{color:#8C1D18}\
-.ss-cal-day:disabled.ss-weekend{color:#F9CCD2}\
+.ss-cal-day.ss-weekend{color:#E03131}\
+.ss-cal-day:disabled.ss-weekend{color:#F5B5B5}\
 .ss-cal-day.ss-cal-today{background:#F2F7FF;color:#0A4FB8;font-weight:600}\
-.ss-cal-day.ss-cal-selected{background:#1A1A1A;color:#fff!important;font-weight:600}\
+.ss-cal-day.ss-cal-selected{background:#0A4FB8;color:#fff!important;font-weight:600}\
 .ss-cal-day.ss-cal-empty{cursor:default}\
 .ss-between-calendar{transition:max-height .3s ease,opacity .3s ease;overflow:hidden}\
 .ss-between-warning{transition:max-height .3s ease,opacity .3s ease;overflow:hidden}\
@@ -118,25 +128,47 @@ function injectStyles() {
 .ss-radio-card{padding:16px}\
 .ss-radio-main{font-size:16px}\
 .ss-radio-desc{font-size:13px}\
-.ss-radio-sub{margin-top:14px}\
-.ss-cal{padding:12px 8px}\
+.ss-radio-sub{margin-top:6px}\
+.ss-cal{padding:16px}\
 .ss-cal-grid{gap:0}\
-.ss-cal-day{width:100%;max-width:40px;height:40px;font-size:15px}\
-.ss-cal-dow{font-size:11px}\
+.ss-cal-day{font-size:15px}\
+.ss-cal-dow{font-size:16px}\
 .ss-close{width:44px;height:44px}\
 .ss-btn{height:44px}\
 }\
 @media (max-width:360px){\
 .ss-body{padding:12px 14px 16px}\
 .ss-footer{padding:10px 14px calc(14px + env(safe-area-inset-bottom))}\
-.ss-cal{padding:10px 4px}\
-.ss-cal-day{max-width:36px;height:36px;font-size:14px}\
+.ss-cal{padding:16px}\
+.ss-cal-day{font-size:15px}\
 }\
 .ss-simple-card{border:1.5px solid #D4D4D4;border-radius:8px;padding:20px 24px;cursor:pointer;font-size:18px;font-weight:600;color:#1A1A1A;transition:border-color .15s,background .15s}\
 .ss-simple-card:hover{background:#F5F5F5;border-color:#D4D4D4}\
 .ss-simple-card.selected{border-color:#0A4FB8;background:#F2F7FF}\
 .ss-subtitle{font-size:15px;color:#5C5C5C;padding:2px 24px 0;line-height:1.4;flex-shrink:0}\
 .ss-order-label{font-size:12px;color:#5C5C5C;margin-bottom:4px}\
+.ss-back{display:inline-flex;align-items:center;gap:8px;background:none;border:none;padding:0;margin-bottom:4px;cursor:pointer;font-family:inherit;font-size:17px;color:#1A1A1A;align-self:flex-start}\
+.ss-back:hover{color:#AF0018}\
+.ss-question{font-size:24px;font-weight:600;color:#1A1A1A;line-height:1.25;margin-bottom:6px}\
+.ss-badge{display:inline-flex;align-items:center;background:#0A4FB8;color:#fff;border-radius:4px;padding:3px 8px;font-size:11px;font-weight:600;letter-spacing:.5px;flex-shrink:0}\
+.ss-radio-main-row{display:flex;align-items:center;justify-content:space-between;gap:10px}\
+.ss-same-date{display:flex;align-items:center;gap:12px;background:#F2F7FF;border-radius:8px;padding:16px 18px;cursor:pointer;user-select:none}\
+.ss-same-date-label{font-size:16px;font-weight:500;color:#1A1A1A}\
+.ss-emne-group{border:1px solid #F9CCD2;border-radius:8px;overflow:hidden}\
+.ss-emne-head{background:#FCF8F5;padding:14px 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}\
+.ss-emne-head-main{flex:1;min-width:0}\
+.ss-emne-head-chevron{display:inline-flex;color:#1A1A1A;flex-shrink:0}\
+.ss-error{color:#AF0018;font-size:14px;margin:12px 0 0;line-height:1.4}\
+.ss-notis{background:#FFFBEB;border:1px solid #FFCA00;border-radius:8px;padding:16px 18px;font-size:16px;font-weight:600;color:#1A1A1A;line-height:1.4}\
+.ss-varsel{background:#FCF8F5;border:1px solid #F9CCD2;border-radius:8px;padding:14px 16px;margin-top:12px}\
+.ss-varsel-tekst{font-size:14px;color:#1A1A1A;line-height:1.55;margin:0 0 8px}\
+.ss-varsel-tekst:last-child{margin-bottom:0}\
+.ss-emne-head-meta{font-size:13px;color:#5C5C5C;margin-bottom:2px}\
+.ss-emne-head-name{font-size:17px;font-weight:600;color:#1A1A1A}\
+.ss-emne-item{padding:18px;border-top:1px solid #F9CCD2}\
+.ss-emne-item-code{font-size:13px;color:#5C5C5C}\
+.ss-emne-item-name{font-size:17px;font-weight:600;color:#1A1A1A;margin-bottom:8px}\
+.ss-emne-tag{display:inline-flex;background:#7A3FD1;color:#fff;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}\
 .ss-notify-label{font-size:13px;color:#5C5C5C;margin:14px 0 6px;line-height:1.4}\
 .ss-between-lk-card{display:block}\
 .ss-between-lk-card.selected{border-color:#F9CCD2;background:#FCF8F5}\
@@ -147,11 +179,11 @@ function injectStyles() {
 .ss-backdrop.ss-inline-host{position:static;inset:auto;background:none;z-index:auto;display:block;opacity:1;transition:none}\
 .ss-inline-host .ss-modal{position:static;height:auto;width:auto;max-width:none;transform:none;display:block;overflow:visible;transition:none}\
 .ss-inline-host .ss-header,.ss-inline-host .ss-title{display:none}\
-.ss-inline-host .ss-subtitle{padding:4px 0 0;font-size:18px;font-weight:500;color:#1A1A1A;line-height:1.4}\
+.ss-inline-host .ss-subtitle{padding:0;font-size:15px;color:#5C5C5C;line-height:1.4}\
+.ss-inline-host .ss-question{font-size:22px}\
 .ss-inline-host .ss-body{padding:16px 0 0;overflow:visible;flex:none;min-height:0}\
 .ss-inline-host .ss-faq-section{padding:8px 0 0}\
 .ss-inline-host .ss-footer{padding:20px 0 0;border-top:none;background:none}\
-.ss-inline-host .ss-cal-day{max-width:38px}\
 ';
   document.head.appendChild(css);
 }
@@ -229,6 +261,206 @@ function getStudiestartScenario() {
   };
 }
 
+/* ── Eksamensplan, nettstudier høst 2026 ────────────────────────────────────
+   Emnekode → eksamensdato (kolonnen «Dato til (eksamensdato)» i planen).
+   Hentet fra Kristianias publiserte plan, 254 emner. Emner med «fleksibel
+   eksamensgjennomføring» står ikke her – de har ingen fast dato.
+   MERK: kun høsten 2026. Vårplanen er ikke publisert ennå, så emner uten
+   treff her gir ingen studieperiode-sjekk. */
+var EKSAMENSPLAN = {
+  '2343':'2027-01-13', '2433':'2026-12-16', '2434':'2027-01-08', '2436':'2027-01-14', '2437':'2027-01-12', '2438':'2027-01-13',
+  '2439':'2027-01-06', '2442':'2026-12-18', '2443':'2027-01-14', '2444':'2026-12-18', '2445':'2026-12-17', '2446':'2027-01-13',
+  '2447':'2027-01-14', '2448':'2027-01-04', '2449':'2027-01-05', '2450':'2026-12-21', '2451':'2027-01-11', '2452':'2026-12-04',
+  '2453':'2027-01-13', '2454':'2027-01-13', '2455':'2027-01-04', '2456':'2027-01-07', '2506':'2027-01-14', '2507':'2027-01-13',
+  '2525':'2026-12-04', '2802':'2027-01-06', '2900':'2026-12-07', '2901':'2027-01-08', '2904':'2027-01-08', '2905':'2026-12-07',
+  '2907':'2026-12-07', '2910':'2026-12-21', '4006':'2026-12-02', '4007':'2026-12-09', '4008':'2026-11-12', '4009':'2026-11-19',
+  '4010':'2026-11-26', '4011':'2026-12-03', '4020':'2026-12-09', '4029':'2026-12-02', '4031':'2026-12-04', '4033':'2026-11-20',
+  '4035':'2026-11-25', '4037':'2026-11-27', '4039':'2026-11-18', '4041':'2026-11-13', '4042':'2026-11-25', '4043':'2026-11-20',
+  '4044':'2026-11-18', '4051':'2026-11-27', '4052':'2026-12-04', '4053':'2026-12-02', '4054':'2026-11-20', '4055':'2026-11-18',
+  '4056':'2026-11-25', '4058':'2026-11-20', '4059':'2026-11-27', '4060':'2026-12-04', '4061':'2026-11-25', '4062':'2026-12-02',
+  '4063':'2026-12-09', '4067':'2026-11-18', '4068':'2026-11-27', '4069':'2026-12-04', '4099':'2026-11-18', '4100':'2026-11-24',
+  '4101':'2026-12-02', '4105':'2026-12-14', '4106':'2026-12-03', '4107':'2026-11-26', '4108':'2026-11-12', '4109':'2026-11-19',
+  '4111':'2026-11-11', '4112':'2026-11-27', '4113':'2026-12-14', '4114':'2026-12-04', '5320':'2026-12-18', '5321':'2026-12-11',
+  '5323':'2027-01-08', '5325':'2027-01-14', '5327':'2027-01-15', '5340':'2027-01-11', '5341':'2027-01-13', '5342':'2027-01-11',
+  '5343':'2027-01-13', '5344':'2026-12-18', '5346':'2027-01-13', '5350':'2027-01-15', '5351':'2026-12-15', '5353':'2027-01-15',
+  '5360':'2027-01-08', '6002':'2026-12-18', '6003':'2027-01-11', '6004':'2027-01-05', '6018':'2027-01-15', '6022':'2027-01-11',
+  '6023':'2027-01-11', '6024':'2027-01-04', '6025':'2026-12-17', '6026':'2026-12-18', '6027':'2026-12-15', '6064':'2027-01-15',
+  '6082':'2027-01-15', '6084':'2027-01-11', '6086':'2027-01-08', '6087':'2027-01-12', '6088':'2027-01-13', '6090':'2027-01-04',
+  '6091':'2027-01-06', '6093':'2027-01-12', '6106':'2026-12-17', '6107':'2027-01-05', '6108':'2027-01-12', '6267':'2027-01-13',
+  '6272':'2027-01-04', '6274':'2027-01-13', '6277':'2026-12-11', '6281':'2027-01-11', '6285':'2026-12-18', '6286':'2027-01-12',
+  '6308':'2027-01-11', '6313':'2027-01-15', '6314':'2027-01-15', '6316':'2026-12-17', '6320':'2027-01-13', '6322':'2027-01-14',
+  '6323':'2026-12-11', '6324':'2027-01-05', '6328':'2026-12-11', '6329':'2027-01-07', '6331':'2027-01-04', '6332':'2026-12-14',
+  '6334':'2026-12-17', '6335':'2027-01-15', '6336':'2027-01-13', '6337':'2027-01-07', '6338':'2027-01-14', '6339':'2027-01-07',
+  '6340':'2027-01-14', '6341':'2026-12-11', '6343':'2027-01-12', '6344':'2027-01-12', '6345':'2026-12-17', '6346':'2027-01-13',
+  '6347':'2027-01-13', '6349':'2027-01-15', '6350':'2027-01-11', '6351':'2027-01-13', '6352':'2027-01-08', '6353':'2027-01-04',
+  '6356':'2027-01-05', '6357':'2027-01-14', '6359':'2027-01-11', '6360':'2027-01-13', '6361':'2027-01-15', '6362':'2027-01-14',
+  '6363':'2027-01-08', '6364':'2027-01-05', '6366':'2027-01-04', '6368':'2026-12-18', '6369':'2027-01-12', '6370':'2026-12-17',
+  '6371':'2027-01-04', '6373':'2027-01-15', '6375':'2027-01-13', '6376':'2027-01-11', '6377':'2027-01-08', '6378':'2027-01-05',
+  '6379':'2026-12-11', '6380':'2027-01-14', '6381':'2027-01-06', '6382':'2027-01-14', '6383':'2026-12-17', '6384':'2027-01-11',
+  '6385':'2027-01-12', '6386':'2027-01-12', '6387':'2027-01-12', '6389':'2026-12-15', '6390':'2026-12-18', '6391':'2027-01-12',
+  '6392':'2027-01-15', '6393':'2027-01-08', '6394':'2026-12-18', '6395':'2026-12-17', '6396':'2027-01-04', '6397':'2026-12-18',
+  '6398':'2027-01-12', '6399':'2027-01-13', '6408':'2027-01-14', '6409':'2027-01-15', '6410':'2027-01-12', '6500':'2026-12-16',
+  '6501':'2026-12-18', '6502':'2027-01-12', '6503':'2027-01-05', '6504':'2027-01-13', '6505':'2027-01-11', '6550':'2027-01-13',
+  '6551':'2027-01-15', '7055':'2026-12-11', '7057':'2027-01-11', '7065':'2027-01-14', '7100':'2026-12-17', '7102':'2027-01-11',
+  '7103':'2027-01-15', '7104':'2027-01-15', '7106':'2026-12-21', '7107':'2027-01-06', '7110':'2027-01-11', '7113':'2026-12-14',
+  '7114':'2027-01-14', '7115':'2026-12-18', '7116':'2027-01-08', '7117':'2027-01-12', '7118':'2027-01-15', '7119':'2027-01-08',
+  '7120':'2027-01-05', '7130':'2027-01-12', '7131':'2026-12-15', '7132':'2027-01-08', '7133':'2027-01-06', '7134':'2027-01-12',
+  '7136':'2027-01-11', '7137':'2027-01-15', '7138':'2026-12-18', '7139':'2027-01-04', '7141':'2027-01-14', '7142':'2026-12-18',
+  '7145':'2027-01-07', '7146':'2027-01-15', '7150':'2026-12-18', '7151':'2027-01-11', '7152':'2027-01-07', '7153':'2027-01-08',
+  '7154':'2026-12-17', '7155':'2027-01-07', '7156':'2026-12-21', '7157':'2027-01-11', '7200':'2026-12-11', '7203':'2026-12-17',
+  '7204':'2027-01-14', '7205':'2026-12-18', '7206':'2026-12-21', '7207':'2027-01-15', '7208':'2026-12-18', '7209':'2026-12-18',
+  '7210':'2027-01-11', '7211':'2026-12-17', '7212':'2027-01-14', '7213':'2027-01-15', '7214':'2027-01-07', '7215':'2027-01-11',
+  '7216':'2027-01-11', '7217':'2026-11-25'
+};
+
+var SS_MND = ['januar','februar','mars','april','mai','juni','juli','august',
+               'september','oktober','november','desember'];
+
+/* «16.08.26» → Date. Faller tilbake på i dag hvis scenariet mangler datoen. */
+function ssSemesterStart(sc) {
+  var m = /^(\d{2})\.(\d{2})\.(\d{2})$/.exec((sc && sc.semesterDateStr) || '');
+  if (!m) return new Date();
+  return new Date(2000 + parseInt(m[3], 10), parseInt(m[2], 10) - 1, parseInt(m[1], 10));
+}
+
+/* Alle emner har 18 måneders studierett, uansett hvilken oppstart som velges. */
+var SS_STUDIERETT_MND = 18;
+
+/* Semesterstarten i scenariet kan ha passert. Da er den ikke et reelt valg, og
+   vi anbefaler neste semesterstart i stedet (16. januar / 16. august). */
+function ssAnbefaltDato(sc) {
+  var d = ssSemesterStart(sc);
+  var iDag = new Date();
+  iDag.setHours(0, 0, 0, 0);
+  if (d >= iDag) return d;
+  var y = iDag.getFullYear();
+  var kandidater = [new Date(y, 0, 16), new Date(y, 7, 16), new Date(y + 1, 0, 16)];
+  for (var i = 0; i < kandidater.length; i++) {
+    if (kandidater[i] >= iDag) return kandidater[i];
+  }
+  return d;
+}
+
+function ssStudierettLabel(sc) {
+  var start = ssAnbefaltDato(sc);
+  var slutt = new Date(start.getFullYear(), start.getMonth() + SS_STUDIERETT_MND, start.getDate() - 1);
+  return 'Studierett til ' + slutt.getDate() + '. ' + SS_MND[slutt.getMonth()] + ' ' + slutt.getFullYear();
+}
+
+/* Eksamensdatoen for ett emne, eller null når emnet ikke står i planen
+   (fleksibel eksamen, eller et semester vi ikke har plan for ennå). */
+function ssEksamensdato(kode) {
+  var iso = EKSAMENSPLAN[String(kode)];
+  if (!iso) return null;
+  var d = iso.split('-');
+  return new Date(+d[0], +d[1] - 1, +d[2]);
+}
+
+function ssFormatDato(d) {
+  return d.getDate() + '. ' + SS_MND[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+/* Rammene rundt en eksamensperiode: når den åpner og lukker, og når
+   oppmeldingen stenger. 'h2026' = høsten 2026, 'v2027' = våren 2027. */
+function ssPeriodeInfo(verdi) {
+  var m = /^([hv])(\d{4})$/.exec(verdi || '');
+  if (!m) return null;
+  var y = +m[2];
+  if (m[1] === 'h') {
+    return { verdi: verdi, navn: 'Høst', maneder: 'desember ' + y + ' eller januar ' + (y + 1),
+             fra: new Date(y, 11, 1), til: new Date(y + 1, 0, 15), frist: new Date(y, 10, 1) };
+  }
+  return { verdi: verdi, navn: 'Vår', maneder: 'mai eller juni ' + y,
+           fra: new Date(y, 4, 1), til: new Date(y, 5, 15), frist: new Date(y, 3, 1) };
+}
+
+/* Alle perioder fra og med en dato, sortert etter oppmeldingsfrist. */
+function ssPerioderFra(dato) {
+  var liste = [];
+  for (var y = dato.getFullYear(); y <= dato.getFullYear() + 2; y++) {
+    liste.push('v' + y, 'h' + y);
+  }
+  return liste.map(ssPeriodeInfo)
+    .sort(function(a, b) { return a.frist - b.frist; });
+}
+
+/* Perioden studenten faktisk siktet på. Vet de det ikke ennå, regner vi på den
+   første som fortsatt er åpen – det er den strengeste. */
+function ssGjeldendePeriode() {
+  var info = ssPeriodeInfo(_ssEksamen);
+  if (info) return info;
+  var forste = ssEksamensPerioder()[0];
+  return forste ? ssPeriodeInfo(forste.verdi) : null;
+}
+
+/* Sluttdatoen vi måler studieperioden mot. Har vi emnets faktiske eksamensdato
+   i den valgte perioden, bruker vi den. Ellers første dag i perioden, som er
+   det strengeste anslaget – for eksempel våren, der planen ikke finnes ennå. */
+function ssSluttdato(kode, periode) {
+  if (!periode) return null;
+  var eks = ssEksamensdato(kode);
+  if (eks && eks >= periode.fra && eks <= periode.til) return eks;
+  return periode.til;
+}
+
+/* Lånekassen krever minst 4 måneder fra oppstart til eksamen. */
+function ssSenesteOppstart(kode, periode) {
+  var slutt = ssSluttdato(kode, periode);
+  if (!slutt) return null;
+  return new Date(slutt.getFullYear(), slutt.getMonth() - 4, slutt.getDate());
+}
+
+/* Første periode som både er åpen for oppmelding og gir fire måneders
+   studieperiode med den valgte oppstarten. */
+function ssAnbefaltPeriode(kode, oppstart) {
+  var alle = ssPerioderFra(oppstart);
+  for (var i = 0; i < alle.length; i++) {
+    var p = alle[i];
+    if (oppstart > p.frist) continue;
+    var senest = ssSenesteOppstart(kode, p);
+    if (senest && oppstart > senest) continue;
+    return p;
+  }
+  return null;
+}
+
+/* Varselteksten når oppstarten ikke henger sammen med den valgte perioden.
+   Da peker vi videre til første periode som faktisk går opp.
+   «Nei» på Lånekassen slår av sjekken; «vet ikke» gjør det ikke. */
+function ssPeriodeVarsel(kode, oppstart) {
+  if (_ssWantsLanekassen === false || !oppstart) return null;
+  var periode = ssGjeldendePeriode();
+  if (!periode) return null;
+
+  var senest = ssSenesteOppstart(kode, periode);
+  var rekkerOppmelding = oppstart <= periode.frist;
+  var rekkerFireMnd = !senest || oppstart <= senest;
+  if (rekkerOppmelding && rekkerFireMnd) return null;
+
+  var aarsak = rekkerOppmelding
+    ? 'Studieperioden fram til eksamen i ' + periode.maneder + ' blir for kort – Lånekassen krever minst 4 måneder.'
+    : 'Oppmeldingen til eksamen i ' + periode.maneder + ' stenger ' + ssFormatDato(periode.frist) + '.';
+
+  var neste = ssAnbefaltPeriode(kode, oppstart);
+  if (!neste || neste.verdi === periode.verdi) return aarsak;
+  return aarsak + ' Med denne oppstarten anbefaler vi eksamen i ' + neste.maneder + '.';
+}
+
+/* De generelle eksamensperiodene: høst er desember/januar, vår er mai/juni.
+   Oppmeldingen stenger 1. november og 1. april, så en periode der fristen er
+   passert er ikke et reelt valg – da er første mulighet påfølgende semester. */
+function ssEksamensPerioder() {
+  var iDag = new Date();
+  iDag.setHours(0, 0, 0, 0);
+  return ssPerioderFra(iDag)
+    .filter(function(p) { return p.frist >= iDag; })
+    .slice(0, 2)
+    .map(function(p) {
+      return { verdi: p.verdi, label: p.navn,
+               sub: p.maneder.charAt(0).toUpperCase() + p.maneder.slice(1) };
+    });
+}
+
 function formatDateShort(d) {
   var dd = String(d.getDate()).padStart(2, '0');
   var mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -249,6 +481,9 @@ function getCalendarMinMax() {
 /* ── Custom calendar widget ── */
 var _ssMonthNames = ['Januar','Februar','Mars','April','Mai','Juni','Juli','August','September','Oktober','November','Desember'];
 var _ssDowLabels = ['Man','Tir','Ons','Tor','Fre','Lør','Søn'];
+
+var SS_CHEV_V = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var SS_CHEV_H = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function ssRenderCalendar() {
   var container = document.getElementById('ss-cal-widget');
@@ -271,8 +506,8 @@ function ssRenderCalendar() {
   var html = '<div class="ss-cal-nav">'
     + '<span class="ss-cal-month">' + _ssMonthNames[m] + ' ' + y + '</span>'
     + '<div class="ss-cal-arrows">'
-    + '<button class="ss-cal-arrow" onclick="ssCalPrev()"' + prevDisabled + '>&lsaquo;</button>'
-    + '<button class="ss-cal-arrow" onclick="ssCalNext()"' + nextDisabled + '>&rsaquo;</button>'
+    + '<button class="ss-cal-arrow" onclick="ssCalPrev()"' + prevDisabled + ' aria-label="Forrige måned">' + SS_CHEV_V + '</button>'
+    + '<button class="ss-cal-arrow" onclick="ssCalNext()"' + nextDisabled + ' aria-label="Neste måned">' + SS_CHEV_H + '</button>'
     + '</div></div>';
 
   html += '<div class="ss-cal-grid">';
@@ -323,6 +558,11 @@ window.ssCalNext = function() {
 
 window.ssCalSelect = function(y, m, d) {
   _ssCalSelected = new Date(y, m, d);
+  if (_ssAktivtEmne) {
+    _ssPerEmneDato[_ssAktivtEmne] = _ssCalSelected;
+    ssOppdaterVarsel(_ssAktivtEmne);
+  }
+  ssVisFeil(null);
   ssRenderCalendar();
   ssShowSelectedDate(_ssCalSelected);
   // Enable confirm button
@@ -405,43 +645,152 @@ window.ssToggleInfo = function(header) {
 };
 
 /* ── Build modal HTML ── */
-function buildApproachingHTML(sc) {
-  var mm = getCalendarMinMax();
-  var calMin = sc.calendarMin || mm.min;
-  var calMax = sc.calendarMax || mm.max;
-  return '<div class="ss-header"><button class="ss-close" onclick="closeStudiestartModal()" aria-label="Lukk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></button></div>'
-    + '<h2 class="ss-title">Velg studiestart</h2>'
-    + '<div class="ss-body">'
-    + '<div class="ss-radio-group">'
-    // Option 1: Semester date
-    + '<div class="ss-radio-card selected" onclick="ssSelectRadio(this,\'semester\')">'
+
+/* Hele bunken deler ett valg under denne nøkkelen når «samme dato» er på. */
+var SS_ALLE = '__alle';
+
+/* De to oppstartsvalgene. Brukes både for hele bunken og per enkeltemne. */
+function ssDatokortHTML(sc, kode) {
+  /* Semesterstarten er bare anbefalt av hensyn til Lånekassen. Svarer studenten
+     nei, står hen fritt – da er kalenderen eneste valg. */
+  var kunValgfri = _ssWantsLanekassen === false;
+  if (kunValgfri) _ssPerEmne[kode] = 'custom';
+
+  var valgt = _ssPerEmne[kode] || 'semester';
+  var kall = function(verdi) { return 'ssVelgDato(this,\'' + verdi + '\',\'' + kode + '\')'; };
+  return '<div class="ss-radio-group">'
+    + (kunValgfri ? '' :
+       '<div class="ss-radio-card' + (valgt === 'semester' ? ' selected' : '') + '" onclick="' + kall('semester') + '">'
     + '<div class="ss-radio-dot"></div>'
     + '<div style="flex:1">'
-    + '<div class="ss-radio-main">' + sc.semesterLabel + '</div>'
-    + '<p class="ss-radio-desc">' + sc.loanInfo + '</p>'
-    + '<div class="ss-radio-sub"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#5C5C5C" stroke-width="1.5"/><path d="M12 6v6l4 2" stroke="#5C5C5C" stroke-width="1.5" stroke-linecap="round"/></svg> ' + sc.studierettLabel + '</div>'
-    + '</div></div>'
-    // Option 2: Custom date
-    + '<div class="ss-radio-card" onclick="ssSelectRadio(this,\'custom\')">'
+    + '<div class="ss-radio-main-row"><div class="ss-radio-main">' + ssFormatDato(ssAnbefaltDato(sc)) + '</div>'
+    + '<span class="ss-badge">ANBEFALT</span></div>'
+    + '<div class="ss-radio-sub">' + ssStudierettLabel(sc) + '</div>'
+    + '</div></div>')
+    + '<div class="ss-radio-card' + (valgt === 'custom' ? ' selected' : '') + '" onclick="' + kall('custom') + '">'
     + '<div class="ss-radio-dot"></div>'
     + '<div style="flex:1">'
     + '<div class="ss-radio-main">Valgfri oppstart</div>'
-    + '<p class="ss-radio-desc">Du kan starte når som helst innen 3 måneder fra dagens dato.</p>'
-    + '<div class="ss-radio-sub"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#5C5C5C" stroke-width="1.5"/><path d="M12 6v6l4 2" stroke="#5C5C5C" stroke-width="1.5" stroke-linecap="round"/></svg> 12 måneder studierett</div>'
-    + '<div class="ss-calendar-wrap" id="ss-cal-wrap">'
-    + '<input type="date" class="ss-date-input" id="ss-custom-date" min="' + calMin + '" max="' + calMax + '">'
+    + '<div class="ss-radio-sub">' + SS_STUDIERETT_MND + ' måneder studierett</div>'
     + '</div>'
-    + '</div></div>'
+    /* Klikk inne i kalenderen må ikke boble opp til kortet – da kalles
+       ssVelgDato på nytt, kalenderen bygges om og hopper tilbake til i dag. */
+    + '<div class="ss-calendar-wrap" id="ss-cal-wrap-' + kode + '" onclick="event.stopPropagation()"></div>'
     + '</div>'
-    + '<div class="ss-faq-section">'
-    + buildInfoAccordion()
-    + '</div>'
-    + '</div>'
-    + '<div class="ss-footer">'
-    + '<button class="ss-btn" id="ss-confirm-btn" onclick="confirmStudiestart()">'
-    + 'Bekreft'
-    + '</button>'
+    + '<div class="ss-varsel" id="ss-varsel-' + kode + '" hidden></div>'
     + '</div>';
+}
+
+/* Samler varslene for det valget gjelder: ett emne, eller alle når bunken
+   deler oppstartsdato. */
+function ssVarselTekster(kode, sc) {
+  if (kode !== SS_ALLE) {
+    var t = ssPeriodeVarsel(kode, ssValgtDato(kode, sc));
+    return t ? [{ navn: null, tekst: t }] : [];
+  }
+  var dato = ssValgtDato(SS_ALLE, sc);
+  var alle = _ssEmner.map(function(e) {
+    var v = ssPeriodeVarsel(e.code, dato);
+    return v ? { navn: e.name, tekst: v } : null;
+  }).filter(Boolean);
+
+  /* Samme melding for hvert emne betyr at den gjelder bunken, ikke emnet. */
+  var likeAlle = alle.length === _ssEmner.length && alle.every(function(v) {
+    return v.tekst === alle[0].tekst;
+  });
+  return likeAlle ? [{ navn: null, tekst: alle[0].tekst }] : alle;
+}
+
+window.ssOppdaterVarsel = function(kode) {
+  var el = document.getElementById('ss-varsel-' + kode);
+  if (!el) return;
+  var backdrop = document.getElementById('ss-backdrop');
+  var sc = backdrop && backdrop._ssScenario;
+  if (!sc) return;
+  var varsler = ssVarselTekster(kode, sc);
+  el.hidden = !varsler.length;
+  el.innerHTML = varsler.map(function(v) {
+    return '<p class="ss-varsel-tekst">'
+      + (v.navn ? '<strong>' + v.navn + ':</strong> ' : '') + v.tekst + '</p>';
+  }).join('');
+};
+
+/* Per emne: ett kort per studieprogram, med hvert emne og dets eget datovalg. */
+/* Ett emne om gangen – «Bekreft» tar studenten videre til neste. */
+function ssPerEmneHTML(sc) {
+  if (!_ssEmner.length) return ssDatokortHTML(sc, SS_ALLE) + ssFot();
+
+  if (_ssEmneIdx > _ssEmner.length - 1) _ssEmneIdx = _ssEmner.length - 1;
+  var g = _ssGruppe || {};
+  var e = _ssEmner[_ssEmneIdx];
+  var kode = String(e.code);
+  var chevron = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 15l-6-6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  return '<div class="ss-emne-group">'
+    + '<div class="ss-emne-head">'
+    + '<div class="ss-emne-head-main">'
+    + (g.meta ? '<div class="ss-emne-head-meta">' + g.meta + '</div>' : '')
+    + '<div class="ss-emne-head-name">' + (g.navn || 'Emner') + '</div>'
+    + '</div>'
+    + '<span class="ss-emne-head-chevron">' + chevron + '</span>'
+    + '</div>'
+    + '<div class="ss-emne-item">'
+    + '<div class="ss-emne-item-code">#' + kode + (e.pts ? ' · ' + e.pts + ' stp.' : '') + '</div>'
+    + '<div class="ss-emne-item-name">' + (e.name || '') + '</div>'
+    + '<span class="ss-emne-tag">Nett</span>'
+    + ssDatokortHTML(sc, kode)
+    + ssFot()
+    + '</div>'
+    + '</div>';
+}
+
+function buildApproachingHTML(sc) {
+  var hake = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  return SS_LUKK
+    + '<h2 class="ss-title">Velg studiestart</h2>'
+    + '<div class="ss-body">' + ssTilbakeKnapp()
+    + '<div class="ss-question" style="font-size:20px;margin:0">Startdato</div>'
+    + '<div class="ss-same-date" onclick="ssToggleSammeDato()">'
+    + '<span class="ss-checkbox-box' + (_ssSammeDato ? ' checked' : '') + '">' + (_ssSammeDato ? hake : '') + '</span>'
+    + '<span class="ss-same-date-label">Samme oppstartsdato for alle emner</span>'
+    + '</div>'
+    + (_ssSammeDato ? ssDatokortHTML(sc, SS_ALLE) + ssFot() : ssPerEmneHTML(sc))
+    + '<div class="ss-faq-section">' + buildInfoAccordion() + '</div>'
+    + '</div>';
+}
+
+window.ssToggleSammeDato = function() {
+  _ssSammeDato = !_ssSammeDato;
+  _ssEmneIdx = 0;
+  ssGaTilSteg('startdato');
+};
+
+window.ssVelgDato = function(kort, verdi, kode) {
+  ssVisFeil(null);
+  _ssPerEmne[kode] = verdi;
+  var gruppe = kort.closest('.ss-radio-group');
+  gruppe.querySelectorAll('.ss-radio-card').forEach(function(c) { c.classList.remove('selected'); });
+  kort.classList.add('selected');
+  ssApneKalender(verdi === 'custom' ? kode : null);
+  ssOppdaterVarsel(kode);
+};
+
+/* Kalenderen finnes i én instans og flyttes til kortet som er åpent. */
+function ssApneKalender(kode) {
+  document.querySelectorAll('.ss-calendar-wrap').forEach(function(w) {
+    w.classList.remove('open'); w.innerHTML = '';
+  });
+  _ssAktivtEmne = kode;
+  if (!kode) return;
+
+  var wrap = document.getElementById('ss-cal-wrap-' + kode);
+  if (!wrap) return;
+  wrap.classList.add('open');
+  wrap.innerHTML = '<div id="ss-cal-widget" class="ss-cal" style="margin-top:12px"></div>';
+  ssInitCalendarState();
+  _ssCalSelected = _ssPerEmneDato[kode] || null;
+  /* Knappen er alltid aktiv – mangler datoen, sier ssValider() fra i stedet. */
+  ssRenderCalendar();
 }
 
 function buildBetweenHTML(sc) {
@@ -452,7 +801,7 @@ function buildBetweenHTML(sc) {
     // Card-based layout: upcoming semester + email notification, OR custom date now
     return '<div class="ss-header"><button class="ss-close" onclick="closeStudiestartModal()" aria-label="Lukk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></button></div>'
       + '<h2 class="ss-title">Velg studiestart</h2>'
-      + '<div class="ss-body">'
+      + '<div class="ss-body">' + ssTilbakeKnapp()
       + '<div class="ss-radio-group">'
       // Card 1: upcoming semester (selected by default, no radio dot)
       + '<div class="ss-radio-card ss-between-lk-card selected" onclick="ssSelectRadioBetween(this,\'semester\')">'
@@ -497,7 +846,7 @@ function buildBetweenHTML(sc) {
   // Nei case: just show calendar to pick a date now
   return '<div class="ss-header"><button class="ss-close" onclick="closeStudiestartModal()" aria-label="Lukk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></button></div>'
     + '<h2 class="ss-title">Velg studiestart</h2>'
-    + '<div class="ss-body">'
+    + '<div class="ss-body">' + ssTilbakeKnapp()
     + '<div id="ss-cal-widget" class="ss-cal"></div>'
     + '<div class="ss-selected-date" id="ss-selected-date">'
     + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
@@ -515,44 +864,190 @@ function buildBetweenHTML(sc) {
     + '</div>';
 }
 
-/* ── Studiestøtte step ── */
-function buildStudiestotteHTML() {
-  var chevron = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  return '<div class="ss-header"><button class="ss-close" onclick="closeStudiestartModal()" aria-label="Lukk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></button></div>'
-    + '<h2 class="ss-title">Studiestøtte</h2>'
-    + '<p class="ss-subtitle">Planlegger du å søke lån eller stipend fra Lånekassen?</p>'
-    + '<div class="ss-body">'
-    + '<div class="ss-radio-group">'
-    + '<div class="ss-simple-card" onclick="ssStudiestotteSelect(\'ja\', this)">Ja</div>'
-    + '<div class="ss-simple-card" onclick="ssStudiestotteSelect(\'nei\', this)">Nei</div>'
+/* ── Steg 1: Lånekassen ──────────────────────────────────────────────────
+   Svaret avgjør om vi spør om eksamensdato, og hvor mye oppstartsdatoen
+   betyr for studenten. */
+var SS_LUKK = '<div class="ss-header"><button class="ss-close" onclick="closeStudiestartModal()" aria-label="Lukk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></button></div>';
+
+function ssFot() {
+  return '<p class="ss-error" id="ss-error" hidden></p>'
+    + '<div class="ss-footer"><button class="ss-btn" id="ss-confirm-btn" onclick="ssBekreftSteg()">Bekreft</button></div>';
+}
+
+function ssVisFeil(tekst) {
+  var el = document.getElementById('ss-error');
+  if (!el) return;
+  el.textContent = tekst || '';
+  el.hidden = !tekst;
+}
+
+/* Returnerer feilteksten når steget mangler et valg, ellers null. */
+function ssValider() {
+  if (_ssSteg === 'lanekassen') {
+    return _ssWantsLanekassen === null ? 'Velg et alternativ for å gå videre.' : null;
+  }
+  if (_ssSteg === 'eksamen') {
+    return _ssEksamen === null ? 'Velg et alternativ for å gå videre.' : null;
+  }
+  var backdrop = document.getElementById('ss-backdrop');
+  var sc = backdrop && backdrop._ssScenario;
+  if (!sc) return null;
+  var kode = _ssSammeDato ? SS_ALLE : String((_ssEmner[_ssEmneIdx] || {}).code);
+  return ssDatoFor(kode, sc) ? null : 'Velg en oppstartsdato for å gå videre.';
+}
+
+function ssValgkort(verdi, tekst, valgt, handler, sub) {
+  return '<div class="ss-radio-card' + (valgt ? ' selected' : '') + '" onclick="' + handler + '(this,\'' + verdi + '\')">'
+    + '<div class="ss-radio-dot"></div>'
+    + '<div style="flex:1"><div class="ss-radio-main">' + tekst + '</div>'
+    + (sub ? '<p class="ss-radio-desc">' + sub + '</p>' : '')
     + '</div>'
-    + buildInfoAccordion()
     + '</div>';
 }
 
-window.ssStudiestotteSelect = function(val, card) {
-  _ssWantsLanekassen = (val === 'ja');
-  // Brief visual feedback on the card
-  var cards = document.querySelectorAll('.ss-simple-card');
-  cards.forEach(function(c) { c.classList.remove('selected'); });
-  if (card) card.classList.add('selected');
+function buildLanekassenHTML() {
+  var v = _ssWantsLanekassen;
+  return SS_LUKK
+    + '<h2 class="ss-title">Oppstart for emner</h2>'
+    + '<div class="ss-body">' + ssTilbakeKnapp()
+    + '<div>'
+    + '<div class="ss-question">Skal du søke lån eller stipend fra Lånekassen?</div>'
+    + '<p class="ss-subtitle">Svaret avgjør hvor viktig oppstartsdatoen til emnet er.</p>'
+    + '</div>'
+    + '<div class="ss-radio-group">'
+    + ssValgkort('ja', 'Ja', v === true, 'ssVelgLanekassen')
+    + ssValgkort('nei', 'Nei', v === false, 'ssVelgLanekassen')
+    + ssValgkort('vetikke', 'Vet ikke ennå', v === 'vetikke', 'ssVelgLanekassen')
+    + '</div>'
+    + ssFot()
+    + '<div class="ss-faq-section">' + buildInfoAccordion() + '</div>'
+    + '</div>';
+}
 
+window.ssVelgLanekassen = function(kort, verdi) {
+  ssVisFeil(null);
+  _ssWantsLanekassen = (verdi === 'ja') ? true : (verdi === 'nei' ? false : 'vetikke');
+  /* Bare «Ja» får eksamenssteget – et gammelt svar må ikke bli hengende igjen
+     og styre studieperiode-sjekken etterpå. */
+  if (verdi !== 'ja') _ssEksamen = null;
+  var gruppe = kort.closest('.ss-radio-group');
+  gruppe.querySelectorAll('.ss-radio-card').forEach(function(c) { c.classList.remove('selected'); });
+  kort.classList.add('selected');
+  var btn = document.getElementById('ss-confirm-btn');
+  if (btn) btn.disabled = false;
+};
+
+/* ── Steg 2: eksamensdato ────────────────────────────────────────────────
+   Vises bare når studenten svarer «Ja» på Lånekassen. Svaret er sluttdatoen
+   Kristiania i dag må be om på e-post for å rapportere den videre. */
+function buildEksamenHTML(sc) {
+  var kort = ssEksamensPerioder().map(function(a) {
+    return ssValgkort(a.verdi, a.label, _ssEksamen === a.verdi, 'ssVelgEksamen', a.sub);
+  }).join('') + ssValgkort('vetikke', 'Vet ikke ennå', _ssEksamen === 'vetikke', 'ssVelgEksamen');
+
+  return SS_LUKK
+    + '<h2 class="ss-title">Velg studiestart</h2>'
+    + '<div class="ss-body">' + ssTilbakeKnapp()
+    + '<div>'
+    + '<div class="ss-question">Når planlegger du å ta eksamen?</div>'
+    + '<p class="ss-subtitle">Svaret avgjør hvor lang studieperiode du har.</p>'
+    + '</div>'
+    + '<div class="ss-notis">Du må fortsatt melde deg opp til vurdering i StudentWeb</div>'
+    + '<div class="ss-radio-group">' + kort + '</div>'
+    + ssFot()
+    + '<div class="ss-faq-section">' + buildInfoAccordion() + '</div>'
+    + '</div>';
+}
+
+window.ssVelgEksamen = function(kort, verdi) {
+  ssVisFeil(null);
+  _ssEksamen = verdi;
+  var gruppe = kort.closest('.ss-radio-group');
+  gruppe.querySelectorAll('.ss-radio-card').forEach(function(c) { c.classList.remove('selected'); });
+  kort.classList.add('selected');
+  var btn = document.getElementById('ss-confirm-btn');
+  if (btn) btn.disabled = false;
+};
+
+/* ── Stegmotor ──────────────────────────────────────────────────────────── */
+function ssTittelFor(steg) {
+  var s = steg || _ssSteg;
+  if (s === 'lanekassen') return 'Oppstart for emner';
+  if (s === 'eksamen') return 'Studieperiode';
+  return 'Velg studiestart';
+}
+
+/* Forrige steg, eller null når vi står på det første. */
+function ssForrigeSteg() {
+  if (_ssSteg === 'startdato') {
+    if (!_ssSammeDato && _ssEmneIdx > 0) return 'forrigeEmne';
+    return _ssWantsLanekassen === true ? 'eksamen' : 'lanekassen';
+  }
+  if (_ssSteg === 'eksamen') return 'lanekassen';
+  return null;
+}
+
+function ssTilbakeKnapp() {
+  if (!ssForrigeSteg() && !_ssOnBack) return '';
+  return '<button class="ss-back" onclick="ssTilbake()">'
+    + '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    + 'Tilbake</button>';
+}
+
+window.ssTilbake = function() {
+  var forrige = ssForrigeSteg();
+  if (forrige === 'forrigeEmne') { _ssEmneIdx--; ssGaTilSteg('startdato'); return; }
+  if (forrige) { ssGaTilSteg(forrige); return; }
+  if (_ssOnBack) _ssOnBack();
+};
+
+function ssByggSteg(steg, sc) {
+  if (steg === 'lanekassen') return buildLanekassenHTML();
+  if (steg === 'eksamen') return buildEksamenHTML(sc);
+  return (sc.id === 'approaching') ? buildApproachingHTML(sc) : buildBetweenHTML(sc);
+}
+
+window.ssGaTilSteg = function(steg) {
   var backdrop = document.getElementById('ss-backdrop');
-  if (!backdrop) return;
-  var sc = backdrop._ssScenario;
   var modal = document.getElementById('ss-modal');
-  if (!modal) return;
+  if (!backdrop || !modal) return;
+  var sc = backdrop._ssScenario;
+  _ssSteg = steg;
+  _ssAktivtEmne = null;
+  modal.innerHTML = ssByggSteg(steg, sc);
+  if (_ssInline && _ssInline.onTitle) _ssInline.onTitle(ssTittelFor());
+  if (steg === 'startdato' && sc.id === 'between') {
+    ssInitCalendarState();
+    ssRenderCalendar();
+  }
+  if (steg === 'startdato') {
+    var aktivKode = _ssSammeDato ? SS_ALLE : String((_ssEmner[_ssEmneIdx] || {}).code);
+    /* Er kalenderen eneste valg, skal den stå åpen fra start. */
+    if (_ssWantsLanekassen === false) ssApneKalender(aktivKode);
+    /* Vis studieperiode-varselet med en gang, siden datoen er forvalgt. */
+    ssOppdaterVarsel(aktivKode);
+  }
+};
 
-  setTimeout(function() {
-    var html = (sc.id === 'approaching') ? buildApproachingHTML(sc) : buildBetweenHTML(sc);
-    modal.innerHTML = html;
-    if (_ssInline && _ssInline.onTitle) _ssInline.onTitle('Velg studiestart');
-    if (sc.id === 'between' && !_ssWantsLanekassen) {
-      ssInitCalendarState();
-      ssRenderCalendar();
-    }
-    // Between+Ja: calendar is lazy-init'd when user clicks "Valgfri oppstart"
-  }, 120);
+window.ssBekreftSteg = function() {
+  var feil = ssValider();
+  if (feil) { ssVisFeil(feil); return; }
+  ssVisFeil(null);
+
+  if (_ssSteg === 'lanekassen') {
+    /* Bare «Ja» trenger eksamensdatoen – den er til Lånekasse-rapporteringen. */
+    ssGaTilSteg(_ssWantsLanekassen === true ? 'eksamen' : 'startdato');
+    return;
+  }
+  if (_ssSteg === 'eksamen') { ssGaTilSteg('startdato'); return; }
+
+  /* Egen dato per emne: gå til neste emne til alle er tatt stilling til. */
+  if (!_ssSammeDato && _ssEmneIdx < _ssEmner.length - 1) {
+    _ssEmneIdx++;
+    ssGaTilSteg('startdato');
+    return;
+  }
+  confirmStudiestart();
 };
 
 /* ── Public API ── */
@@ -582,13 +1077,13 @@ window.openStudiestartModal = function(pendingCourses, scenarioOverride, options
   var old = document.getElementById('ss-backdrop');
   if (old) old.remove();
 
-  _ssWantsLanekassen = null;
+  ssNullstillValg();
+  _ssEmner = _ssPending.slice();
+  _ssGruppe = (options && options.gruppe) || null;
+  _ssOnBack = (options && options.onBack) || null;
   var sc = scenarioOverride || getStudiestartScenario();
-  var skipStudiestotte = options && options.skipStudiestotte;
-
-  var initialHTML = skipStudiestotte
-    ? (sc.id === 'approaching' ? buildApproachingHTML(sc) : buildBetweenHTML(sc))
-    : buildStudiestotteHTML();
+  _ssSteg = 'lanekassen';
+  var initialHTML = buildLanekassenHTML();
 
   var backdrop = document.createElement('div');
   backdrop.className = 'ss-backdrop';
@@ -608,7 +1103,7 @@ window.openStudiestartModal = function(pendingCourses, scenarioOverride, options
   // Trigger open animation
   requestAnimationFrame(function() {
     backdrop.classList.add('open');
-    if (skipStudiestotte && sc.id === 'between') {
+    if (sc.id === 'between' && false) {
       ssInitCalendarState();
       ssRenderCalendar();
     }
@@ -616,7 +1111,7 @@ window.openStudiestartModal = function(pendingCourses, scenarioOverride, options
 };
 
 /* Samme steg som skuffen, men rendret rett i en beholder – søknadspanelet.
-   opts: { onConfirm(datoStr), onNotify(epost), onTitle(tekst), skipStudiestotte } */
+   opts: { onConfirm(datoStr, perEmne), onNotify(epost), onTitle(tekst), emner, gruppe } */
 window.renderStudiestartStep = function(container, scenarioOverride, opts) {
   if (!container) return;
   opts = opts || {};
@@ -627,7 +1122,10 @@ window.renderStudiestartStep = function(container, scenarioOverride, opts) {
   if (old) old.remove();
 
   _ssPending = [];
-  _ssWantsLanekassen = null;
+  ssNullstillValg();
+  _ssEmner = (opts.emner || []).slice();
+  _ssGruppe = opts.gruppe || null;
+  _ssOnBack = opts.onBack || null;
   _ssInline = {
     onConfirm: opts.onConfirm || null,
     onNotify: opts.onNotify || null,
@@ -635,10 +1133,8 @@ window.renderStudiestartStep = function(container, scenarioOverride, opts) {
   };
 
   var sc = scenarioOverride || window.STUDIESTART_SCENARIO || getStudiestartScenario();
-  var skipStudiestotte = !!opts.skipStudiestotte;
-  var initialHTML = skipStudiestotte
-    ? (sc.id === 'approaching' ? buildApproachingHTML(sc) : buildBetweenHTML(sc))
-    : buildStudiestotteHTML();
+  _ssSteg = 'lanekassen';
+  var initialHTML = buildLanekassenHTML();
 
   var host = document.createElement('div');
   host.className = 'ss-backdrop ss-inline-host open';
@@ -648,12 +1144,19 @@ window.renderStudiestartStep = function(container, scenarioOverride, opts) {
   container.appendChild(host);
   host._ssScenario = sc;
 
-  if (_ssInline.onTitle) _ssInline.onTitle(skipStudiestotte ? 'Velg studiestart' : 'Studiestøtte');
-  if (skipStudiestotte && sc.id === 'between') {
-    ssInitCalendarState();
-    ssRenderCalendar();
-  }
+  if (_ssInline.onTitle) _ssInline.onTitle(ssTittelFor());
 };
+
+function ssNullstillValg() {
+  _ssWantsLanekassen = null;
+  _ssEksamen = null;
+  _ssSammeDato = true;
+  _ssPerEmne = {};
+  _ssPerEmneDato = {};
+  _ssAktivtEmne = null;
+  _ssEmneIdx = 0;
+  _ssCalSelected = null;
+}
 
 function ssClearInline() {
   var inline = _ssInline;
@@ -690,26 +1193,6 @@ window.ssSelectRadioBetween = function(card, value) {
   }
 };
 
-window.ssSelectRadio = function(card, value) {
-  var group = card.closest('.ss-radio-group');
-  group.querySelectorAll('.ss-radio-card').forEach(function(c) { c.classList.remove('selected'); });
-  card.classList.add('selected');
-
-  var calWrap = document.getElementById('ss-cal-wrap');
-  var btn = document.getElementById('ss-confirm-btn');
-  if (value === 'custom') {
-    if (calWrap) calWrap.classList.add('open');
-    // Disable confirm until date picked
-    var dateInput = document.getElementById('ss-custom-date');
-    if (btn) btn.disabled = !dateInput.value;
-    if (dateInput) {
-      dateInput.onchange = function() { if (btn) btn.disabled = !this.value; };
-    }
-  } else {
-    if (calWrap) calWrap.classList.remove('open');
-    if (btn) btn.disabled = false;
-  }
-};
 
 window.ssToggleCheckbox = function(row) {
   var box = row.querySelector('.ss-checkbox-box');
@@ -765,23 +1248,44 @@ window.ssDateChanged = function() {
   }
 };
 
+function ssFormatKort(d) {
+  return String(d.getDate()).padStart(2, '0') + '.'
+       + String(d.getMonth() + 1).padStart(2, '0') + '.'
+       + String(d.getFullYear()).slice(-2);
+}
+
+function ssValgtDato(kode, sc) {
+  if ((_ssPerEmne[kode] || 'semester') === 'semester') return ssAnbefaltDato(sc);
+  return _ssPerEmneDato[kode] || null;
+}
+
+/* Tom streng betyr «valgfri oppstart er valgt, men ingen dato er plukket». */
+function ssDatoFor(kode, sc) {
+  if ((_ssPerEmne[kode] || 'semester') === 'semester') return ssFormatKort(ssAnbefaltDato(sc));
+  var d = _ssPerEmneDato[kode];
+  return d ? ssFormatKort(d) : '';
+}
+
 window.confirmStudiestart = function() {
   var backdrop = document.getElementById('ss-backdrop');
   if (!backdrop) return;
   var sc = backdrop._ssScenario;
   var dateStr = '';
+  var perEmne = null;
 
   if (sc.id === 'approaching') {
-    var selectedCard = document.querySelector('.ss-radio-card.selected');
-    if (!selectedCard) return;
-    var isSemester = selectedCard.querySelector('.ss-radio-main').textContent.indexOf('Valgfri') === -1;
-    if (isSemester) {
-      dateStr = sc.semesterDateStr;
+    if (_ssSammeDato) {
+      dateStr = ssDatoFor(SS_ALLE, sc);
+      if (!dateStr) return;   /* valgfri oppstart uten valgt dato */
     } else {
-      var dateInput = document.getElementById('ss-custom-date');
-      if (!dateInput || !dateInput.value) return;
-      var parts = dateInput.value.split('-');
-      dateStr = parts[2] + '.' + parts[1] + '.' + parts[0].slice(-2);
+      perEmne = {};
+      for (var i = 0; i < _ssEmner.length; i++) {
+        var kode = String(_ssEmner[i].code);
+        var d = ssDatoFor(kode, sc);
+        if (!d) return;
+        perEmne[kode] = d;
+      }
+      dateStr = perEmne[String((_ssEmner[0] || {}).code)] || ssFormatKort(ssAnbefaltDato(sc));
     }
   } else {
     if (_ssWantsLanekassen) {
@@ -818,14 +1322,15 @@ window.confirmStudiestart = function() {
   /* Inline-modus: kalleren eier emnene og legger dem i søknaden selv. */
   if (_ssInline) {
     var inlineState = ssClearInline();
-    if (inlineState.onConfirm) inlineState.onConfirm(dateStr);
+    if (inlineState.onConfirm) inlineState.onConfirm(dateStr, perEmne);
     return;
   }
 
   // Add all pending courses with start date
   _ssPending.forEach(function(c) {
     if (typeof spCart !== 'undefined' && !spCart[c.code]) {
-      spCart[c.code] = { name: c.name, pts: c.pts, price: c.price, startDate: dateStr, url: c.url || null };
+      var egen = perEmne ? perEmne[String(c.code)] : null;
+      spCart[c.code] = { name: c.name, pts: c.pts, price: c.price, startDate: egen || dateStr, url: c.url || null };
       document.querySelectorAll('.sp-course-row[data-code="' + c.code + '"] .sp-add-btn').forEach(function(b) {
         b.classList.add('added');
         b.textContent = '\u2713';
