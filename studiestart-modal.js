@@ -50,6 +50,14 @@ function injectStyles() {
 .ss-radio-card.selected .ss-radio-dot::after{content:"";width:12px;height:12px;background:#0A4FB8;border-radius:50%}\
 .ss-radio-main{font-size:18px;font-weight:600;color:#1A1A1A;line-height:1.25}\
 .ss-radio-desc{font-size:14px;color:#5C5C5C;margin:4px 0 0;line-height:1.45}\
+.ss-perisk{margin:10px 0 0;border:1px solid #FFCA00;background:#FFFBEB;border-radius:8px;overflow:hidden}\
+.ss-perisk-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px 14px;cursor:pointer;user-select:none}\
+.ss-perisk-tittel{font-size:15px;font-weight:600;color:#1A1A1A;line-height:1.35}\
+.ss-perisk-ikon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:#1A1A1A;flex-shrink:0;margin-top:2px;transition:transform .3s ease}\
+.ss-perisk.apen .ss-perisk-ikon{transform:rotate(180deg)}\
+.ss-perisk-body{max-height:0;overflow:hidden;transition:max-height .35s ease}\
+.ss-perisk.apen .ss-perisk-body{max-height:400px}\
+.ss-perisk-tekst{font-size:15px;color:#1A1A1A;line-height:1.5;margin:0;padding:0 14px 14px}\
 .ss-radio-sub{font-size:15px;color:#5C5C5C;margin-top:6px;line-height:1.35}\
 .ss-radio-sub svg{flex-shrink:0}\
 .ss-radio-sub strong{color:#1A1A1A;font-weight:600}\
@@ -128,6 +136,7 @@ function injectStyles() {
 .ss-radio-card{padding:16px}\
 .ss-radio-main{font-size:16px}\
 .ss-radio-desc{font-size:13px}\
+.ss-perisk-tittel,.ss-perisk-tekst{font-size:14px}\
 .ss-radio-sub{margin-top:6px}\
 .ss-cal{padding:16px}\
 .ss-cal-grid{gap:0}\
@@ -159,7 +168,6 @@ function injectStyles() {
 .ss-emne-head-main{flex:1;min-width:0}\
 .ss-emne-head-chevron{display:inline-flex;color:#1A1A1A;flex-shrink:0}\
 .ss-error{color:#AF0018;font-size:14px;margin:12px 0 0;line-height:1.4}\
-.ss-notis{background:#FFFBEB;border:1px solid #FFCA00;border-radius:8px;padding:16px 18px;font-size:16px;font-weight:600;color:#1A1A1A;line-height:1.4}\
 .ss-varsel{background:#FCF8F5;border:1px solid #F9CCD2;border-radius:8px;padding:14px 16px;margin-top:12px}\
 .ss-varsel-tekst{font-size:14px;color:#1A1A1A;line-height:1.55;margin:0 0 8px}\
 .ss-varsel-tekst:last-child{margin-bottom:0}\
@@ -194,11 +202,8 @@ window.STUDIESTART_SCENARIO = {
   id: 'approaching',
   semesterLabel: '16. august 2026',
   studierettLabel: 'Studierett til 15. august 2027',
-  semesterDateStr: '16.08.26',
   loanInfo: 'Anbefalt hvis du ønsker å søke lån/stipend hos Lånekassen.',
   loanLink: 'Les mer: Lånekassen: Nettstudier og samlingsbasert',
-  calendarMin: '2026-06-16',
-  calendarMax: '2026-09-16',
   /* Brukes i «mellom semestre»-varianten av studiestartsteget. */
   nextSemester: 'høstsemesteret',
   nextDate: '16. august',
@@ -221,7 +226,6 @@ function getStudiestartScenario() {
       id: 'approaching',
       semesterLabel: '16. januar ' + semYear,
       studierettLabel: 'Studierett til 15. januar ' + (semYear + 1),
-      semesterDateStr: formatDateShort(semDate),
       loanInfo: 'Anbefalt hvis du ønsker å søke lån/stipend hos Lånekassen.',
       loanLink: 'Les mer: Lånekassen: Nettstudier og samlingsbasert'
     };
@@ -234,7 +238,6 @@ function getStudiestartScenario() {
       id: 'approaching',
       semesterLabel: '16. august ' + y,
       studierettLabel: 'Studierett til 15. august ' + (y + 1),
-      semesterDateStr: formatDateShort(semDate2),
       loanInfo: 'Anbefalt hvis du ønsker å søke lån/stipend hos Lånekassen.',
       loanLink: 'Les mer: Lånekassen: Nettstudier og samlingsbasert'
     };
@@ -316,48 +319,19 @@ var EKSAMENSPLAN = {
 var SS_MND = ['januar','februar','mars','april','mai','juni','juli','august',
                'september','oktober','november','desember'];
 
-/* «16.08.26» → Date. Faller tilbake på i dag hvis scenariet mangler datoen. */
-function ssSemesterStart(sc) {
-  var m = /^(\d{2})\.(\d{2})\.(\d{2})$/.exec((sc && sc.semesterDateStr) || '');
-  if (!m) return new Date();
-  return new Date(2000 + parseInt(m[3], 10), parseInt(m[2], 10) - 1, parseInt(m[1], 10));
-}
-
 /* Alle emner har 18 måneders studierett, uansett hvilken oppstart som velges. */
 var SS_STUDIERETT_MND = 18;
 
-/* Semesterstarten i scenariet kan ha passert. Da er den ikke et reelt valg, og
-   vi anbefaler neste semesterstart i stedet (16. januar / 16. august). */
-function ssAnbefaltDato(sc) {
-  var iDag = new Date();
-  iDag.setHours(0, 0, 0, 0);
-
-  var d = ssSemesterStart(sc);
-  if (d < iDag) {
-    var y = iDag.getFullYear();
-    var kandidater = [new Date(y, 0, 16), new Date(y, 7, 16), new Date(y + 1, 0, 16)];
-    for (var i = 0; i < kandidater.length; i++) {
-      if (kandidater[i] >= iDag) { d = kandidater[i]; break; }
-    }
-  }
-
-  /* Semesterstarten er bare en anbefaling hvis den faktisk går opp med den
-     eksamensperioden studenten valgte. Gjør den ikke det, anbefaler vi den
-     seneste datoen som fortsatt holder – ellers motsier kortet seg selv. */
-  var periode = ssGjeldendePeriode();
-  if (!periode) return d;
-  if (d <= periode.frist && ssPluss4(d) <= periode.til) return d;
-
-  var senest = new Date(periode.til.getFullYear(), periode.til.getMonth() - 4, periode.til.getDate());
-  if (senest > periode.frist) senest = periode.frist;
-  var maks = new Date(iDag.getFullYear(), iDag.getMonth() + 3, iDag.getDate());
-  if (senest > maks) senest = maks;
-  var tidligst = ssTidligsteOppstart();
-  return senest < tidligst ? tidligst : senest;
+/* Emner har oppstart hver dag hele året, og det er studieperioden fram til
+   eksamen som avgjør om oppstarten holder for Lånekassen – ikke hvilken dato
+   semesteret starter. Tidligst mulig oppstart gir lengst studieperiode, så det
+   er den vi anbefaler. */
+function ssAnbefaltDato() {
+  return ssTidligsteOppstart();
 }
 
-function ssStudierettLabel(sc) {
-  var start = ssAnbefaltDato(sc);
+function ssStudierettLabel() {
+  var start = ssAnbefaltDato();
   var slutt = new Date(start.getFullYear(), start.getMonth() + SS_STUDIERETT_MND, start.getDate() - 1);
   return 'Studierett til ' + slutt.getDate() + '. ' + SS_MND[slutt.getMonth()] + ' ' + slutt.getFullYear();
 }
@@ -399,20 +373,24 @@ function ssPerioderFra(dato) {
     .sort(function(a, b) { return a.frist - b.frist; });
 }
 
-/* Perioden studenten faktisk siktet på. Vet de det ikke ennå, regner vi på den
-   første som fortsatt er åpen – det er den strengeste. */
-function ssGjeldendePeriode() {
-  var info = ssPeriodeInfo(_ssEksamen);
-  if (info) return info;
-  var forste = ssEksamensPerioder()[0];
-  return forste ? ssPeriodeInfo(forste.verdi) : null;
-}
-
 /* Sluttdatoen vi måler studieperioden mot. Har vi emnets faktiske eksamensdato
-   i den valgte perioden, bruker vi den. Ellers første dag i perioden, som er
-   det strengeste anslaget – for eksempel våren, der planen ikke finnes ennå. */
+   i den valgte perioden, bruker vi den. Ellers periodens siste dag, som er det
+   mest romslige anslaget – for eksempel våren, der planen ikke finnes ennå.
+
+   Deler emnene oppstartsdato, er det studentens samlede studieperiode som
+   gjelder, og den løper til den siste eksamenen i bestillingen. Et emne med
+   eksamen i desember gjør ikke perioden for kort når studenten i samme
+   bestilling har et emne med eksamen i januar. */
 function ssSluttdato(kode, periode) {
   if (!periode) return null;
+  if (kode === SS_ALLE) {
+    var senest = null;
+    for (var i = 0; i < _ssEmner.length; i++) {
+      var d = ssSluttdato(String(_ssEmner[i].code), periode);
+      if (!senest || d > senest) senest = d;
+    }
+    return senest || periode.til;
+  }
   var eks = ssEksamensdato(kode);
   if (eks && eks >= periode.fra && eks <= periode.til) return eks;
   return periode.til;
@@ -439,12 +417,14 @@ function ssAnbefaltPeriode(kode, oppstart) {
   return null;
 }
 
-/* Varselteksten når oppstarten ikke henger sammen med den valgte perioden.
-   Da peker vi videre til første periode som faktisk går opp.
-   «Nei» på Lånekassen slår av sjekken; «vet ikke» gjør det ikke. */
+/* Varselteksten når oppstarten ikke henger sammen med perioden studenten har
+   valgt. Da peker vi videre til første periode som faktisk går opp.
+   Har de ikke valgt en periode – «nei» eller «vet ikke» på Lånekassen, eller
+   «vet ikke» på eksamen – har vi ingenting å måle mot, og sier ingenting
+   heller enn å gjette på den strengeste. */
 function ssPeriodeVarsel(kode, oppstart) {
-  if (_ssWantsLanekassen === false || !oppstart) return null;
-  var periode = ssGjeldendePeriode();
+  if (!oppstart) return null;
+  var periode = ssPeriodeInfo(_ssEksamen);
   if (!periode) return null;
 
   var senest = ssSenesteOppstart(kode, periode);
@@ -479,31 +459,34 @@ function ssEksamensPerioder() {
   iDag.setHours(0, 0, 0, 0);
   var tidligst = ssTidligsteOppstart();
   return ssPerioderFra(iDag)
-    /* Perioden må både være åpen for oppmelding og mulig å rekke: selv den
-       tidligste tillatte oppstarten må gi fire måneders studieperiode. */
-    .filter(function(p) { return p.frist >= iDag && ssPluss4(tidligst) <= p.til; })
+    /* Oppmeldingsfristen er Kristianias egen og absolutt – er den passert, kan
+       studenten ikke melde seg opp, og perioden er ikke et valg. Fire-måneders-
+       kravet er Lånekassens: den nærmeste perioden vises selv om den er for
+       kort, men merket, så studenten kan velge den med åpne øyne. */
+    .filter(function(p) { return p.frist >= iDag; })
     .slice(0, 2)
     .map(function(p) {
+      /* Samme måling som varselet på neste steg: seneste oppstart som gir fire
+         måneder fram til den siste eksamenen i bestillingen. */
+      var senest = ssSenesteOppstart(SS_ALLE, p);
       return { verdi: p.verdi, label: p.navn,
-               sub: p.maneder.charAt(0).toUpperCase() + p.maneder.slice(1) };
+               sub: p.maneder.charAt(0).toUpperCase() + p.maneder.slice(1),
+               forKort: !!senest && tidligst > senest };
     });
 }
 
-function formatDateShort(d) {
-  var dd = String(d.getDate()).padStart(2, '0');
-  var mm = String(d.getMonth() + 1).padStart(2, '0');
-  var yy = String(d.getFullYear()).slice(-2);
-  return dd + '.' + mm + '.' + yy;
+/* toISOString() regner om til UTC og flytter norske datoer en dag bakover om
+   sommeren. Kalendervinduet må være lokale datoer, ellers blir grensene feil. */
+function ssIsoLokal(d) {
+  var m = d.getMonth() + 1, dag = d.getDate();
+  return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (dag < 10 ? '0' : '') + dag;
 }
 
 function getCalendarMinMax() {
   var now = new Date();
   var min = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
   var max = new Date(now.getFullYear(), now.getMonth() + 3, now.getDate());
-  return {
-    min: min.toISOString().split('T')[0],
-    max: max.toISOString().split('T')[0]
-  };
+  return { min: ssIsoLokal(min), max: ssIsoLokal(max) };
 }
 
 /* ── Custom calendar widget ── */
@@ -620,9 +603,28 @@ function ssInitCalendarState() {
   _ssCalSelected = null;
 }
 
+var SS_CHEV_NED = '<svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+/* Merkingen på en eksamensperiode som ikke gir fire måneders studieperiode.
+   Perioden er fortsatt valgbar – dette er Lånekassens krav, ikke vårt. */
+var SS_PERISK_TITTEL = 'Studieperioden kan bli for kort for å ta denne eksamenen';
+var SS_PERISK_TEKST = 'Studieperioden må være minimum 4 måneder fra startdato til '
+  + 'sluttdato (siste eksamensdato) for å kvalifisere til støtte fra Lånekassen.';
+
+function ssForKortBoks() {
+  var chevron = '<svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M1.5 1.5L8 8l6.5-6.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  return '<div class="ss-perisk">'
+    + '<div class="ss-perisk-head" onclick="ssTogglePerisk(event, this)">'
+    + '<span class="ss-perisk-tittel">' + SS_PERISK_TITTEL + '</span>'
+    + '<span class="ss-perisk-ikon">' + chevron + '</span>'
+    + '</div>'
+    + '<div class="ss-perisk-body"><p class="ss-perisk-tekst">' + SS_PERISK_TEKST + '</p></div>'
+    + '</div>';
+}
+
 /* ── Info accordion ── */
 function buildInfoAccordion() {
-  var chevron = '<svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var chevron = SS_CHEV_NED;
   var startdatoHtml = '<div class="ss-info-accordion">'
     + '<div class="ss-info-header" onclick="ssToggleInfo(this)">'
     + '<span class="ss-info-header-text">Hvilken startdato bør jeg velge?</span>'
@@ -667,6 +669,13 @@ function buildInfoAccordion() {
   return startdatoHtml + tilgangHtml + lanekassenHtml;
 }
 
+window.ssTogglePerisk = function(ev, head) {
+  /* Klikk i boksen må ikke også velge radiokortet den ligger i. */
+  ev.stopPropagation();
+  var boks = head && head.closest ? head.closest('.ss-perisk') : null;
+  if (boks) boks.classList.toggle('apen');
+};
+
 window.ssToggleInfo = function(header) {
   var acc = header && header.closest ? header.closest('.ss-info-accordion') : null;
   if (acc) acc.classList.toggle('open');
@@ -691,9 +700,9 @@ function ssDatokortHTML(sc, kode) {
        '<div class="ss-radio-card' + (valgt === 'semester' ? ' selected' : '') + '" onclick="' + kall('semester') + '">'
     + '<div class="ss-radio-dot"></div>'
     + '<div style="flex:1">'
-    + '<div class="ss-radio-main-row"><div class="ss-radio-main">' + ssFormatDato(ssAnbefaltDato(sc)) + '</div>'
+    + '<div class="ss-radio-main-row"><div class="ss-radio-main">' + ssFormatDato(ssAnbefaltDato()) + '</div>'
     + '<span class="ss-badge">ANBEFALT</span></div>'
-    + '<div class="ss-radio-sub">' + ssStudierettLabel(sc) + '</div>'
+    + '<div class="ss-radio-sub">' + ssStudierettLabel() + '</div>'
     + '</div></div>')
     + '<div class="ss-radio-card' + (valgt === 'custom' ? ' selected' : '') + '" onclick="' + kall('custom') + '">'
     + '<div class="ss-radio-dot"></div>'
@@ -709,38 +718,14 @@ function ssDatokortHTML(sc, kode) {
     + '</div>';
 }
 
-/* Samler varslene for det valget gjelder: ett emne, eller alle når bunken
-   deler oppstartsdato. */
-function ssVarselTekster(kode, sc) {
-  if (kode !== SS_ALLE) {
-    var t = ssPeriodeVarsel(kode, ssValgtDato(kode, sc));
-    return t ? [{ navn: null, tekst: t }] : [];
-  }
-  var dato = ssValgtDato(SS_ALLE, sc);
-  var alle = _ssEmner.map(function(e) {
-    var v = ssPeriodeVarsel(e.code, dato);
-    return v ? { navn: e.name, tekst: v } : null;
-  }).filter(Boolean);
-
-  /* Samme melding for hvert emne betyr at den gjelder bunken, ikke emnet. */
-  var likeAlle = alle.length === _ssEmner.length && alle.every(function(v) {
-    return v.tekst === alle[0].tekst;
-  });
-  return likeAlle ? [{ navn: null, tekst: alle[0].tekst }] : alle;
-}
-
+/* Ett varsel om gangen: det gjelder bunken når emnene deler dato, ellers emnet
+   studenten står i. */
 window.ssOppdaterVarsel = function(kode) {
   var el = document.getElementById('ss-varsel-' + kode);
   if (!el) return;
-  var backdrop = document.getElementById('ss-backdrop');
-  var sc = backdrop && backdrop._ssScenario;
-  if (!sc) return;
-  var varsler = ssVarselTekster(kode, sc);
-  el.hidden = !varsler.length;
-  el.innerHTML = varsler.map(function(v) {
-    return '<p class="ss-varsel-tekst">'
-      + (v.navn ? '<strong>' + v.navn + ':</strong> ' : '') + v.tekst + '</p>';
-  }).join('');
+  var tekst = ssPeriodeVarsel(kode, ssValgtDato(kode));
+  el.hidden = !tekst;
+  el.innerHTML = tekst ? '<p class="ss-varsel-tekst">' + tekst + '</p>' : '';
 };
 
 /* Per emne: ett kort per studieprogram, med hvert emne og dets eget datovalg. */
@@ -921,14 +906,15 @@ function ssValider() {
   var sc = backdrop && backdrop._ssScenario;
   if (!sc) return null;
   var kode = _ssSammeDato ? SS_ALLE : String((_ssEmner[_ssEmneIdx] || {}).code);
-  return ssDatoFor(kode, sc) ? null : 'Velg en oppstartsdato for å gå videre.';
+  return ssDatoFor(kode) ? null : 'Velg en oppstartsdato for å gå videre.';
 }
 
-function ssValgkort(verdi, tekst, valgt, handler, sub) {
+function ssValgkort(verdi, tekst, valgt, handler, sub, forKort) {
   return '<div class="ss-radio-card' + (valgt ? ' selected' : '') + '" onclick="' + handler + '(this,\'' + verdi + '\')">'
     + '<div class="ss-radio-dot"></div>'
     + '<div style="flex:1"><div class="ss-radio-main">' + tekst + '</div>'
     + (sub ? '<p class="ss-radio-desc">' + sub + '</p>' : '')
+    + (forKort ? ssForKortBoks() : '')
     + '</div>'
     + '</div>';
 }
@@ -970,17 +956,16 @@ window.ssVelgLanekassen = function(kort, verdi) {
    Kristiania i dag må be om på e-post for å rapportere den videre. */
 function buildEksamenHTML(sc) {
   var kort = ssEksamensPerioder().map(function(a) {
-    return ssValgkort(a.verdi, a.label, _ssEksamen === a.verdi, 'ssVelgEksamen', a.sub);
+    return ssValgkort(a.verdi, a.label, _ssEksamen === a.verdi, 'ssVelgEksamen', a.sub, a.forKort);
   }).join('') + ssValgkort('vetikke', 'Vet ikke ennå', _ssEksamen === 'vetikke', 'ssVelgEksamen');
 
   return SS_LUKK
-    + '<h2 class="ss-title">Velg studiestart</h2>'
+    + '<h2 class="ss-title">Studieperiode</h2>'
     + '<div class="ss-body">' + ssTilbakeKnapp()
     + '<div>'
     + '<div class="ss-question">Når planlegger du å ta eksamen?</div>'
     + '<p class="ss-subtitle">Svaret avgjør hvor lang studieperiode du har.</p>'
     + '</div>'
-    + '<div class="ss-notis">Du må fortsatt melde deg opp til vurdering i StudentWeb</div>'
     + '<div class="ss-radio-group">' + kort + '</div>'
     + ssFot()
     + '<div class="ss-faq-section">' + buildInfoAccordion() + '</div>'
@@ -1282,14 +1267,14 @@ function ssFormatKort(d) {
        + String(d.getFullYear()).slice(-2);
 }
 
-function ssValgtDato(kode, sc) {
-  if ((_ssPerEmne[kode] || 'semester') === 'semester') return ssAnbefaltDato(sc);
+function ssValgtDato(kode) {
+  if ((_ssPerEmne[kode] || 'semester') === 'semester') return ssAnbefaltDato();
   return _ssPerEmneDato[kode] || null;
 }
 
 /* Tom streng betyr «valgfri oppstart er valgt, men ingen dato er plukket». */
-function ssDatoFor(kode, sc) {
-  if ((_ssPerEmne[kode] || 'semester') === 'semester') return ssFormatKort(ssAnbefaltDato(sc));
+function ssDatoFor(kode) {
+  if ((_ssPerEmne[kode] || 'semester') === 'semester') return ssFormatKort(ssAnbefaltDato());
   var d = _ssPerEmneDato[kode];
   return d ? ssFormatKort(d) : '';
 }
@@ -1303,17 +1288,17 @@ window.confirmStudiestart = function() {
 
   if (sc.id === 'approaching') {
     if (_ssSammeDato) {
-      dateStr = ssDatoFor(SS_ALLE, sc);
+      dateStr = ssDatoFor(SS_ALLE);
       if (!dateStr) return;   /* valgfri oppstart uten valgt dato */
     } else {
       perEmne = {};
       for (var i = 0; i < _ssEmner.length; i++) {
         var kode = String(_ssEmner[i].code);
-        var d = ssDatoFor(kode, sc);
+        var d = ssDatoFor(kode);
         if (!d) return;
         perEmne[kode] = d;
       }
-      dateStr = perEmne[String((_ssEmner[0] || {}).code)] || ssFormatKort(ssAnbefaltDato(sc));
+      dateStr = perEmne[String((_ssEmner[0] || {}).code)] || ssFormatKort(ssAnbefaltDato());
     }
   } else {
     if (_ssWantsLanekassen) {
