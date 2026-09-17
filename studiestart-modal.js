@@ -176,7 +176,7 @@ function injectStyles() {
 .ss-emne-item{padding:18px;border-top:1px solid #F9CCD2}\
 .ss-emne-item-code{font-size:13px;color:#5C5C5C}\
 .ss-emne-item-name{font-size:17px;font-weight:600;color:#1A1A1A;margin-bottom:8px}\
-.ss-emne-tag{display:inline-flex;background:#7A3FD1;color:#fff;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600}\
+.ss-emne-tag{display:inline-flex;background:#7A3FD1;color:#fff;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600;margin-bottom:14px}\
 .ss-notify-label{font-size:13px;color:#5C5C5C;margin:14px 0 6px;line-height:1.4}\
 .ss-between-lk-card{display:block}\
 .ss-between-lk-card.selected{border-color:#F9CCD2;background:#FCF8F5}\
@@ -192,6 +192,7 @@ function injectStyles() {
 .ss-inline-host .ss-body{padding:16px 0 0;overflow:visible;flex:none;min-height:0}\
 .ss-inline-host .ss-faq-section{padding:8px 0 0}\
 .ss-inline-host .ss-footer{padding:20px 0 0;border-top:none;background:none}\
+.ss-emne-item .ss-footer{padding:16px 0 0;border-top:none;background:none}\
 ';
   document.head.appendChild(css);
 }
@@ -333,7 +334,7 @@ function ssAnbefaltDato() {
 function ssStudierettLabel() {
   var start = ssAnbefaltDato();
   var slutt = new Date(start.getFullYear(), start.getMonth() + SS_STUDIERETT_MND, start.getDate() - 1);
-  return 'Studierett til ' + slutt.getDate() + '. ' + SS_MND[slutt.getMonth()] + ' ' + slutt.getFullYear();
+  return 'Studierett til: ' + slutt.getDate() + '. ' + SS_MND[slutt.getMonth()] + ' ' + slutt.getFullYear();
 }
 
 /* Eksamensdatoen for ett emne, eller null når emnet ikke står i planen
@@ -702,13 +703,14 @@ function ssDatokortHTML(sc, kode) {
     + '<div style="flex:1">'
     + '<div class="ss-radio-main-row"><div class="ss-radio-main">' + ssFormatDato(ssAnbefaltDato()) + '</div>'
     + '<span class="ss-badge">ANBEFALT</span></div>'
+    + '<p class="ss-radio-desc">Anbefales for deg som ønsker å søke støtte fra Lånekassen.</p>'
     + '<div class="ss-radio-sub">' + ssStudierettLabel() + '</div>'
     + '</div></div>')
     + '<div class="ss-radio-card' + (valgt === 'custom' ? ' selected' : '') + '" onclick="' + kall('custom') + '">'
     + '<div class="ss-radio-dot"></div>'
     + '<div style="flex:1">'
     + '<div class="ss-radio-main">Valgfri oppstart</div>'
-    + '<div class="ss-radio-sub">' + SS_STUDIERETT_MND + ' måneder studierett</div>'
+    + '<div class="ss-radio-sub">Studierett til: ' + SS_STUDIERETT_MND + ' måneder</div>'
     + '</div>'
     /* Klikk inne i kalenderen må ikke boble opp til kortet – da kalles
        ssVelgDato på nytt, kalenderen bygges om og hopper tilbake til i dag. */

@@ -281,16 +281,16 @@ var BASKET_CSS = '\
 .hk-save-success{font-size:15px;color:#1A1A1A;font-weight:400;margin:0;line-height:1.5}\
 /* Programvalget: ett kort per studieprogram, med niv\u00e5, hva som legges til og\
    hvor langt studenten er kommet. */\
-.hk-prog-card{display:block;width:100%;text-align:left;padding:18px 20px;margin-bottom:14px;border:1px solid #D4D4D4;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s}\
+.hk-prog-card{display:block;width:100%;text-align:left;padding:18px 20px;margin-bottom:12px;border:1px solid #D4D4D4;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s}\
 .hk-prog-card:hover{border-color:#0A4FB8;background:#F2F7FF}\
-.hk-prog-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}\
+.hk-prog-top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:31px}\
 .hk-prog-meta{font-size:15px;font-weight:400;color:#5c5c5c;line-height:1.35}\
-.hk-prog-name{display:block;font-size:18px;font-weight:600;color:#1A1A1A;line-height:1.3;margin-top:2px}\
+.hk-prog-name{display:block;font-size:18px;font-weight:600;color:#1A1A1A;line-height:1.3;margin-top:4px}\
 .hk-prog-progress{display:block;font-size:15px;font-weight:400;color:#5c5c5c;line-height:1.35;margin-top:8px}\
 .hk-prog-sub{display:block;font-size:15px;font-weight:400;color:#1A1A1A;line-height:1.4;margin-top:4px}\
-.hk-prog-heading{font-size:19px;font-weight:600;color:#1A1A1A;margin:0 0 12px}\
+.hk-prog-heading{font-size:19px;font-weight:600;color:#1A1A1A;margin:0 0 8px}\
 .hk-prog-heading + .hk-prog-card{margin-top:0}\
-.hk-prog-heading.hk-prog-heading-next{margin-top:26px}\
+.hk-prog-heading.hk-prog-heading-next{margin-top:32px}\
 .hk-city-popover{position:fixed;z-index:1300;background:#fff;border-radius:8px;padding:16px;min-width:200px}\
 .hk-city-popover h4{margin:0 0 12px;font-size:15px;font-weight:600;color:#1A1A1A}\
 .hk-city-btn{display:block;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px;border:1.5px solid #D4D4D4;border-radius:8px;background:none;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}\
@@ -1434,7 +1434,7 @@ var HK_CHOICE_STYLE = 'display:flex;align-items:center;gap:12px;width:100%;text-
   + 'cursor:pointer;font-family:inherit;transition:border-color .15s,background .15s;';
 
 function hkOrDivider() {
-  return '<div style="display:flex;align-items:center;gap:14px;margin:20px 0;">'
+  return '<div style="display:flex;align-items:center;gap:14px;margin:24px 0;">'
     + '<span style="flex:1;height:1px;background:#D4D4D4;"></span>'
     + '<span style="font-size:12.5px;font-weight:500;letter-spacing:.08em;color:#5C5C5C;">Eller</span>'
     + '<span style="flex:1;height:1px;background:#D4D4D4;"></span>'
