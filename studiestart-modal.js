@@ -727,7 +727,7 @@ function ssDatokortHTML(sc, kode) {
     + '<div class="ss-radio-dot"></div>'
     + '<div style="flex:1">'
     + '<div class="ss-radio-main">Valgfri oppstart</div>'
-    + '<div class="ss-radio-sub">Studierett til: ' + SS_STUDIERETT_MND + ' måneder</div>'
+    + '<div class="ss-radio-sub">' + SS_STUDIERETT_MND + ' måneder studierett</div>'
     + '</div>'
     /* Klikk inne i kalenderen må ikke boble opp til kortet – da kalles
        ssVelgDato på nytt, kalenderen bygges om og hopper tilbake til i dag. */
