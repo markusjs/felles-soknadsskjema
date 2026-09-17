@@ -329,16 +329,31 @@ var SS_STUDIERETT_MND = 18;
 /* Semesterstarten i scenariet kan ha passert. Da er den ikke et reelt valg, og
    vi anbefaler neste semesterstart i stedet (16. januar / 16. august). */
 function ssAnbefaltDato(sc) {
-  var d = ssSemesterStart(sc);
   var iDag = new Date();
   iDag.setHours(0, 0, 0, 0);
-  if (d >= iDag) return d;
-  var y = iDag.getFullYear();
-  var kandidater = [new Date(y, 0, 16), new Date(y, 7, 16), new Date(y + 1, 0, 16)];
-  for (var i = 0; i < kandidater.length; i++) {
-    if (kandidater[i] >= iDag) return kandidater[i];
+
+  var d = ssSemesterStart(sc);
+  if (d < iDag) {
+    var y = iDag.getFullYear();
+    var kandidater = [new Date(y, 0, 16), new Date(y, 7, 16), new Date(y + 1, 0, 16)];
+    for (var i = 0; i < kandidater.length; i++) {
+      if (kandidater[i] >= iDag) { d = kandidater[i]; break; }
+    }
   }
-  return d;
+
+  /* Semesterstarten er bare en anbefaling hvis den faktisk går opp med den
+     eksamensperioden studenten valgte. Gjør den ikke det, anbefaler vi den
+     seneste datoen som fortsatt holder – ellers motsier kortet seg selv. */
+  var periode = ssGjeldendePeriode();
+  if (!periode) return d;
+  if (d <= periode.frist && ssPluss4(d) <= periode.til) return d;
+
+  var senest = new Date(periode.til.getFullYear(), periode.til.getMonth() - 4, periode.til.getDate());
+  if (senest > periode.frist) senest = periode.frist;
+  var maks = new Date(iDag.getFullYear(), iDag.getMonth() + 3, iDag.getDate());
+  if (senest > maks) senest = maks;
+  var tidligst = ssTidligsteOppstart();
+  return senest < tidligst ? tidligst : senest;
 }
 
 function ssStudierettLabel(sc) {
@@ -449,11 +464,24 @@ function ssPeriodeVarsel(kode, oppstart) {
 /* De generelle eksamensperiodene: høst er desember/januar, vår er mai/juni.
    Oppmeldingen stenger 1. november og 1. april, så en periode der fristen er
    passert er ikke et reelt valg – da er første mulighet påfølgende semester. */
+function ssTidligsteOppstart() {
+  var iDag = new Date();
+  iDag.setHours(0, 0, 0, 0);
+  return new Date(iDag.getFullYear(), iDag.getMonth(), iDag.getDate() + 1);
+}
+
+function ssPluss4(d) {
+  return new Date(d.getFullYear(), d.getMonth() + 4, d.getDate());
+}
+
 function ssEksamensPerioder() {
   var iDag = new Date();
   iDag.setHours(0, 0, 0, 0);
+  var tidligst = ssTidligsteOppstart();
   return ssPerioderFra(iDag)
-    .filter(function(p) { return p.frist >= iDag; })
+    /* Perioden må både være åpen for oppmelding og mulig å rekke: selv den
+       tidligste tillatte oppstarten må gi fire måneders studieperiode. */
+    .filter(function(p) { return p.frist >= iDag && ssPluss4(tidligst) <= p.til; })
     .slice(0, 2)
     .map(function(p) {
       return { verdi: p.verdi, label: p.navn,

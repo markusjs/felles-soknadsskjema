@@ -198,6 +198,18 @@ var BASKET_CSS = '\
 .hk-feide-opt:hover{background:#F5F5F5}\
 .hk-feide-row{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #D4D4D4;border-radius:8px;padding:14px 16px}\
 .hk-feide-avatar{width:32px;height:32px;border-radius:50%;background:#46000A;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15px;flex-shrink:0}\
+.k-profil{position:relative;display:flex;align-items:center}\
+.k-profil-btn{background:none;border:none;padding:6px;cursor:pointer;display:flex;align-items:center;color:#1A1A1A}\
+.k-profil-meny{display:none;position:absolute;top:100%;right:0;min-width:330px;background:#fff;border-radius:8px;box-shadow:0 4px 24px rgba(0,0,0,.14);padding:12px;z-index:1080;font-family:inherit}\
+.k-profil.apen .k-profil-meny{display:block}\
+.k-profil-kort{display:flex;align-items:center;gap:12px;background:#FCF8F5;border-radius:8px;padding:12px 14px;margin-bottom:12px}\
+.k-profil-avatar{width:36px;height:36px;border-radius:50%;background:#D4D4D4;color:#5C5C5C;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0}\
+.k-profil-navn{font-size:15px;color:#1A1A1A}\
+.k-profil-kilde{display:flex;align-items:center;gap:5px;font-size:13px;color:#46000A;margin-top:2px}\
+.k-profil-lenke{display:block;border:1px solid #D4D4D4;border-radius:8px;padding:14px 16px;font-size:16px;font-weight:600;color:#1A1A1A;text-decoration:none;margin-bottom:8px}\
+.k-profil-lenke:hover{background:#F5F5F5}\
+.k-profil-handling{display:block;width:100%;text-align:left;background:none;border:none;padding:10px 16px;font-family:inherit;font-size:16px;color:#1A1A1A;cursor:pointer;border-radius:8px}\
+.k-profil-handling:hover{background:#F5F5F5}\
 .k-delete{background:#F2F7FF;border:none;border-radius:50%;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;color:#0A4FB8;transition:background .15s,color .15s;flex-shrink:0}\
 .k-delete:hover{background:#E0EBFE;color:#083D8F}\
 .hk-chevron{background:none;border:none;cursor:pointer;padding:4px;transition:transform .2s;color:#1A1A1A}\
@@ -450,6 +462,7 @@ function refreshBasketUI() {
 }
 
 function updateBasketCount() {
+  plasserProfilEtterKurv();
   var n = getBasketCount();
   document.querySelectorAll('#topbar-basket-count').forEach(function(el) {
     el.textContent = n; el.style.display = n > 0 ? 'block' : 'none';
@@ -656,6 +669,7 @@ function refreshSokPanelFooter(awaitingChoice) {
 }
 
 function renderBasketPanel() {
+  oppdaterProfilMeny();
   injectSidebarPanel();
   var b = getBasket();
   var body = document.getElementById('hk-body');
@@ -956,6 +970,68 @@ function closeCityPopoverOnOutside(e) {
 }
 
 /* ─── Topbar basket auto-enhancer ─── */
+var PERSON_SVG = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.6" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c0-3.6 3.4-6 7.5-6s7.5 2.4 7.5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+
+/* Profilikon i topbaren. Prototypen skjuler nettstedets eget «Min side»-ikon,
+   så vi setter inn vårt eget ved siden av handlekurven. */
+function byggProfilIkon(basketLi) {
+  if (!basketLi || document.querySelector('.k-profil')) return;
+  var li = document.createElement(basketLi.tagName === 'LI' ? 'li' : 'div');
+  li.className = 'k-profil';
+  li.innerHTML = '<button class="k-profil-btn" aria-label="Min profil" aria-haspopup="true">' + PERSON_SVG + '</button>'
+    + '<div class="k-profil-meny" id="k-profil-meny"></div>';
+  basketLi.parentNode.insertBefore(li, basketLi.nextSibling);
+  oppdaterProfilMeny();
+  setTimeout(plasserProfilEtterKurv, 400);
+
+  /* Hover åpner menyen. Lukkingen har en liten forsinkelse, så den ikke
+     forsvinner mens musa er på vei fra ikonet ned i menyen. */
+  var lukkeTimer = null;
+  li.addEventListener('mouseenter', function() {
+    clearTimeout(lukkeTimer);
+    li.classList.add('apen');
+  });
+  li.addEventListener('mouseleave', function() {
+    clearTimeout(lukkeTimer);
+    lukkeTimer = setTimeout(function() { li.classList.remove('apen'); }, 400);
+  });
+}
+
+/* Nettstedets header rendrer om etter at vi har satt inn ikonet, så vi flytter
+   det på plass igjen ved behov i stedet for å stole på innsettingsrekkefølgen. */
+function plasserProfilEtterKurv() {
+  var prof = document.querySelector('.k-profil');
+  var img = document.querySelector('img[src*="Basket.svg"]');
+  var kurv = img && img.closest('li');
+  if (!prof || !kurv || prof.previousElementSibling === kurv) return;
+  kurv.parentNode.insertBefore(prof, kurv.nextSibling);
+}
+
+/* Innholdet avhenger av om studenten er innlogget. */
+function oppdaterProfilMeny() {
+  plasserProfilEtterKurv();
+  var meny = document.getElementById('k-profil-meny');
+  if (!meny) return;
+  var auth = getAuthState();
+
+  if (!auth) {
+    meny.innerHTML = '<button class="k-profil-handling" onclick="openSoknaderPanel();hkVisLoggInn()">Logg inn</button>';
+    return;
+  }
+
+  var deler = (auth.name || '').trim().split(/\s+/);
+  var init = ((deler[0] || '')[0] || '') + ((deler[deler.length - 1] || '')[0] || '');
+  var kilde = auth.method === 'feide' ? 'Innlogget med FEIDE' : 'Innlogget';
+
+  meny.innerHTML = '<div class="k-profil-kort">'
+    + '<div class="k-profil-avatar">' + init.toUpperCase() + '</div>'
+    + '<div><div class="k-profil-navn">' + auth.name + '</div>'
+    + '<div class="k-profil-kilde">' + LOCK_SVG_SMALL + kilde + '</div></div>'
+    + '</div>'
+    + '<a class="k-profil-lenke" href="#" onclick="event.preventDefault()">Mitt Kristiania</a>'
+    + '<button class="k-profil-handling" onclick="clearAuthState()">Logg ut</button>';
+}
+
 function enhanceTopbarBasket() {
   var basketImg = document.querySelector('img[src*="Basket.svg"]');
   if (!basketImg) return;
@@ -972,6 +1048,8 @@ function enhanceTopbarBasket() {
     btn.setAttribute('onclick', 'openSoknaderPanel()');
     btn.style.cursor = 'pointer';
   }
+  byggProfilIkon(basketLi);
+
   // Add badge if missing
   if (!btn.querySelector('#topbar-basket-count')) {
     btn.style.position = 'relative';
