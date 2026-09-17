@@ -50,7 +50,8 @@ function injectStyles() {
 .ss-radio-card.selected .ss-radio-dot::after{content:"";width:12px;height:12px;background:#0A4FB8;border-radius:50%}\
 .ss-radio-main{font-size:18px;font-weight:600;color:#1A1A1A;line-height:1.25}\
 .ss-radio-desc{font-size:14px;color:#5C5C5C;margin:4px 0 0;line-height:1.45}\
-.ss-perisk{margin:10px 0 0;border:1px solid #FFCA00;background:#FFFBEB;border-radius:8px;overflow:hidden}\
+.ss-perisk{border:1px solid #FFCA00;background:#FFFBEB;border-radius:8px;overflow:hidden;flex-shrink:0}\
+.ss-radio-card>.ss-perisk{flex-basis:100%}\
 .ss-perisk-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px 14px;cursor:pointer;user-select:none}\
 .ss-perisk-tittel{font-size:15px;font-weight:600;color:#1A1A1A;line-height:1.35}\
 .ss-perisk-ikon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:#1A1A1A;flex-shrink:0;margin-top:2px;transition:transform .3s ease}\
@@ -404,6 +405,25 @@ function ssSenesteOppstart(kode, periode) {
   return new Date(slutt.getFullYear(), slutt.getMonth() - 4, slutt.getDate());
 }
 
+/* Sant når perioden ikke gir fire måneders studieperiode selv fra tidligst
+   mulig oppstart – da finnes det ingen dato i kalenderen som redder den. */
+function ssPeriodeForKort(periode) {
+  var senest = ssSenesteOppstart(SS_ALLE, periode);
+  return !!senest && ssTidligsteOppstart() > senest;
+}
+
+function ssValgtPeriodeForKort() {
+  var periode = ssPeriodeInfo(_ssEksamen);
+  return !!periode && ssPeriodeForKort(periode);
+}
+
+/* Kalenderen er eneste valg når studenten står fritt (nei til Lånekassen),
+   eller når perioden de valgte uansett er for kort – da er den anbefalte
+   datoen ikke et reelt valg, og studenten må ta stilling selv. */
+function ssKunValgfri() {
+  return _ssWantsLanekassen === false || ssValgtPeriodeForKort();
+}
+
 /* Første periode som både er åpen for oppmelding og gir fire måneders
    studieperiode med den valgte oppstarten. */
 function ssAnbefaltPeriode(kode, oppstart) {
@@ -458,7 +478,6 @@ function ssPluss4(d) {
 function ssEksamensPerioder() {
   var iDag = new Date();
   iDag.setHours(0, 0, 0, 0);
-  var tidligst = ssTidligsteOppstart();
   return ssPerioderFra(iDag)
     /* Oppmeldingsfristen er Kristianias egen og absolutt – er den passert, kan
        studenten ikke melde seg opp, og perioden er ikke et valg. Fire-måneders-
@@ -467,12 +486,9 @@ function ssEksamensPerioder() {
     .filter(function(p) { return p.frist >= iDag; })
     .slice(0, 2)
     .map(function(p) {
-      /* Samme måling som varselet på neste steg: seneste oppstart som gir fire
-         måneder fram til den siste eksamenen i bestillingen. */
-      var senest = ssSenesteOppstart(SS_ALLE, p);
       return { verdi: p.verdi, label: p.navn,
                sub: p.maneder.charAt(0).toUpperCase() + p.maneder.slice(1),
-               forKort: !!senest && tidligst > senest };
+               forKort: ssPeriodeForKort(p) };
     });
 }
 
@@ -689,10 +705,11 @@ var SS_ALLE = '__alle';
 
 /* De to oppstartsvalgene. Brukes både for hele bunken og per enkeltemne. */
 function ssDatokortHTML(sc, kode) {
-  /* Semesterstarten er bare anbefalt av hensyn til Lånekassen. Svarer studenten
-     nei, står hen fritt – da er kalenderen eneste valg. */
-  var kunValgfri = _ssWantsLanekassen === false;
+  /* Den anbefalte datoen er bare et reelt valg når den faktisk holder. Står
+     studenten fritt, eller er perioden for kort uansett, er kalenderen alene. */
+  var kunValgfri = ssKunValgfri();
   if (kunValgfri) _ssPerEmne[kode] = 'custom';
+  var forKort = ssValgtPeriodeForKort();
 
   var valgt = _ssPerEmne[kode] || 'semester';
   var kall = function(verdi) { return 'ssVelgDato(this,\'' + verdi + '\',\'' + kode + '\')'; };
@@ -716,7 +733,7 @@ function ssDatokortHTML(sc, kode) {
        ssVelgDato på nytt, kalenderen bygges om og hopper tilbake til i dag. */
     + '<div class="ss-calendar-wrap" id="ss-cal-wrap-' + kode + '" onclick="event.stopPropagation()"></div>'
     + '</div>'
-    + '<div class="ss-varsel" id="ss-varsel-' + kode + '" hidden></div>'
+    + (forKort ? ssForKortBoks() : '<div class="ss-varsel" id="ss-varsel-' + kode + '" hidden></div>')
     + '</div>';
 }
 
@@ -916,8 +933,10 @@ function ssValgkort(verdi, tekst, valgt, handler, sub, forKort) {
     + '<div class="ss-radio-dot"></div>'
     + '<div style="flex:1"><div class="ss-radio-main">' + tekst + '</div>'
     + (sub ? '<p class="ss-radio-desc">' + sub + '</p>' : '')
-    + (forKort ? ssForKortBoks() : '')
     + '</div>'
+    /* Egen rad i kortet, slik kalenderen gjør det – da spenner den hele
+       bredden i stedet for å rykkes inn bak radioknappen. */
+    + (forKort ? ssForKortBoks() : '')
     + '</div>';
 }
 
@@ -1038,7 +1057,7 @@ window.ssGaTilSteg = function(steg) {
   if (steg === 'startdato') {
     var aktivKode = _ssSammeDato ? SS_ALLE : String((_ssEmner[_ssEmneIdx] || {}).code);
     /* Er kalenderen eneste valg, skal den stå åpen fra start. */
-    if (_ssWantsLanekassen === false) ssApneKalender(aktivKode);
+    if (ssKunValgfri()) ssApneKalender(aktivKode);
     /* Vis studieperiode-varselet med en gang, siden datoen er forvalgt. */
     ssOppdaterVarsel(aktivKode);
   }
