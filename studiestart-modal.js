@@ -345,20 +345,28 @@ function ssPeriodeForSemesterstart(start) {
   return (start.getMonth() === 7 ? 'h' : 'v') + start.getFullYear();
 }
 
-/* Semesterstarten anbefales bare når studenten skal ta eksamen i nettopp det
-   semesteret, og datoen fortsatt er innenfor bestillingsvinduet. Da ligger hen
-   i takt med semesteret, som er det Lånekassen måler studiebelastningen mot.
-   Ellers blir oppstarten fortløpende – emnene ville uansett fordelt seg over
-   to semestre, og studenten kunne blitt vurdert som deltidsstudent. */
-function ssAnbefaltSemesterstart() {
-  if (_ssWantsLanekassen !== true) return null;
+/* Semesterstarten som kan anbefales for en gitt eksamensperiode, eller null.
+   Den gjelder bare det semesteret den tilhører, må være innenfor
+   bestillingsvinduet, og faller bort fra og med dagen før – fra 15. august og
+   15. januar er oppstarten fortløpende. Da ligger studenten i takt med
+   semesteret, som er det Lånekassen måler studiebelastningen mot. Ellers ville
+   emnene fordelt seg over to semestre, og studenten kunne blitt vurdert som
+   deltidsstudent. */
+function ssSemesterstartForPeriode(periodeVerdi) {
   var start = ssNesteSemesterstart();
-  if (!start) return null;
+  if (!start || ssPeriodeForSemesterstart(start) !== periodeVerdi) return null;
+
   var iDag = new Date();
   iDag.setHours(0, 0, 0, 0);
   var maks = new Date(iDag.getFullYear(), iDag.getMonth() + 3, iDag.getDate());
   if (start > maks) return null;
-  return _ssEksamen === ssPeriodeForSemesterstart(start) ? start : null;
+
+  var sisteDag = new Date(start.getFullYear(), start.getMonth(), start.getDate() - 1);
+  return iDag >= sisteDag ? null : start;
+}
+
+function ssAnbefaltSemesterstart() {
+  return _ssWantsLanekassen === true ? ssSemesterstartForPeriode(_ssEksamen) : null;
 }
 
 function ssAnbefaltDato() {
@@ -1149,6 +1157,14 @@ window.ssBekreftSteg = function() {
   confirmStudiestart();
 };
 
+/* Brukes av datosimulatoren: bygger gjeldende steg på nytt når «i dag» endrer
+   seg, så panelet kan stå åpent gjennom et datobytte. */
+window.ssTegnPaaNytt = function() {
+  if (!document.getElementById('ss-backdrop') || !_ssSteg) return false;
+  ssGaTilSteg(_ssSteg);
+  return true;
+};
+
 /* Leses av admin-dato.js. Alt regnes ut av de samme funksjonene panelet selv
    bruker, så simulatoren viser hva prototypen faktisk gjør – ikke en kopi av
    logikken som kan gli fra hverandre. */
@@ -1156,7 +1172,6 @@ window.ssAdminStatus = function() {
   var iDag = new Date();
   iDag.setHours(0, 0, 0, 0);
   var maks = new Date(iDag.getFullYear(), iDag.getMonth() + 3, iDag.getDate());
-  var semesterstart = ssNesteSemesterstart();
   var kortDato = function(d) {
     return d.getDate() + '. ' + SS_MND[d.getMonth()].slice(0, 3) + ' ' + d.getFullYear();
   };
@@ -1165,13 +1180,10 @@ window.ssAdminStatus = function() {
     kalender: { fra: kortDato(ssTidligsteOppstart()), til: kortDato(maks) },
     perioder: ssEksamensPerioder().map(function(p) {
       var info = ssPeriodeInfo(p.verdi);
-      /* Semesterstarten tilbys bare for det semesteret den tilhører, og bare
-         mens den er innenfor bestillingsvinduet. */
-      var bestillbar = !!semesterstart && semesterstart <= maks
-        && ssPeriodeForSemesterstart(semesterstart) === p.verdi;
+      var semesterstart = ssSemesterstartForPeriode(p.verdi);
       return {
         tittel: 'Eksamen ' + p.label.toLowerCase() + ' ' + p.verdi.slice(1),
-        valg: [bestillbar ? kortDato(semesterstart) + ' (anbefalt)' : 'Fortløpende oppstart',
+        valg: [semesterstart ? kortDato(semesterstart) + ' (anbefalt)' : 'Fortløpende oppstart',
                'Valgfri oppstart'],
         forKort: ssPeriodeForKort(info)
       };

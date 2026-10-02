@@ -2298,7 +2298,11 @@ function spSyncFromBasket() {
       });
     });
   });
-  /* Don't call spUpdateSummary() here — it triggers spSyncToBasket → addProgramWithEmner → openSoknaderPanel */
+  /* Emnene som alt ligger i kurven skal vises i sammendraget, så studenten
+     ser dem igjen når hen kommer tilbake til programsiden. Vi tegner bare –
+     spUpdateSummary() ville trigget spSyncToBasket → addProgramWithEmner →
+     openSoknaderPanel, altså skrevet til kurven og åpnet skuffen. */
+  if (typeof spRenderSummary === 'function') spRenderSummary();
 }
 
 /* Emne detail drawer */

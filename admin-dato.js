@@ -2,10 +2,12 @@
    admin-dato.js
    Simulerer dagens dato for hele prototypen.
 
-   Hele poenget er at datoen faktisk skal gjelde: vi bytter ut Date, slik at
-   all logikk – studiestart-panelet, eksamensperiodene, kalendervinduet,
-   oppmeldingsfristene – regner som om det var den dagen. Panelet viser
-   deretter hva de virkelige funksjonene svarer, ikke en kopi av dem.
+   Poenget er at datoen faktisk skal gjelde: vi bytter ut Date, slik at all
+   logikk – studiestart-panelet, eksamensperiodene, kalendervinduet,
+   oppmeldingsfristene – regner som om det var den dagen.
+
+   Overstyringen leser en variabel som kan endres underveis. Derfor trenger et
+   datobytte ingen sidelast, og panelet studenten står i blir stående åpent.
 
    Må lastes før de andre prototyp-skriptene.
    ═══════════════════════════════════════════ */
@@ -13,8 +15,13 @@
   'use strict';
 
   var NOKKEL = 'adminSimDato';
+  var APEN_NOKKEL = 'adminSimApen';
   var MND = ['januar','februar','mars','april','mai','juni',
              'juli','august','september','oktober','november','desember'];
+
+  var EkteDate = Date;
+  /* Millisekunder for den simulerte dagen, eller null for den ekte klokka. */
+  var simulertTid = null;
 
   function les() {
     try { return localStorage.getItem(NOKKEL); } catch (e) { return null; }
@@ -27,8 +34,6 @@
     } catch (e) {}
   }
 
-  var EkteDate = Date;
-
   function isoAv(d) {
     var m = d.getMonth() + 1, dag = d.getDate();
     return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (dag < 10 ? '0' : '') + dag;
@@ -39,35 +44,46 @@
   }
 
   /* ── Date-overstyring ───────────────────────────────────────────────────
-     Må skje før noe annet leser klokka. En simulert dag står stille på
-     midnatt – prototypen bryr seg bare om datoen, ikke klokkeslettet. */
-  var simIso = les();
-  var simulert = false;
-
-  if (simIso && /^\d{4}-\d{2}-\d{2}$/.test(simIso)) {
-    var deler = simIso.split('-');
-    var fast = new EkteDate(+deler[0], +deler[1] - 1, +deler[2]);
-    if (isoAv(fast) !== isoAv(new EkteDate())) simulert = true;
-
-    var FalskDate = function(a, b, c, d, e, f, g) {
-      if (!(this instanceof FalskDate)) return new EkteDate(fast.getTime()).toString();
-      switch (arguments.length) {
-        case 0: return new EkteDate(fast.getTime());
-        case 1: return new EkteDate(a);
-        case 2: return new EkteDate(a, b);
-        case 3: return new EkteDate(a, b, c);
-        case 4: return new EkteDate(a, b, c, d);
-        case 5: return new EkteDate(a, b, c, d, e);
-        case 6: return new EkteDate(a, b, c, d, e, f);
-        default: return new EkteDate(a, b, c, d, e, f, g);
-      }
-    };
-    FalskDate.prototype = EkteDate.prototype;
-    FalskDate.now = function() { return fast.getTime(); };
-    FalskDate.parse = EkteDate.parse;
-    FalskDate.UTC = EkteDate.UTC;
-    window.Date = FalskDate;
+     Alltid installert, men inert så lenge simulertTid er null. En simulert
+     dag står stille på midnatt – prototypen bryr seg om datoen, ikke klokka. */
+  function naaRaa() {
+    return simulertTid === null ? new EkteDate() : new EkteDate(simulertTid);
   }
+
+  var FalskDate = function(a, b, c, d, e, f, g) {
+    if (!(this instanceof FalskDate)) return naaRaa().toString();
+    switch (arguments.length) {
+      case 0: return naaRaa();
+      case 1: return new EkteDate(a);
+      case 2: return new EkteDate(a, b);
+      case 3: return new EkteDate(a, b, c);
+      case 4: return new EkteDate(a, b, c, d);
+      case 5: return new EkteDate(a, b, c, d, e);
+      case 6: return new EkteDate(a, b, c, d, e, f);
+      default: return new EkteDate(a, b, c, d, e, f, g);
+    }
+  };
+  FalskDate.prototype = EkteDate.prototype;
+  FalskDate.now = function() { return naaRaa().getTime(); };
+  FalskDate.parse = EkteDate.parse;
+  FalskDate.UTC = EkteDate.UTC;
+  window.Date = FalskDate;
+
+  function settSimulert(iso) {
+    if (iso && /^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+      var d = iso.split('-');
+      simulertTid = new EkteDate(+d[0], +d[1] - 1, +d[2]).getTime();
+    } else {
+      simulertTid = null;
+    }
+  }
+
+  function erSimulert() {
+    return simulertTid !== null
+      && isoAv(new EkteDate(simulertTid)) !== isoAv(new EkteDate());
+  }
+
+  settSimulert(les());
 
   /* ── Panelet ──────────────────────────────────────────────────────────── */
 
@@ -84,11 +100,11 @@
     '.ad-datorad{display:flex;align-items:stretch;gap:8px}',
     '.ad-pil{width:42px;flex-shrink:0;border:1px solid #9A6D6D;border-radius:6px;background:#fff;',
     'cursor:pointer;font-family:inherit;font-size:17px;color:#1A1A1A;line-height:1}',
+    '.ad-datofelt{position:relative;flex:1;min-width:0;display:flex}',
     '.ad-dato{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:10px;',
     'font-family:inherit;font-size:16px;padding:10px 12px;border:1px solid #9A6D6D;border-radius:6px;',
     'color:#1A1A1A;background:#fff;cursor:pointer;white-space:nowrap}',
     '.ad-dato-velger{position:absolute;left:0;bottom:0;width:100%;height:100%;opacity:0;border:none;padding:0;pointer-events:none}',
-    '.ad-datofelt{position:relative;flex:1;min-width:0;display:flex}',
     '.ad-tilbake{align-self:flex-start;background:none;border:none;padding:0;cursor:pointer;',
     'font-family:inherit;font-size:15px;font-weight:600;color:#0A4FB8}',
     '.ad-fot{border-top:1px solid #E6E6E6;padding:16px;display:flex;flex-direction:column;gap:10px;background:#FCF8F5}',
@@ -111,6 +127,10 @@
   var KALENDERIKON = '<svg width="18" height="18" viewBox="0 0 48 48" fill="none" aria-hidden="true">'
     + '<path d="M32 2C33.1 2 34 2.9 34 4v2h4c3.3 0 6 2.7 6 6v28c0 3.3-2.7 6-6 6H10c-3.3 0-6-2.7-6-6V12c0-3.3 2.7-6 6-6h4V4c0-1.1.9-2 2-2s2 .9 2 2v2h12V4c0-1.1.9-2 2-2ZM8 40c0 1.1.9 2 2 2h28c1.1 0 2-.9 2-2V22H8v18ZM10 10c-1.1 0-2 .9-2 2v6h32v-6c0-1.1-.9-2-2-2h-4v2c0 1.1-.9 2-2 2s-2-.9-2-2v-2H18v2c0 1.1-.9 2-2 2s-2-.9-2-2v-2h-4Z" fill="currentColor"/></svg>';
 
+  var FELTIKON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">'
+    + '<rect x="3" y="5" width="18" height="16" rx="2" stroke="#9A6D6D" stroke-width="1.6"/>'
+    + '<path d="M3 10h18M8 3v4M16 3v4" stroke="#9A6D6D" stroke-width="1.6" stroke-linecap="round"/></svg>';
+
   function avlesningHtml() {
     if (typeof window.ssAdminStatus !== 'function') {
       return '<span class="ad-vindu">studiestart-modal.js er ikke lastet på denne siden.</span>';
@@ -128,11 +148,17 @@
       + '<span class="ad-vindu">Valgfri dato: ' + st.kalender.fra + ' – ' + st.kalender.til + '</span>';
   }
 
-  function settDato(iso) {
-    skriv(iso);
-    /* Datoen må gjelde fra første linje kode på siden, så vi laster på nytt
-       i stedet for å prøve å regne om alt som alt er tegnet. */
-    location.reload();
+  /* Tegner på nytt det ene som faktisk avhenger av dagens dato: stegene i
+     studiestart-panelet, som regner ut datoene når de bygges.
+
+     Vi rører ikke sidebaren ellers. Den er én skuff som skiftevis viser
+     handlekurven, programvalget, innloggingen og gjennomføringssteget – å
+     tegne kurven på nytt her ville kastet studenten ut av det hen holdt på
+     med. Og kurven trenger det ikke: den viser lagrede datoer som tekst. */
+  function oppdaterVisninger() {
+    if (typeof window.ssTegnPaaNytt === 'function') {
+      try { window.ssTegnPaaNytt(); } catch (e) {}
+    }
   }
 
   function tegn() {
@@ -149,26 +175,37 @@
 
     /* Lukket til den åpnes – verktøyet skal ikke stå i veien for prototypen. */
     var apen = false;
-    try { apen = localStorage.getItem('adminSimApen') === '1'; } catch (e) {}
-
-    var naa = new Date();
-    naa.setHours(0, 0, 0, 0);
-    var iDagIso = isoAv(naa);
+    try { apen = localStorage.getItem(APEN_NOKKEL) === '1'; } catch (e) {}
 
     function settApen(verdi) {
       apen = verdi;
-      try { localStorage.setItem('adminSimApen', verdi ? '1' : '0'); } catch (e) {}
+      try { localStorage.setItem(APEN_NOKKEL, verdi ? '1' : '0'); } catch (e) {}
       render();
     }
 
+    function settDato(iso) {
+      skriv(iso);
+      settSimulert(iso);
+      render();
+      oppdaterVisninger();
+    }
+
+    function flytt(n) {
+      var d = naaRaa();
+      settDato(isoAv(new EkteDate(d.getFullYear(), d.getMonth(), d.getDate() + n)));
+    }
+
     function render() {
+      var naa = naaRaa();
+      naa.setHours(0, 0, 0, 0);
+      var simulert = erSimulert();
       rot.innerHTML = '';
 
       if (!apen) {
         var flik = document.createElement('button');
         flik.className = 'ad-flik';
         flik.type = 'button';
-        flik.title = 'Åpne dato-simulatoren';
+        flik.title = 'Åpne datosimuleringen';
         flik.innerHTML = KALENDERIKON
           + '<span class="ad-flik-dato">' + naa.getDate() + '. ' + MND[naa.getMonth()].slice(0, 3) + '</span>';
         flik.onclick = function() { settApen(true); };
@@ -178,11 +215,6 @@
 
       var panel = document.createElement('aside');
       panel.className = 'ad-panel';
-
-      var KAL_IKON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">'
-        + '<rect x="3" y="5" width="18" height="16" rx="2" stroke="#9A6D6D" stroke-width="1.6"/>'
-        + '<path d="M3 10h18M8 3v4M16 3v4" stroke="#9A6D6D" stroke-width="1.6" stroke-linecap="round"/></svg>';
-
       panel.innerHTML =
         '<div class="ad-head">' + KALENDERIKON
         + '<span class="ad-head-tittel">Datosimulering</span>'
@@ -194,8 +226,8 @@
         + '<button type="button" class="ad-pil" id="ad-forrige" title="Forrige dag">&lsaquo;</button>'
         + '<div class="ad-datofelt">'
         + '<button type="button" class="ad-dato" id="ad-dato-knapp">'
-        + '<span>' + formater(naa) + '</span>' + KAL_IKON + '</button>'
-        + '<input type="date" class="ad-dato-velger" id="ad-dato" value="' + iDagIso + '" tabindex="-1" aria-hidden="true">'
+        + '<span>' + formater(naa) + '</span>' + FELTIKON + '</button>'
+        + '<input type="date" class="ad-dato-velger" id="ad-dato" value="' + isoAv(naa) + '" tabindex="-1" aria-hidden="true">'
         + '</div>'
         + '<button type="button" class="ad-pil" id="ad-neste" title="Neste dag">&rsaquo;</button>'
         + '</div>'
@@ -206,7 +238,6 @@
 
       rot.appendChild(panel);
 
-      panel.querySelector('#ad-minimer').onclick = function() { settApen(false); };
       var velger = panel.querySelector('#ad-dato');
       velger.onchange = function(e) { settDato(e.target.value || null); };
       panel.querySelector('#ad-dato-knapp').onclick = function() {
@@ -214,14 +245,11 @@
         if (typeof velger.showPicker === 'function') velger.showPicker();
         else { velger.style.pointerEvents = 'auto'; velger.focus(); velger.click(); }
       };
+      panel.querySelector('#ad-minimer').onclick = function() { settApen(false); };
       panel.querySelector('#ad-forrige').onclick = function() { flytt(-1); };
       panel.querySelector('#ad-neste').onclick = function() { flytt(1); };
       var tilbake = panel.querySelector('#ad-tilbake');
       if (tilbake) tilbake.onclick = function() { settDato(null); };
-    }
-
-    function flytt(n) {
-      settDato(isoAv(new Date(naa.getFullYear(), naa.getMonth(), naa.getDate() + n)));
     }
 
     render();
