@@ -743,10 +743,11 @@ function ssDatokortHTML(sc, kode) {
      eksamen, ellers fortløpende oppstart. Valgfri oppstart står alltid som
      alternativ, og kalenderen åpnes først når den velges. */
   var semesterstart = ssAnbefaltSemesterstart();
-  if (!_ssPerEmne[kode]) _ssPerEmne[kode] = semesterstart ? 'semester' : 'fortlopende';
+  /* Ingenting er forhåndsvalgt – studenten skal ta stilling til oppstarten
+     selv. Et tidligere valg står igjen når de går tilbake eller redigerer. */
   if (!semesterstart && _ssPerEmne[kode] === 'semester') _ssPerEmne[kode] = 'fortlopende';
 
-  var valgt = _ssPerEmne[kode];
+  var valgt = _ssPerEmne[kode] || null;
   var kall = function(verdi) { return 'ssVelgDato(this,\'' + verdi + '\',\'' + kode + '\')'; };
 
   var forstekort = semesterstart
@@ -827,10 +828,14 @@ function buildApproachingHTML(sc) {
     + '<h2 class="ss-title">Velg studiestart</h2>'
     + '<div class="ss-body">' + ssStegIndikatorHtml() + ssTilbakeKnapp()
     + '<div class="ss-question" style="font-size:20px;margin:0">Startdato</div>'
-    + '<div class="ss-same-date" onclick="ssToggleSammeDato()">'
-    + '<span class="ss-checkbox-box' + (_ssSammeDato ? ' checked' : '') + '">' + (_ssSammeDato ? hake : '') + '</span>'
-    + '<span class="ss-same-date-label">Samme oppstartsdato for alle emner</span>'
-    + '</div>'
+    /* Avkryssingen har bare mening når bunken har flere emner – fra en
+       enkeltemneside, eller når ett emne redigeres, er det bare ett. */
+    + (_ssEmner.length > 1
+        ? '<div class="ss-same-date" onclick="ssToggleSammeDato()">'
+          + '<span class="ss-checkbox-box' + (_ssSammeDato ? ' checked' : '') + '">' + (_ssSammeDato ? hake : '') + '</span>'
+          + '<span class="ss-same-date-label">Samme oppstartsdato for alle emner</span>'
+          + '</div>'
+        : '')
     + (_ssSammeDato ? ssDatokortHTML(sc, SS_ALLE) + ssFot() : ssPerEmneHTML(sc))
     + '<div class="ss-faq-section">' + buildInfoAccordion() + '</div>'
     + '</div>';
@@ -1131,7 +1136,7 @@ window.ssGaTilSteg = function(steg) {
     /* Står «Valgfri oppstart» alt valgt – fra et tidligere svar – skal datoen
        være synlig med én gang, ikke gjemt bak et klikk til. */
     if (_ssPerEmne[aktivKode] === 'custom') ssApneKalender(aktivKode);
-    /* Vis studieperiode-varselet med en gang, siden valget er forhåndsvalgt. */
+    /* Varselet hører til et valgt alternativ; uten valg sier det ingenting. */
     ssOppdaterVarsel(aktivKode);
   }
 };
@@ -1432,7 +1437,8 @@ function ssFormatKort(d) {
 }
 
 function ssValgtDato(kode) {
-  var valg = _ssPerEmne[kode] || 'fortlopende';
+  var valg = _ssPerEmne[kode];
+  if (!valg) return null;
   if (valg === 'semester') return ssAnbefaltDato();
   if (valg === 'fortlopende') return ssTidligsteOppstart();
   return _ssPerEmneDato[kode] || null;
@@ -1440,7 +1446,8 @@ function ssValgtDato(kode) {
 
 /* Tom streng betyr «valgfri oppstart er valgt, men ingen dato er plukket». */
 function ssDatoFor(kode) {
-  var valg = _ssPerEmne[kode] || 'fortlopende';
+  var valg = _ssPerEmne[kode];
+  if (!valg) return '';
   if (valg === 'semester') return ssFormatKort(ssAnbefaltDato());
   if (valg === 'fortlopende') return OPPSTART_FORTLOPENDE;
   var d = _ssPerEmneDato[kode];

@@ -231,7 +231,16 @@ var BASKET_CSS = '\
 .hk-card:has(.hk-emner-list.open) .hk-emner-list{border-top-color:#F9CCD2}\
 /* Alle emner i s\u00f8knaden har samme status \u2013 de er lagt til. Derfor b\u00e6rer\
    hver rad den bl\u00e5 «lagt til»-markeringen, ikke bare den sist tilf\u00f8yde. */\
-.hk-emne-row{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid #E6E6E6;gap:8px;background:#fff}\
+.hk-emne-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid #E6E6E6;gap:8px;background:#fff}\
+/* Varsel om bestatt eller paabegynt emne, lukket som standard. */\
+.hk-konflikt{flex-basis:100%;margin-top:4px;overflow:hidden;background:#FFFBEB;border:1px solid #FFCA00;border-radius:8px}\
+.hk-konflikt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;width:100%;padding:12px 14px;background:none;border:none;cursor:pointer;font-family:inherit;text-align:left}\
+.hk-konflikt-tittel{font-size:14px;font-weight:600;color:#1A1A1A;line-height:1.4}\
+.hk-konflikt-ikon{width:16px;flex-shrink:0;margin-top:3px;color:#1A1A1A;display:flex;transition:transform .3s ease}\
+.hk-konflikt.apen .hk-konflikt-ikon{transform:rotate(180deg)}\
+.hk-konflikt-body{max-height:0;overflow:hidden;transition:max-height .35s ease}\
+.hk-konflikt.apen .hk-konflikt-body{max-height:200px}\
+.hk-konflikt-tekst{margin:0;padding:0 14px 12px;font-size:14px;color:#1A1A1A;line-height:1.5}\
 .hk-emne-left{flex:1;min-width:0}\
 .hk-emne-oppstart{font-size:14px;font-weight:400;color:#1A1A1A;line-height:17.5px;margin-top:2px}\
 .hk-emne-oppstart strong{font-weight:600;color:#1A1A1A}\
@@ -793,6 +802,35 @@ function renderCampusCard(prog) {
     + '</div></div></div>';
 }
 
+/* Varselet om at emnet er bestått eller påbegynt står der emnet ligger – i
+   handlekurven på alle sider, og på emnekortet i Studievalg. Lukket som
+   standard; overskriften sier det studenten trenger. */
+function hkKonfliktBoksHtml(code) {
+  var konflikt = typeof emneKonflikt === 'function' ? emneKonflikt(code) : null;
+  if (!konflikt) return '';
+  var tittel = konflikt === 'bestatt'
+    ? 'Du har allerede bestått dette emnet.'
+    : 'Du er allerede aktiv i dette emnet.';
+  var chevron = '<svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true">'
+    + '<path d="M1.5 1.5L8 8l6.5-6.5" stroke="currentColor" stroke-width="2.2" '
+    + 'stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  return '<div class="hk-konflikt">'
+    + '<button type="button" class="hk-konflikt-head" onclick="hkToggleKonflikt(event, this)" aria-expanded="false">'
+    + '<span class="hk-konflikt-tittel">' + tittel + '</span>'
+    + '<span class="hk-konflikt-ikon">' + chevron + '</span>'
+    + '</button>'
+    + '<div class="hk-konflikt-body"><p class="hk-konflikt-tekst">Fjern det for å gå videre.</p></div>'
+    + '</div>';
+}
+
+function hkToggleKonflikt(event, head) {
+  event.stopPropagation();
+  var boks = head.closest('.hk-konflikt');
+  if (!boks) return;
+  var apen = boks.classList.toggle('apen');
+  head.setAttribute('aria-expanded', apen ? 'true' : 'false');
+}
+
 function renderNettCard(prog) {
   var emnerCount = prog.emner ? prog.emner.length : 0;
   var totalPts = 0;
@@ -811,7 +849,9 @@ function renderNettCard(prog) {
         + '<span class="hk-badge hk-badge-nett hk-emne-nett">Nett</span></div>'
         + '<div class="hk-emne-right">'
         + '<button class="k-delete" onclick="hkRemoveEmne(\'' + prog.id + '\',\'' + e.code + '\')" aria-label="Fjern">' + TRASH_SVG + '</button>'
-        + '</div></div>';
+        + '</div>'
+        + hkKonfliktBoksHtml(e.code)
+        + '</div>';
     });
   }
 
@@ -840,7 +880,9 @@ function renderLooseEmner(emner) {
       + '<span class="hk-badge hk-badge-nett hk-emne-nett">Nett</span></div>'
       + '<div class="hk-emne-right">'
       + '<button class="k-delete" onclick="hkRemoveLooseEmne(\'' + e.code + '\')" aria-label="Fjern">' + TRASH_SVG + '</button>'
-      + '</div></div>';
+      + '</div>'
+      + hkKonfliktBoksHtml(e.code)
+      + '</div>';
   });
   return '<div class="hk-card" data-prog-id="' + HK_LOOSE_CARD_ID + '"><div class="hk-card-header hk-clickable" onclick="toggleHkEmner(this)">'
     + '<div><div class="hk-section-title">Emner uten tilknytning til studieprogram</div>'
@@ -1780,35 +1822,6 @@ function emneProgramKandidater(emne, cb) {
 }
 
 
-/* Emnet er allerede bestått – vis beskjed i sidepanelet i stedet for å legge
-   det til. Samme ordlyd som konflikt-varselet i søknadsskjemaet. */
-function showEmneAlreadyCompleted(emne, program) {
-  injectSidebarPanel();
-  openSoknaderPanel();
-  var body = document.getElementById('hk-body');
-  var title = document.getElementById('hk-title');
-  if (!body) return;
-  refreshSokPanelFooter();
-  if (title) title.textContent = 'Allerede bestått';
-
-  var iProgram = program
-    ? ' i <strong>' + program.name + '</strong>'
-    : '';
-
-  body.innerHTML = '<div style="padding:8px 0;">'
-    + '<div style="background:#FCF8F5;border-radius:8px;padding:18px 20px;">'
-    + '<div style="display:flex;align-items:flex-start;gap:10px;">'
-    + '<span style="color:#46000A;font-size:15px;font-weight:600;flex-shrink:0;margin-top:2px;">&#10003;</span>'
-    + '<p style="font-size:15px;font-weight:600;color:#46000A;margin:0;">Du har allerede bestått ' + emne.name + '</p>'
-    + '</div>'
-    + '<p style="font-size:13.5px;color:#5C5C5C;margin:10px 0 0;line-height:1.55;padding-left:25px;">'
-    + 'Emnet ble tatt' + iProgram + ' og kan ikke tas om igjen, så vi har ikke lagt det til. '
-    + 'Stemmer ikke dette, ta kontakt på <a href="mailto:opptaknettstudier@kristiania.no" style="color:#0A4FB8;">opptaknettstudier@kristiania.no</a> eller 21 09 30 00.'
-    + '</p>'
-    + '</div></div>';
-}
-
-
 /* ─── Logg inn som steg i panelet ───
    Svaret styrer bare innloggingsmåten – FEIDE for dem som har studert her før,
    telefon for de andre. Selve søknaden er upåvirket. */
@@ -2054,18 +2067,11 @@ function handleKjopEmnet() {
   var emne = buildEmneObj(subject);
   var included = getEmneIncludedPrograms();
 
-  /* Innlogget og emnet er allerede bestått → det kan ikke tas om igjen. */
-  if (getAuthState() && isCompletedCourse(emne.code)) {
-    var owner = COMPLETED_BY_PROGRAM.filter(function(p) {
-      return p.codes.indexOf(String(emne.code)) > -1;
-    })[0];
-    showEmneAlreadyCompleted(emne, owner);
-    return;
-  }
-
-  /* Studenten skal uansett velge studieprogram – også når vi vet hvilket de
-     har påbegynt, eller når bare ett av dem ligger i søknaden. Det påbegynte
-     merkes i listen i stedet for å velges for dem. */
+  /* Beståtte og påbegynte emner stoppes ikke her. De legges i kurven som alle
+     andre, og varselet står på emnekortet i handlekurven – samme sted som for
+     emner lagt til fra studiesidene.
+     Studenten velger studieprogram uansett, også når vi vet hvilket de har
+     påbegynt: det merkes i listen i stedet for å velges for dem. */
   showEmneProgramChoice(emne, included);
 }
 
