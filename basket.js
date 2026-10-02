@@ -462,10 +462,22 @@ function normalizeTopbarOrder() {
   var search   = liIn(searchEl);
   var menu     = liIn(document.querySelector('img[src*="Menu.svg"]'));
 
-  var order = [profile, search, basketLi, menu];
-  for (var i = 0; i < order.length; i++) {
-    if (order[i] && order[i].parentNode === ul) ul.appendChild(order[i]);
-  }
+  var order = [profile, search, basketLi, menu].filter(function(li) {
+    return li && li.parentNode === ul;
+  });
+
+  /* Flytt bare når rekkefølgen faktisk er feil. Ubetinget appendChild ville
+     vært en DOM-endring hver gang, og dermed utløst topbar-vokteren i en
+     evig runde. */
+  var naa = Array.prototype.filter.call(ul.children, function(c) {
+    return order.indexOf(c) > -1;
+  });
+  var riktig = order.length === naa.length && order.every(function(li, i) {
+    return naa[i] === li;
+  });
+  if (riktig) return;
+
+  order.forEach(function(li) { ul.appendChild(li); });
 }
 
 /* ─── UI refresh ─── */
@@ -1006,7 +1018,7 @@ function byggProfilIkon(basketLi) {
     + '<div class="k-profil-meny" id="k-profil-meny"></div>';
   basketLi.parentNode.insertBefore(li, basketLi.nextSibling);
   oppdaterProfilMeny();
-  setTimeout(plasserProfilEtterKurv, 400);
+  voktTopbar(basketLi.parentNode);
 
   /* Hover åpner menyen. Lukkingen har en liten forsinkelse, så den ikke
      forsvinner mens musa er på vei fra ikonet ned i menyen. */
@@ -1021,8 +1033,23 @@ function byggProfilIkon(basketLi) {
   });
 }
 
-/* Nettstedets header rendrer om etter at vi har satt inn ikonet, så vi flytter
-   det på plass igjen ved behov i stedet for å stole på innsettingsrekkefølgen. */
+/* Nettstedets header rendrer om etter at vi har satt inn ikonene, og kaster da
+   om på rekkefølgen. Vi retter det opp i en MutationObserver i stedet for etter
+   en timeout: tilbakestillingen skjer da i samme frame som omrenderingen, før
+   nettleseren rekker å tegne, så ikonene ikke synlig hopper. */
+var _topbarVokter = null;
+
+function voktTopbar(ul) {
+  if (_topbarVokter || !ul || typeof MutationObserver !== 'function') return;
+  _topbarVokter = new MutationObserver(function() {
+    /* Begge er no-op når rekkefølgen alt stemmer, så vår egen flytting
+       utløser ikke en ny runde. */
+    normalizeTopbarOrder();
+    plasserProfilEtterKurv();
+  });
+  _topbarVokter.observe(ul, { childList: true });
+}
+
 function plasserProfilEtterKurv() {
   var prof = document.querySelector('.k-profil');
   var img = document.querySelector('img[src*="Basket.svg"]');

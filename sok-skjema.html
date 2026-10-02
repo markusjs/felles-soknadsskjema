@@ -707,8 +707,10 @@ body {
 
 .s0-emnegroup { border: 1.5px solid #E6E6E6; border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
 .s0-emnegroup-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #FCF8F5; padding: 16px 22px; cursor: pointer; }
-.s0-emnegroup-name { font-weight: 600; font-size: 15px; color: #46000A; display: block; margin-bottom: 3px; }
-.s0-emnegroup-count { font-size: 14px; color: #5C5C5C; }
+.s0-emnegroup-count { display: block; font-size: 14px; color: #5C5C5C; margin-bottom: 3px; }
+.s0-emnegroup-name { display: block; font-weight: 600; font-size: 15px; color: #46000A; }
+.s0-emnegroup-handlinger { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.s0-tom { margin: 0; padding: 16px 24px; font-size: 14px; color: #5C5C5C; }
 .s0-emnegroup-chevron { flex-shrink: 0; transition: transform 0.2s; }
 .s0-emnegroup-chevron.open { transform: rotate(180deg); }
 .s0-emnegroup-list { display: none; }
@@ -727,14 +729,13 @@ body {
   color: #0A4FB8; text-decoration: none; line-height: 1.4;
 }
 .s0-emne-change:hover { text-decoration: underline; text-underline-offset: 4px; }
-/* Sletting av et emne er rød her, mens programkortene beholder den blå. */
-.s0-emne-row .k-delete { background: #FDECEC; color: #C0392B; }
-.s0-emne-row .k-delete:hover { background: #F9D8D8; }
+
 .s0-emne-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.s0-fakta { display: flex; flex-wrap: wrap; gap: 8px 36px; margin-top: 14px; }
-.s0-fakta-felt { display: flex; flex-direction: column; gap: 2px; }
-.s0-fakta-navn { font-size: 14px; color: #8C4A52; line-height: 1.3; }
-.s0-fakta-verdi { font-size: 15px; font-weight: 600; color: #1A1A1A; line-height: 1.3; }
+.s0-emne-topp { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.s0-fakta-linje { font-size: 15px; line-height: 1.5; color: #1A1A1A; }
+.s0-fakta-verdi { font-weight: 600; }
+.s0-emne-bunn { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+.s0-emne-bunn-hoyre { display: flex; align-items: center; gap: 16px; }
 .s0-emne-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .s0-emne-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
 /* Slettknapp – én utforming i hele appen: blå X på lys blå sirkel */
@@ -1058,27 +1059,12 @@ body {
 .s0-emne-row.vis-feil .k-delete { background: #8B1A1A; color: #fff; }
 .s0-emne-row.vis-feil .k-delete:hover { background: #6E1414; }
 /* Varselet går fra gul påminnelse til rød feil når raden faktisk blokkerer */
-.s0-emne-row.vis-feil .s0-emne-konflikt { background: #8B1A1A; border-color: #8B1A1A; }
-.s0-emne-row.vis-feil .s0-konflikt-tittel,
-.s0-emne-row.vis-feil .s0-konflikt-tekst,
-.s0-emne-row.vis-feil .s0-konflikt-ikon { color: #fff; }
+.s0-emne-row.vis-feil .s0-emne-konflikt { background: #8B1A1A; border-color: #8B1A1A; color: #fff; }
 .s0-emne-konflikt {
-  flex-basis: 100%; margin-top: 12px; overflow: hidden;
+  margin-top: 12px; padding: 14px 16px;
   background: #FFFBEB; border: 1px solid #FFCA00; border-radius: 8px;
+  font-size: 15px; font-weight: 600; color: #1A1A1A; line-height: 1.4;
 }
-.s0-konflikt-head {
-  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
-  padding: 14px 16px; cursor: pointer; user-select: none;
-}
-.s0-konflikt-tittel { font-size: 15px; font-weight: 600; color: #1A1A1A; line-height: 1.4; }
-.s0-konflikt-ikon {
-  width: 16px; flex-shrink: 0; margin-top: 3px; color: #1A1A1A;
-  display: flex; transition: transform .3s ease;
-}
-.s0-emne-konflikt.apen .s0-konflikt-ikon { transform: rotate(180deg); }
-.s0-konflikt-body { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
-.s0-emne-konflikt.apen .s0-konflikt-body { max-height: 200px; }
-.s0-konflikt-tekst { margin: 0; padding: 0 16px 14px; font-size: 15px; color: #1A1A1A; line-height: 1.5; }
 .sbx-card { background: #fff; border: 1px solid #E6E6E6; border-radius: 8px; overflow: hidden; }
 .sbx-group {
   display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 16px;
@@ -2162,7 +2148,7 @@ function renderStep0() {
   // --- Hele program ---
   if (programs.length === 0) {
     document.getElementById('step0PrioritetList').innerHTML =
-      '<p style="font-size:14px;color:#5C5C5C;padding:16px 0;">Ingen studieprogram lagt til ennå.</p>';
+      '<p class="s0-tom">Ingen studieprogram lagt til ennå.</p>';
   } else {
     document.getElementById('step0PrioritetList').innerHTML = programs.map(function(p, idx) {
       return buildPrioritetCardHtml(p, idx, programs.length, 's0RemoveProgram', 'moveProgram');
@@ -2194,9 +2180,13 @@ function renderStep0() {
     var emnerHtml = '';
     nettPrograms.forEach(function(p) {
       var safeId = p.id ? p.id.toString().replace(/'/g, "\\'") : '';
-      var meta = (p.points ? studiepoengTekst(p.points) + ' · ' : '') + (p.emner || []).length + ' emne' + ((p.emner || []).length !== 1 ? 'r' : '')
-        + gjennomforingSuffix(p);
-      emnerHtml += buildEmnegroupHtml(p.name, meta, p.emner || [], safeId, false, 's0RemoveEmne', true, 's0RedigerOppstart');
+      var antall = (p.emner || []).length;
+      var meta = [p.level, p.points ? studiepoengTekst(p.points) : '',
+                  antall + ' emne' + (antall !== 1 ? 'r' : '')].filter(Boolean).join(' · ');
+      var kode = p.programCode || p.studiekode;
+      var navn = p.name + (kode ? ' [' + kode + ']' : '');
+      emnerHtml += buildEmnegroupHtml(navn, meta, p.emner || [], safeId, false, 's0RemoveEmne', true,
+        's0RedigerOppstart', "s0RemoveProgram('" + safeId + "')");
     });
     if (looseEmner.length > 0) {
       emnerHtml += buildEmnegroupHtml('Emner uten tilknytning til studieprogram', looseEmner.length + ' emne' + (looseEmner.length !== 1 ? 'r' : ''), looseEmner, null, true, 's0RemoveEmne', true, 's0RedigerOppstart');
@@ -2255,6 +2245,10 @@ function s0RedigerOppstart(programId, code, isLoose) {
     },
     onConfirm: function(datoStr, perEmne, valg) {
       s0LagreValg(code, datoStr, valg);
+      /* Redigeringen er ferdig når siste valg er bekreftet. Da lukker vi
+         skuffen i stedet for å la studenten stå igjen i handlekurven og måtte
+         gå videre en gang til. */
+      if (typeof closeSoknaderPanel === 'function') closeSoknaderPanel();
       if (typeof renderBasketPanel === 'function') renderBasketPanel();
       renderStep0();
       renderSidebar();
@@ -2434,79 +2428,83 @@ var S0_IKON_PENN = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" 
   + '<path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3z" stroke="currentColor" stroke-width="1.8" '
   + 'stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-/* Varselet er utfoldbart: overskriften sier hva som er galt, kroppen hva
-   studenten må gjøre. Samme form som det gule feltet i studiestart-panelet. */
+/* Enkelt gult varsel – emnet må fjernes, det er hele beskjeden. */
 function s0KonfliktBoksHtml(konflikt) {
-  var tittel = konflikt === 'bestatt'
+  return '<div class="s0-emne-konflikt">' + (konflikt === 'bestatt'
     ? 'Du har allerede bestått dette emnet.'
-    : 'Du er allerede aktiv i dette emnet.';
-  var chevron = '<svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M1.5 1.5L8 8l6.5-6.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  return '<div class="s0-emne-konflikt">'
-    + '<div class="s0-konflikt-head" onclick="s0ToggleKonflikt(this)">'
-    + '<span class="s0-konflikt-tittel">' + tittel + '</span>'
-    + '<span class="s0-konflikt-ikon">' + chevron + '</span>'
-    + '</div>'
-    + '<div class="s0-konflikt-body"><p class="s0-konflikt-tekst">Fjern det for å gå videre. Du kan legge til andre emner i stedet.</p></div>'
-    + '</div>';
+    : 'Du er allerede aktiv i dette emnet.') + '</div>';
 }
 
-function s0ToggleKonflikt(head) {
-  var boks = head && head.closest ? head.closest('.s0-emne-konflikt') : null;
-  if (boks) boks.classList.toggle('apen');
-}
-
-/* Oppstart, eksamen og Lånekasse-svaret står som tre kolonner over taggene,
-   slik at studenten ser hele valget sitt uten å åpne panelet. */
-function s0FaktaradHtml(e) {
-  var felt = [
-    ['Oppstart', e.startDate || e.startSemester || ''],
-    ['Eksamen', e.eksamen || ''],
-    ['Lån/stipend', e.lanekassen || '']
-  ].filter(function(f) { return !!f[1]; });
-  if (!felt.length) return '';
-  return '<div class="s0-fakta">' + felt.map(function(f) {
-    return '<div class="s0-fakta-felt">'
-      + '<span class="s0-fakta-navn">' + f[0] + '</span>'
-      + '<span class="s0-fakta-verdi">' + f[1] + '</span>'
-      + '</div>';
-  }).join('') + '</div>';
-}
-
-function buildEmneRowHtml(e, removeFnCall, showPrice, changeFnCall, tilknytning) {
-  var extras = s0FaktaradHtml(e);
-  var actions = '';
-  if (changeFnCall) {
-    actions += '<button class="s0-emne-change" onclick="' + changeFnCall + '">'
-      + S0_IKON_PENN + 'Rediger</button>';
+/* Oppstart, eksamen og Lånekasse-svaret står som merkede linjer under navnet,
+   så studenten ser hele valget sitt uten å åpne panelet. */
+function s0FaktalinjerHtml(e) {
+  var oppstart = e.startDate || e.startSemester || '';
+  /* «Fortløpende oppstart» blir bare «Fortløpende» her – «Oppstart:» står alt
+     som etikett foran. */
+  if (typeof erFortlopendeOppstart === 'function' && erFortlopendeOppstart(oppstart)) {
+    oppstart = 'Fortløpende';
   }
-  if (removeFnCall) {
-    actions += '<button class="k-delete" onclick="' + removeFnCall + '" aria-label="Fjern">' + ICON_X_PLAIN + '</button>';
-  }
+  return [['Oppstart', oppstart], ['Eksamen', e.eksamen || ''], ['Lån/stipend', e.lanekassen || '']]
+    .filter(function(f) { return !!f[1]; })
+    .map(function(f) {
+      return '<div class="s0-fakta-linje"><span class="s0-fakta-navn">' + f[0] + ':</span> '
+        + '<span class="s0-fakta-verdi">' + f[1] + '</span></div>';
+    }).join('');
+}
+
+function buildEmneRowHtml(e, removeFnCall, showPrice, changeFnCall) {
+  var label = [];
+  if (e.code) label.push('#' + e.code);
+  var pts = e.points || e.pts;
+  if (pts) label.push(studiepoengTekst(pts));
+
   /* Sletting finnes bare i handlekurven/Søknad-panelet og på Studievalg.
      Varselet hører hjemme samme sted – det ber studenten fjerne emnet. */
   var konflikt = removeFnCall && typeof emneKonflikt === 'function' ? emneKonflikt(e.code) : null;
-  var varsel = konflikt ? s0KonfliktBoksHtml(konflikt) : '';
 
   return '<div class="s0-emne-row' + (konflikt ? ' har-konflikt' : '') + '">'
-    + emneKortInnholdHtml(e, extras, showPrice ? emneKortPrisHtml(e) : '', tilknytning, actions)
-    + varsel
+    + '<div class="s0-emne-topp">'
+    + '<span class="bt-emne-label">' + label.join(' \u00b7 ') + '</span>'
+    + (removeFnCall
+        ? '<button class="k-delete" onclick="' + removeFnCall + '" aria-label="Fjern">' + ICON_X_PLAIN + '</button>'
+        : '')
+    + '</div>'
+    + '<div class="bt-emne-name">' + (e.name || '') + '</div>'
+    + s0FaktalinjerHtml(e)
+    + '<div class="s0-emne-bunn">'
+    + '<span class="s0-badge s0-badge-nett">Nett</span>'
+    + '<div class="s0-emne-bunn-hoyre">'
+    + (changeFnCall
+        ? '<button class="s0-emne-change" onclick="' + changeFnCall + '">' + S0_IKON_PENN + 'Rediger</button>'
+        : '')
+    + (showPrice ? emneKortPrisHtml(e) : '')
+    + '</div>'
+    + '</div>'
+    + (konflikt ? s0KonfliktBoksHtml(konflikt) : '')
     + '</div>';
 }
 
 /* changeFn settes bare fra Studievalg \u2013 der studievalget fortsatt er \u00e5pent
    for endring. Betaling og Oppstart viser de samme kortene uten den. */
-function buildEmnegroupHtml(label, meta, emner, groupId, isLoose, removeFn, showPrice, changeFn) {
+function buildEmnegroupHtml(label, meta, emner, groupId, isLoose, removeFn, showPrice, changeFn, removeGroupFn) {
   var rows = emner.map(function(e) {
     var safeCode = e.code ? e.code.toString().replace(/'/g, "\\'") : '';
     var args = "(" + (groupId ? "'" + groupId + "'" : 'null') + ",'" + safeCode + "'," + (isLoose ? 'true' : 'false') + ")";
-    var removeFnCall = removeFn + args;
-    return buildEmneRowHtml(e, removeFnCall, showPrice, changeFn ? changeFn + args : null,
-      isLoose ? 'enkeltemne' : label);
+    return buildEmneRowHtml(e, removeFn + args, showPrice, changeFn ? changeFn + args : null);
   }).join('');
   return '<div class="s0-emnegroup">'
     + '<div class="s0-emnegroup-header" onclick="toggleS0EmnegroupOpen(this)">'
-    + '<div><span class="s0-emnegroup-name">' + label + '</span><span class="s0-emnegroup-count">' + meta + '</span></div>'
+    /* Meta over navnet: nivå og omfang først, så hva gruppen heter. */
+    + '<div><span class="s0-emnegroup-count">' + meta + '</span>'
+    + '<span class="s0-emnegroup-name">' + label + '</span></div>'
+    + '<div class="s0-emnegroup-handlinger">'
     + '<svg class="s0-emnegroup-chevron open" width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#5C5C5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    /* Klikket må ikke boble opp til overskriften – den folder gruppen sammen. */
+    + (removeGroupFn
+        ? '<button class="k-delete" onclick="event.stopPropagation();' + removeGroupFn
+          + '" aria-label="Fjern ' + label + '">' + ICON_X_PLAIN + '</button>'
+        : '')
+    + '</div>'
     + '</div>'
     + '<div class="s0-emnegroup-list open">' + rows + '</div>'
     + '</div>';
@@ -3569,7 +3567,9 @@ function prioMetaHtml(p) {
 /* p.points er noen ganger et tall (180) og noen ganger ferdig tekst («180 studiepoeng») */
 function studiepoengTekst(points) {
   if (!points) return '';
-  return /^[\d\s.,]+$/.test(String(points)) ? points + ' studiepoeng' : String(points);
+  var s = String(points);
+  if (!/^[\d\s.,]+$/.test(s)) return s;
+  return s.replace('.', ',') + ' studiepoeng';
 }
 
 /* Programnavn inneholder ofte nivået alt («Bachelor i …») — unngå dobbelt prefiks */
