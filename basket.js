@@ -114,6 +114,19 @@ function getCompletedConflicts() {
   return conflicts;
 }
 
+/* «Fortløpende oppstart» er ikke en dato, og skal stå alene uten «Oppstart »
+   foran seg. Lagres som tekst i startDate, så den følger emnet gjennom hele
+   søknaden. */
+var OPPSTART_FORTLOPENDE = 'Fortløpende oppstart';
+
+function erFortlopendeOppstart(v) {
+  return String(v || '') === OPPSTART_FORTLOPENDE;
+}
+
+function oppstartEtikett(v) {
+  return erFortlopendeOppstart(v) ? OPPSTART_FORTLOPENDE : 'Oppstart ' + v;
+}
+
 /* ─── Path helper ─── */
 function getSokSkjemaPath() {
   return '/sok-skjema.html';
@@ -492,8 +505,8 @@ function injectSidebarPanel() {
        uforpliktende til det som fører søknaden videre: lagre, logg inn, gå videre. */
     + '<div id="hk-save-slot"></div>'
     + '<div id="hk-auth-slot"></div>'
-    // Fra handlekurven er studievalget allerede gjort → hopp rett til innlogging
-    + '<a href="' + getSokSkjemaPath() + '" id="hk-cta-btn" class="hk-btn-primary" style="display:none;">Gå videre</a>'
+    /* Knapp og ikke lenke: utlogget skal innloggingen tas her først. */
+    + '<button type="button" id="hk-cta-btn" class="hk-btn-primary" style="display:none;" onclick="hkGaVidereFraKurv()">Gå videre</button>'
     + '</div>'
     + '</div>';
   document.body.insertAdjacentHTML('beforeend', html);
@@ -539,7 +552,7 @@ function buildAuthFooterRow(awaitingChoice) {
        forlate emnet. Det er også det fotnoten lover. */
     var loginBtn = awaitingChoice
       ? '<button class="hk-btn-outline hk-btn-small" onclick="hkLoginAndRetryChoice()">Logg inn</button>'
-      : '<button class="hk-btn-outline hk-btn-small" onclick="hkVisLoggInn()">Logg inn</button>';
+      : '<button class="hk-btn-outline hk-btn-small" onclick="hkStartInnlogging()">Logg inn</button>';
     return '<div class="hk-auth-row">'
       + '<p class="hk-auth-prompt">' + prompt + '</p>'
       + loginBtn
@@ -649,6 +662,17 @@ function sendBasketSave() {
    emne. Da skal «Gå videre» skjules – ellers kan man gå videre og
    miste emnet som er i ferd med å bli lagt til. Innloggingsraden beholdes,
    siden innlogging er en del av valget (den finner påbegynte program). */
+/* «Gå videre» fra handlekurven skal også innom innlogging – det er her vi
+   først får vite hva studenten har bestått fra før. Etterpå åpnes søknaden på
+   Studievalg, der eventuelle beståtte emner er markert. */
+function hkGaVidereFraKurv() {
+  if (!getAuthState()) {
+    hkStartInnlogging(function() { location.href = getSokSkjemaPath(); });
+    return;
+  }
+  location.href = getSokSkjemaPath();
+}
+
 function refreshSokPanelFooter(awaitingChoice) {
   var authSlot = document.getElementById('hk-auth-slot');
   if (authSlot) authSlot.innerHTML = buildAuthFooterRow(awaitingChoice);
@@ -771,7 +795,7 @@ function renderNettCard(prog) {
       emnerHtml += '<div class="hk-emne-row" data-code="' + (e.code || '') + '">'
         + '<div class="hk-emne-left"><div class="hk-emne-meta">#' + (e.code || '') + ' · ' + (e.pts || 0) + ' stp.</div>'
         + '<div class="hk-emne-name">' + e.name + '</div>'
-        + (e.startDate ? '<div class="hk-emne-oppstart">Oppstart: <strong>' + e.startDate + '</strong></div>' : '')
+        + (e.startDate ? '<div class="hk-emne-oppstart">' + (erFortlopendeOppstart(e.startDate) ? '<strong>' + OPPSTART_FORTLOPENDE + '</strong>' : 'Oppstart: <strong>' + e.startDate + '</strong>') + '</div>' : '')
         + '<span class="hk-badge hk-badge-nett hk-emne-nett">Nett</span></div>'
         + '<div class="hk-emne-right">'
         + '<button class="k-delete" onclick="hkRemoveEmne(\'' + prog.id + '\',\'' + e.code + '\')" aria-label="Fjern">' + TRASH_SVG + '</button>'
@@ -800,7 +824,7 @@ function renderLooseEmner(emner) {
       + '<div class="hk-emne-left"><div class="hk-emne-meta">' + (e.program || 'Enkeltemne') + ' · ' + (e.pts || 0) + ' stp.'
       + gjennomforingSuffix(e) + '</div>'
       + '<div class="hk-emne-name">' + e.name + '</div>'
-      + (e.startDate ? '<div class="hk-emne-oppstart">Oppstart: <strong>' + e.startDate + '</strong></div>' : '')
+      + (e.startDate ? '<div class="hk-emne-oppstart">' + (erFortlopendeOppstart(e.startDate) ? '<strong>' + OPPSTART_FORTLOPENDE + '</strong>' : 'Oppstart: <strong>' + e.startDate + '</strong>') + '</div>' : '')
       + '<span class="hk-badge hk-badge-nett hk-emne-nett">Nett</span></div>'
       + '<div class="hk-emne-right">'
       + '<button class="k-delete" onclick="hkRemoveLooseEmne(\'' + e.code + '\')" aria-label="Fjern">' + TRASH_SVG + '</button>'
@@ -1015,7 +1039,7 @@ function oppdaterProfilMeny() {
   var auth = getAuthState();
 
   if (!auth) {
-    meny.innerHTML = '<button class="k-profil-handling" onclick="openSoknaderPanel();hkVisLoggInn()">Logg inn</button>';
+    meny.innerHTML = '<button class="k-profil-handling" onclick="openSoknaderPanel();hkStartInnlogging()">Logg inn</button>';
     return;
   }
 
@@ -1478,11 +1502,14 @@ function hkToggleInfo(id) {
   if (chev) chev.innerHTML = open ? CHEVRON_UP : CHEVRON_DOWN;
 }
 
-var INFO_GJENNOMFORING = '<p style="margin:0 0 10px;">Hvis du studerer p\u00e5 fulltid, tar du 30 studiepoeng '
-  + 'eller mer i semesteret. Studerer du p\u00e5 deltid, tar du mindre, ofte halvparten.</p>'
+/* Noen studenter har unntak som gir full st\u00f8tte for deltid, s\u00e5 vi kan ikke si
+   noe om bel\u00f8pet \u2013 bare hva L\u00e5nekassen vurderer ut fra. */
+var INFO_GJENNOMFORING = '<p style="margin:0 0 10px;">Hvis du studerer fulltid, tar du 30 studiepoeng '
+  + 'eller mer i semesteret. Merk at L\u00e5nekassen innvilger st\u00f8tte til maksimalt 30 studiepoeng '
+  + 'per semester. Studerer du p\u00e5 deltid, tar du under 30 studiepoeng per semester, ofte halvparten.</p>'
   + '<p style="margin:0 0 12px;">Graden du ender opp med, vil v\u00e6re den samme \u2013 den tar bare lengre tid '
-  + '\u00e5 fullf\u00f8re. Du f\u00e5r ogs\u00e5 st\u00f8tte fra L\u00e5nekassen som deltidsstudent, men ikke s\u00e5 mye som om '
-  + 'du hadde studert p\u00e5 heltid.</p>'
+  + '\u00e5 fullf\u00f8re. Du kan ogs\u00e5 f\u00e5 st\u00f8tte fra L\u00e5nekassen som deltidsstudent, men L\u00e5nekassen '
+  + 'vurderer st\u00f8tte ut fra hvor mange studiepoeng du tar per semester.</p>'
   + '<a href="https://www.kristiania.no/nettstudier/" style="font-size:15px;font-weight:500;color:#46000A;">'
   + 'Les mer om gjennomf\u00f8ring</a>';
 
@@ -1553,6 +1580,14 @@ function openEmneProgramDetail(idx) {
   var st = _emneChoiceState;
   if (!st || !st.programs[idx]) return;
   var p = st.programs[idx];
+  /* Innloggingen hører hjemme rett etter programvalget: da vet vi hva studenten
+     har bestått før gjennomføring og oppstart velges. Den må ligge foran
+     snarveiene under – er gjennomføringen alt valgt på siden, hopper de rett
+     videre til oppstart, og da ville innloggingen aldri blitt vist. */
+  if (!getAuthState()) {
+    hkStartInnlogging(function() { openEmneProgramDetail(idx); }, backToEmneProgramList);
+    return;
+  }
   if (st.skipGjennomforing && st.onPick) { st.onPick(p); return; }
   if (hkGjennomforingAlleredeValgt(p, getProgramCodes(p))) return;
   _emneProgramView = { idx: idx, program: p, codes: getProgramCodes(p) };
@@ -1757,6 +1792,18 @@ var HK_LOGIN_VALG = [
 ];
 var _hkLoginValg = null;
 
+/* Hva som skal skje når innloggingen er ferdig, og hvor «Tilbake» går. Settes
+   av steget som ba om innlogging, slik at studenten fortsetter der hen var i
+   stedet for å bli sendt til søknaden. */
+var _hkEtterInnlogging = null;
+var _hkLoginTilbake = null;
+
+function hkStartInnlogging(etterpaa, tilbakeFn) {
+  _hkEtterInnlogging = etterpaa || null;
+  _hkLoginTilbake = tilbakeFn || null;
+  hkVisLoggInn();
+}
+
 function hkVisLoggInn() {
   var body = document.getElementById('hk-body');
   if (!body) return;
@@ -1796,6 +1843,10 @@ function hkVelgLoggInn(kort, verdi) {
 }
 
 function hkLoggInnTilbake() {
+  var tilbake = _hkLoginTilbake;
+  _hkEtterInnlogging = null;
+  _hkLoginTilbake = null;
+  if (tilbake) { tilbake(); return; }
   if (typeof refreshSokPanelFooter === 'function') refreshSokPanelFooter(false);
   renderBasketPanel();
 }
@@ -1924,8 +1975,26 @@ function hkFullforInnlogging(metode) {
   setAuthState(metode, 'Lars Juster Eilefsen');
   _hkLoginValg = null;
   _hkTelefon = '';
+  var etterpaa = _hkEtterInnlogging;
+  _hkEtterInnlogging = null;
+  _hkLoginTilbake = null;
+  if (etterpaa) { etterpaa(); return; }
   if (typeof refreshSokPanelFooter === 'function') refreshSokPanelFooter(false);
   renderBasketPanel();
+  hkTilStudievalg();
+}
+
+/* Først ved innlogging kjenner vi studiehistorikken. Har studenten emner i
+   kurven, kan noen av dem være bestått eller påbegynt fra før – da skal hen til
+   Studievalg og se det, ikke bli stående der hen var. */
+function hkTilStudievalg() {
+  var b = getBasket();
+  if (!(b.programs || []).length && !(b.looseEmner || []).length) return;
+  if (typeof gaVidere === 'function' && document.getElementById('step0Page')) {
+    gaVidere(0);
+    return;
+  }
+  location.href = getSokSkjemaPath();
 }
 
 /* Logg inn uten å forlate valget, og bygg panelet på nytt – nå med «Studie

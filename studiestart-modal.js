@@ -42,6 +42,9 @@ function injectStyles() {
 .ss-body > *{flex-shrink:0}\
 .ss-footer{padding:16px 24px calc(20px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #E6E6E6;flex-shrink:0}\
 .ss-radio-group{display:flex;flex-direction:column;gap:8px}\
+.ss-stegindikator{display:flex;gap:6px;margin:0 0 4px}\
+.ss-stegindikator-del{flex:1;height:5px;border-radius:999px;background:transparent;border:1px solid #1A1A1A}\
+.ss-stegindikator-del.ferdig{background:#1A1A1A}\
 .ss-radio-card{border:1.5px solid #D4D4D4;border-radius:8px;padding:18px 20px;cursor:pointer;display:flex;flex-wrap:wrap;align-items:flex-start;gap:14px;transition:border-color .15s,background .15s}\
 .ss-radio-card:hover{background:#F5F5F5}\
 .ss-radio-card.selected{border-color:#0A4FB8;border-width:2px;padding:17px 19px;background:#F2F7FF}\
@@ -205,7 +208,7 @@ window.STUDIESTART_SCENARIO = {
   semesterLabel: '16. august 2026',
   studierettLabel: 'Studierett til 15. august 2027',
   loanInfo: 'Anbefalt hvis du ønsker å søke lån/stipend hos Lånekassen.',
-  loanLink: 'Les mer: Lånekassen: Nettstudier og samlingsbasert',
+  loanLink: 'Les mer om Lånekassen på vår hjemmeside her.',
   /* Brukes i «mellom semestre»-varianten av studiestartsteget. */
   nextSemester: 'høstsemesteret',
   nextDate: '16. august',
@@ -229,7 +232,7 @@ function getStudiestartScenario() {
       semesterLabel: '16. januar ' + semYear,
       studierettLabel: 'Studierett til 15. januar ' + (semYear + 1),
       loanInfo: 'Anbefalt hvis du ønsker å søke lån/stipend hos Lånekassen.',
-      loanLink: 'Les mer: Lånekassen: Nettstudier og samlingsbasert'
+      loanLink: 'Les mer om Lånekassen på vår hjemmeside her.'
     };
   }
   // May 16 – Aug 15: høst nærmer seg
@@ -241,7 +244,7 @@ function getStudiestartScenario() {
       semesterLabel: '16. august ' + y,
       studierettLabel: 'Studierett til 15. august ' + (y + 1),
       loanInfo: 'Anbefalt hvis du ønsker å søke lån/stipend hos Lånekassen.',
-      loanLink: 'Les mer: Lånekassen: Nettstudier og samlingsbasert'
+      loanLink: 'Les mer om Lånekassen på vår hjemmeside her.'
     };
   }
   // Jan 16 – May 15: mellom semestre (vår pågår)
@@ -324,12 +327,42 @@ var SS_MND = ['januar','februar','mars','april','mai','juni','juli','august',
 /* Alle emner har 18 måneders studierett, uansett hvilken oppstart som velges. */
 var SS_STUDIERETT_MND = 18;
 
-/* Emner har oppstart hver dag hele året, og det er studieperioden fram til
-   eksamen som avgjør om oppstarten holder for Lånekassen – ikke hvilken dato
-   semesteret starter. Tidligst mulig oppstart gir lengst studieperiode, så det
-   er den vi anbefaler. */
+/* Neste semesterstart som fortsatt ligger foran oss. En startdato kan ikke
+   settes tilbake i tid, så 16. august er bare et valg til og med 15. august. */
+function ssNesteSemesterstart() {
+  var iDag = new Date();
+  iDag.setHours(0, 0, 0, 0);
+  var y = iDag.getFullYear();
+  var kandidater = [new Date(y, 0, 16), new Date(y, 7, 16), new Date(y + 1, 0, 16)];
+  for (var i = 0; i < kandidater.length; i++) {
+    if (kandidater[i] > iDag) return kandidater[i];
+  }
+  return null;
+}
+
+/* Eksamensperioden som hører til semesteret som starter på denne datoen. */
+function ssPeriodeForSemesterstart(start) {
+  return (start.getMonth() === 7 ? 'h' : 'v') + start.getFullYear();
+}
+
+/* Semesterstarten anbefales bare når studenten skal ta eksamen i nettopp det
+   semesteret, og datoen fortsatt er innenfor bestillingsvinduet. Da ligger hen
+   i takt med semesteret, som er det Lånekassen måler studiebelastningen mot.
+   Ellers blir oppstarten fortløpende – emnene ville uansett fordelt seg over
+   to semestre, og studenten kunne blitt vurdert som deltidsstudent. */
+function ssAnbefaltSemesterstart() {
+  if (_ssWantsLanekassen !== true) return null;
+  var start = ssNesteSemesterstart();
+  if (!start) return null;
+  var iDag = new Date();
+  iDag.setHours(0, 0, 0, 0);
+  var maks = new Date(iDag.getFullYear(), iDag.getMonth() + 3, iDag.getDate());
+  if (start > maks) return null;
+  return _ssEksamen === ssPeriodeForSemesterstart(start) ? start : null;
+}
+
 function ssAnbefaltDato() {
-  return ssTidligsteOppstart();
+  return ssAnbefaltSemesterstart() || ssTidligsteOppstart();
 }
 
 function ssStudierettLabel() {
@@ -417,13 +450,6 @@ function ssValgtPeriodeForKort() {
   return !!periode && ssPeriodeForKort(periode);
 }
 
-/* Kalenderen er eneste valg når studenten står fritt (nei til Lånekassen),
-   eller når perioden de valgte uansett er for kort – da er den anbefalte
-   datoen ikke et reelt valg, og studenten må ta stilling selv. */
-function ssKunValgfri() {
-  return _ssWantsLanekassen === false || ssValgtPeriodeForKort();
-}
-
 /* Første periode som både er åpen for oppmelding og gir fire måneders
    studieperiode med den valgte oppstarten. */
 function ssAnbefaltPeriode(kode, oppstart) {
@@ -487,7 +513,7 @@ function ssEksamensPerioder() {
     .slice(0, 2)
     .map(function(p) {
       return { verdi: p.verdi, label: p.navn,
-               sub: p.maneder.charAt(0).toUpperCase() + p.maneder.slice(1),
+               sub: 'Eksamen avholdes i ' + p.maneder + ' i henhold til eksamensplanen',
                forKort: ssPeriodeForKort(p) };
     });
 }
@@ -648,7 +674,7 @@ function buildInfoAccordion() {
     + '<span class="ss-info-header-icon">' + chevron + '</span>'
     + '</div>'
     + '<div class="ss-info-body"><div class="ss-info-body-inner"><ul>'
-    + '<li>Startdatoen kan maksimalt settes tre måneder frem i tid og avgjør når du får tilgang til studiet.</li>'
+    + '<li>Startdatoen kan ikke settes tilbake i tid, og maksimalt tre måneder frem i tid. Den avgjør når du får tilgang til studiet.</li>'
     + '<li>Fristen for betaling og angrerett bestemmes av startdatoen du velger.</li>'
     + '<li>Du kan ikke endre startdato etter bestilling, da må du benytte angreretten og bestille emnet på nytt.</li>'
     + '</ul></div></div>'
@@ -660,7 +686,7 @@ function buildInfoAccordion() {
     + '<span class="ss-info-header-icon">' + chevron + '</span>'
     + '</div>'
     + '<div class="ss-info-body"><div class="ss-info-body-inner"><ul>'
-    + '<li>Du får tilgang til emnet når eventuell dokumentasjon er godkjent og søknaden til studiet er behandlet. Har du valgt å utsette oppstart, får du tilgang på valgt dato.</li>'
+    + '<li>Du får tilgang til emnet når eventuell dokumentasjon er godkjent og søknaden til studiet er behandlet. Har du valgt å utsette oppstart, får du tilgang ved valgt dato, eller fortløpende, basert på når dokumentasjonen din er godkjent.</li>'
     + '<li>Hvis behandlingen av søknaden går lengre enn valgt oppstartsdato, får du tilsvarende utvidet studierett.</li>'
     + '</ul></div></div>'
     + '</div>';
@@ -673,13 +699,13 @@ function buildInfoAccordion() {
     + '<div class="ss-info-body"><div class="ss-info-body-inner"><ul>'
     + '<li>Søknadsfrist hos Lånekassen: <strong>15. mars</strong> for vårsemesteret og <strong>15. november</strong> for høstsemesteret.</li>'
     + '<li>Bestill i god tid – vi kan først bekrefte studiestatus når bestillingen er ferdig behandlet, og Lånekassen har periodevis lang saksbehandling.</li>'
-    + '<li>Studieperioden (fra startdato til eksamen) må være <strong>minst 4 måneder</strong> for å gi rett til lån/stipend.</li>'
-    + '<li>Studiebelastning avgjør beløpet: 30 studiepoeng per semester tilsvarer heltid, 15 studiepoeng tilsvarer deltid. Det gis ikke støtte for mer enn 30 studiepoeng per semester.</li>'
+    + '<li>Studieperioden for emnene du søker på (fra tidligste startdato til seneste eksamensdato) må være <strong>minst 4 måneder</strong> for å gi rett til lån/stipend.</li>'
+    + '<li>Studiebelastning avgjør støtten: 30 studiepoeng per semester tilsvarer heltid, alt under dette tilsvarer deltid. Det gis ikke støtte for mer enn 30 studiepoeng per semester.</li>'
     + '<li>Lånekassen gir ikke støtte for perioden <strong>16. juni – 15. august</strong>.</li>'
-    + '<li>Du kan ikke ta forbehold om at du får lån/stipend – betalingsfristen må overholdes uavhengig av Lånekassens vedtak.</li>'
+    + '<li>Vi tar ikke forbehold om støtte fra Lånekassen, uavhengig om du betaler med kort eller faktura, betalingsfristen må derfor overholdes uavhengig av Lånekassens vedtak. Det er 14 dagers angrefrist fra startdato.</li>'
     + '<li>Du er selv ansvarlig for å kjenne Lånekassens regler. Mer informasjon på <a href="https://www.lanekassen.no/" target="_blank" rel="noopener" onclick="event.stopPropagation()">lanekassen.no</a>.</li>'
     + '</ul>'
-    + '<div class="ss-info-link-wrap"><a href="https://www.kristiania.no/studere-hos-oss/opptaksinformasjon/lanekassen/" class="ss-info-link" target="_blank" rel="noopener" onclick="event.stopPropagation()">Les mer: Lånekassen: Nettstudier og samlingsbasert</a></div>'
+    + '<div class="ss-info-link-wrap"><a href="https://www.kristiania.no/studere-hos-oss/opptaksinformasjon/lanekassen/" class="ss-info-link" target="_blank" rel="noopener" onclick="event.stopPropagation()">Les mer om Lånekassen på vår hjemmeside her.</a></div>'
     + '</div></div>'
     + '</div>';
 
@@ -705,24 +731,35 @@ var SS_ALLE = '__alle';
 
 /* De to oppstartsvalgene. Brukes både for hele bunken og per enkeltemne. */
 function ssDatokortHTML(sc, kode) {
-  /* Den anbefalte datoen er bare et reelt valg når den faktisk holder. Står
-     studenten fritt, eller er perioden for kort uansett, er kalenderen alene. */
-  var kunValgfri = ssKunValgfri();
-  if (kunValgfri) _ssPerEmne[kode] = 'custom';
-  var forKort = ssValgtPeriodeForKort();
+  /* Førstevalget er semesterstarten når den kan bestilles og passer med
+     eksamen, ellers fortløpende oppstart. Valgfri oppstart står alltid som
+     alternativ, og kalenderen åpnes først når den velges. */
+  var semesterstart = ssAnbefaltSemesterstart();
+  if (!_ssPerEmne[kode]) _ssPerEmne[kode] = semesterstart ? 'semester' : 'fortlopende';
+  if (!semesterstart && _ssPerEmne[kode] === 'semester') _ssPerEmne[kode] = 'fortlopende';
 
-  var valgt = _ssPerEmne[kode] || 'semester';
+  var valgt = _ssPerEmne[kode];
   var kall = function(verdi) { return 'ssVelgDato(this,\'' + verdi + '\',\'' + kode + '\')'; };
+
+  var forstekort = semesterstart
+    ? '<div class="ss-radio-card' + (valgt === 'semester' ? ' selected' : '') + '" onclick="' + kall('semester') + '">'
+      + '<div class="ss-radio-dot"></div>'
+      + '<div style="flex:1">'
+      + '<div class="ss-radio-main-row"><div class="ss-radio-main">' + ssFormatDato(semesterstart) + '</div>'
+      + '<span class="ss-badge">ANBEFALT</span></div>'
+      + '<p class="ss-radio-desc">Anbefales for deg som ønsker å søke støtte fra Lånekassen.</p>'
+      + '<div class="ss-radio-sub">' + ssStudierettLabel() + '</div>'
+      + '</div></div>'
+    : '<div class="ss-radio-card' + (valgt === 'fortlopende' ? ' selected' : '') + '" onclick="' + kall('fortlopende') + '">'
+      + '<div class="ss-radio-dot"></div>'
+      + '<div style="flex:1">'
+      + '<div class="ss-radio-main">Fortløpende oppstart</div>'
+      + '<p class="ss-radio-desc">Du får tilgang så snart søknaden er behandlet og dokumentasjonen er godkjent.</p>'
+      + '<div class="ss-radio-sub">' + SS_STUDIERETT_MND + ' måneder studierett</div>'
+      + '</div></div>';
+
   return '<div class="ss-radio-group">'
-    + (kunValgfri ? '' :
-       '<div class="ss-radio-card' + (valgt === 'semester' ? ' selected' : '') + '" onclick="' + kall('semester') + '">'
-    + '<div class="ss-radio-dot"></div>'
-    + '<div style="flex:1">'
-    + '<div class="ss-radio-main-row"><div class="ss-radio-main">' + ssFormatDato(ssAnbefaltDato()) + '</div>'
-    + '<span class="ss-badge">ANBEFALT</span></div>'
-    + '<p class="ss-radio-desc">Anbefales for deg som ønsker å søke støtte fra Lånekassen.</p>'
-    + '<div class="ss-radio-sub">' + ssStudierettLabel() + '</div>'
-    + '</div></div>')
+    + forstekort
     + '<div class="ss-radio-card' + (valgt === 'custom' ? ' selected' : '') + '" onclick="' + kall('custom') + '">'
     + '<div class="ss-radio-dot"></div>'
     + '<div style="flex:1">'
@@ -733,7 +770,7 @@ function ssDatokortHTML(sc, kode) {
        ssVelgDato på nytt, kalenderen bygges om og hopper tilbake til i dag. */
     + '<div class="ss-calendar-wrap" id="ss-cal-wrap-' + kode + '" onclick="event.stopPropagation()"></div>'
     + '</div>'
-    + (forKort ? ssForKortBoks() : '<div class="ss-varsel" id="ss-varsel-' + kode + '" hidden></div>')
+    + (ssValgtPeriodeForKort() ? ssForKortBoks() : '<div class="ss-varsel" id="ss-varsel-' + kode + '" hidden></div>')
     + '</div>';
 }
 
@@ -780,7 +817,7 @@ function buildApproachingHTML(sc) {
   var hake = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   return SS_LUKK
     + '<h2 class="ss-title">Velg studiestart</h2>'
-    + '<div class="ss-body">' + ssTilbakeKnapp()
+    + '<div class="ss-body">' + ssStegIndikatorHtml() + ssTilbakeKnapp()
     + '<div class="ss-question" style="font-size:20px;margin:0">Startdato</div>'
     + '<div class="ss-same-date" onclick="ssToggleSammeDato()">'
     + '<span class="ss-checkbox-box' + (_ssSammeDato ? ' checked' : '') + '">' + (_ssSammeDato ? hake : '') + '</span>'
@@ -821,6 +858,12 @@ function ssApneKalender(kode) {
   wrap.innerHTML = '<div id="ss-cal-widget" class="ss-cal" style="margin-top:12px"></div>';
   ssInitCalendarState();
   _ssCalSelected = _ssPerEmneDato[kode] || null;
+  /* Har studenten alt valgt en dato, skal kalenderen åpne på den måneden –
+     ellers står den på inneværende måned og valget ser ut til å være borte. */
+  if (_ssCalSelected) {
+    _ssCalYear = _ssCalSelected.getFullYear();
+    _ssCalMonth = _ssCalSelected.getMonth();
+  }
   /* Knappen er alltid aktiv – mangler datoen, sier ssValider() fra i stedet. */
   ssRenderCalendar();
 }
@@ -833,7 +876,7 @@ function buildBetweenHTML(sc) {
     // Card-based layout: upcoming semester + email notification, OR custom date now
     return '<div class="ss-header"><button class="ss-close" onclick="closeStudiestartModal()" aria-label="Lukk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></button></div>'
       + '<h2 class="ss-title">Velg studiestart</h2>'
-      + '<div class="ss-body">' + ssTilbakeKnapp()
+      + '<div class="ss-body">' + ssStegIndikatorHtml() + ssTilbakeKnapp()
       + '<div class="ss-radio-group">'
       // Card 1: upcoming semester (selected by default, no radio dot)
       + '<div class="ss-radio-card ss-between-lk-card selected" onclick="ssSelectRadioBetween(this,\'semester\')">'
@@ -878,7 +921,7 @@ function buildBetweenHTML(sc) {
   // Nei case: just show calendar to pick a date now
   return '<div class="ss-header"><button class="ss-close" onclick="closeStudiestartModal()" aria-label="Lukk"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></button></div>'
     + '<h2 class="ss-title">Velg studiestart</h2>'
-    + '<div class="ss-body">' + ssTilbakeKnapp()
+    + '<div class="ss-body">' + ssStegIndikatorHtml() + ssTilbakeKnapp()
     + '<div id="ss-cal-widget" class="ss-cal"></div>'
     + '<div class="ss-selected-date" id="ss-selected-date">'
     + '<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
@@ -944,7 +987,7 @@ function buildLanekassenHTML() {
   var v = _ssWantsLanekassen;
   return SS_LUKK
     + '<h2 class="ss-title">Oppstart for emner</h2>'
-    + '<div class="ss-body">' + ssTilbakeKnapp()
+    + '<div class="ss-body">' + ssStegIndikatorHtml() + ssTilbakeKnapp()
     + '<div>'
     + '<div class="ss-question">Skal du søke lån eller stipend fra Lånekassen?</div>'
     + '<p class="ss-subtitle">Svaret avgjør hvor viktig oppstartsdatoen til emnet er.</p>'
@@ -982,7 +1025,7 @@ function buildEksamenHTML(sc) {
 
   return SS_LUKK
     + '<h2 class="ss-title">Studieperiode</h2>'
-    + '<div class="ss-body">' + ssTilbakeKnapp()
+    + '<div class="ss-body">' + ssStegIndikatorHtml() + ssTilbakeKnapp()
     + '<div>'
     + '<div class="ss-question">Når planlegger du å ta eksamen?</div>'
     + '<p class="ss-subtitle">Svaret avgjør hvor lang studieperiode du har.</p>'
@@ -1004,6 +1047,27 @@ window.ssVelgEksamen = function(kort, verdi) {
 };
 
 /* ── Stegmotor ──────────────────────────────────────────────────────────── */
+/* Stegene i løpet. Eksamenssteget faller bort når studenten svarer at hen ikke
+   skal søke Lånekassen, så antallet følger svaret – før det er gitt viser vi
+   det lengste løpet. */
+function ssStegListe() {
+  return (_ssWantsLanekassen === false || _ssWantsLanekassen === 'vetikke')
+    ? ['lanekassen', 'startdato']
+    : ['lanekassen', 'eksamen', 'startdato'];
+}
+
+function ssStegIndikatorHtml() {
+  var steg = ssStegListe();
+  var naa = steg.indexOf(_ssSteg);
+  if (naa < 0) naa = steg.length - 1;
+  return '<div class="ss-stegindikator" role="img" aria-label="Steg '
+    + (naa + 1) + ' av ' + steg.length + '">'
+    + steg.map(function(_, i) {
+        return '<span class="ss-stegindikator-del' + (i <= naa ? ' ferdig' : '') + '"></span>';
+      }).join('')
+    + '</div>';
+}
+
 function ssTittelFor(steg) {
   var s = steg || _ssSteg;
   if (s === 'lanekassen') return 'Oppstart for emner';
@@ -1056,9 +1120,10 @@ window.ssGaTilSteg = function(steg) {
   }
   if (steg === 'startdato') {
     var aktivKode = _ssSammeDato ? SS_ALLE : String((_ssEmner[_ssEmneIdx] || {}).code);
-    /* Er kalenderen eneste valg, skal den stå åpen fra start. */
-    if (ssKunValgfri()) ssApneKalender(aktivKode);
-    /* Vis studieperiode-varselet med en gang, siden datoen er forvalgt. */
+    /* Står «Valgfri oppstart» alt valgt – fra et tidligere svar – skal datoen
+       være synlig med én gang, ikke gjemt bak et klikk til. */
+    if (_ssPerEmne[aktivKode] === 'custom') ssApneKalender(aktivKode);
+    /* Vis studieperiode-varselet med en gang, siden valget er forhåndsvalgt. */
     ssOppdaterVarsel(aktivKode);
   }
 };
@@ -1082,6 +1147,36 @@ window.ssBekreftSteg = function() {
     return;
   }
   confirmStudiestart();
+};
+
+/* Leses av admin-dato.js. Alt regnes ut av de samme funksjonene panelet selv
+   bruker, så simulatoren viser hva prototypen faktisk gjør – ikke en kopi av
+   logikken som kan gli fra hverandre. */
+window.ssAdminStatus = function() {
+  var iDag = new Date();
+  iDag.setHours(0, 0, 0, 0);
+  var maks = new Date(iDag.getFullYear(), iDag.getMonth() + 3, iDag.getDate());
+  var semesterstart = ssNesteSemesterstart();
+  var kortDato = function(d) {
+    return d.getDate() + '. ' + SS_MND[d.getMonth()].slice(0, 3) + ' ' + d.getFullYear();
+  };
+
+  return {
+    kalender: { fra: kortDato(ssTidligsteOppstart()), til: kortDato(maks) },
+    perioder: ssEksamensPerioder().map(function(p) {
+      var info = ssPeriodeInfo(p.verdi);
+      /* Semesterstarten tilbys bare for det semesteret den tilhører, og bare
+         mens den er innenfor bestillingsvinduet. */
+      var bestillbar = !!semesterstart && semesterstart <= maks
+        && ssPeriodeForSemesterstart(semesterstart) === p.verdi;
+      return {
+        tittel: 'Eksamen ' + p.label.toLowerCase() + ' ' + p.verdi.slice(1),
+        valg: [bestillbar ? kortDato(semesterstart) + ' (anbefalt)' : 'Fortløpende oppstart',
+               'Valgfri oppstart'],
+        forKort: ssPeriodeForKort(info)
+      };
+    })
+  };
 };
 
 /* ── Public API ── */
@@ -1166,6 +1261,9 @@ window.renderStudiestartStep = function(container, scenarioOverride, opts) {
     onTitle: opts.onTitle || null
   };
 
+  /* Må settes før første steg bygges, ellers tegnes kortene uten avkryssing. */
+  ssSettValg(opts.forhandsvalg);
+
   var sc = scenarioOverride || window.STUDIESTART_SCENARIO || getStudiestartScenario();
   _ssSteg = 'lanekassen';
   var initialHTML = buildLanekassenHTML();
@@ -1190,6 +1288,39 @@ function ssNullstillValg() {
   _ssAktivtEmne = null;
   _ssEmneIdx = 0;
   _ssCalSelected = null;
+}
+
+/* Svarene studenten ga i panelet. Visningstekstene brukes på emnekortet i
+   Studievalg; råverdiene gjør at «Rediger» kan åpne panelet med de samme
+   valgene krysset av. */
+function ssValgOppsummering() {
+  var lk = _ssWantsLanekassen;
+  var periode = ssPeriodeInfo(_ssEksamen);
+  var dato = _ssPerEmneDato[SS_ALLE];
+  return {
+    lanekassen: lk === true ? 'Planlegger å søke' : (lk === false ? 'Planlegger ikke å søke' : (lk ? 'Vet ikke' : null)),
+    eksamen: periode ? periode.navn + ' ' + String(_ssEksamen).slice(1) : (_ssEksamen === 'vetikke' ? 'Vet ikke' : null),
+    raa: {
+      lanekassen: lk === true ? 'ja' : (lk === false ? 'nei' : (lk ? 'vetikke' : null)),
+      eksamen: _ssEksamen || null,
+      oppstart: _ssPerEmne[SS_ALLE] || null,
+      oppstartDato: dato ? ssIsoLokal(dato) : null
+    }
+  };
+}
+
+/* Setter panelet tilbake i den tilstanden studenten forlot det i. */
+function ssSettValg(v) {
+  if (!v) return;
+  if (v.lanekassen === 'ja') _ssWantsLanekassen = true;
+  else if (v.lanekassen === 'nei') _ssWantsLanekassen = false;
+  else if (v.lanekassen === 'vetikke') _ssWantsLanekassen = 'vetikke';
+  if (v.eksamen) _ssEksamen = v.eksamen;
+  if (v.oppstart) _ssPerEmne[SS_ALLE] = v.oppstart;
+  if (v.oppstartDato) {
+    var d = v.oppstartDato.split('-');
+    _ssPerEmneDato[SS_ALLE] = new Date(+d[0], +d[1] - 1, +d[2]);
+  }
 }
 
 function ssClearInline() {
@@ -1289,13 +1420,17 @@ function ssFormatKort(d) {
 }
 
 function ssValgtDato(kode) {
-  if ((_ssPerEmne[kode] || 'semester') === 'semester') return ssAnbefaltDato();
+  var valg = _ssPerEmne[kode] || 'fortlopende';
+  if (valg === 'semester') return ssAnbefaltDato();
+  if (valg === 'fortlopende') return ssTidligsteOppstart();
   return _ssPerEmneDato[kode] || null;
 }
 
 /* Tom streng betyr «valgfri oppstart er valgt, men ingen dato er plukket». */
 function ssDatoFor(kode) {
-  if ((_ssPerEmne[kode] || 'semester') === 'semester') return ssFormatKort(ssAnbefaltDato());
+  var valg = _ssPerEmne[kode] || 'fortlopende';
+  if (valg === 'semester') return ssFormatKort(ssAnbefaltDato());
+  if (valg === 'fortlopende') return OPPSTART_FORTLOPENDE;
   var d = _ssPerEmneDato[kode];
   return d ? ssFormatKort(d) : '';
 }
@@ -1356,7 +1491,7 @@ window.confirmStudiestart = function() {
   /* Inline-modus: kalleren eier emnene og legger dem i søknaden selv. */
   if (_ssInline) {
     var inlineState = ssClearInline();
-    if (inlineState.onConfirm) inlineState.onConfirm(dateStr, perEmne);
+    if (inlineState.onConfirm) inlineState.onConfirm(dateStr, perEmne, ssValgOppsummering());
     return;
   }
 

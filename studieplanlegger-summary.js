@@ -397,7 +397,7 @@ function spVisStudiestart(pending) {
       var el = document.getElementById('hk-title');
       if (el) el.textContent = tekst;
     },
-    onConfirm: function(datoStr, perEmne) { spLeggISoknaden(pending, datoStr, perEmne); },
+    onConfirm: function(datoStr, perEmne, valg) { spLeggISoknaden(pending, datoStr, perEmne, valg); },
     onNotify: function(epost) { spVisVarselKvittering(epost); }
   });
 }
@@ -416,10 +416,17 @@ function spGruppeMeta(pending, valgt) {
   return d.join(' · ');
 }
 
-function spLeggISoknaden(pending, datoStr, perEmne) {
+function spLeggISoknaden(pending, datoStr, perEmne, valg) {
   pending.forEach(function(e) {
     var egen = perEmne ? perEmne[String(e.code)] : null;
-    if (spCart[e.code]) spCart[e.code].startDate = egen || datoStr || '';
+    if (!spCart[e.code]) return;
+    spCart[e.code].startDate = egen || datoStr || '';
+    /* Svarene fra panelet følger emnet, så Studievalg kan vise og endre dem. */
+    if (valg) {
+      spCart[e.code].lanekassen = valg.lanekassen || '';
+      spCart[e.code].eksamen = valg.eksamen || '';
+      if (valg.raa) spCart[e.code].oppstartValg = valg.raa;
+    }
   });
 
   _spCommitting = true;

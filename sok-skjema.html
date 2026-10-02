@@ -724,11 +724,17 @@ body {
 .s0-emne-change {
   display: inline-flex; align-items: center; gap: 6px; background: none; border: none;
   padding: 0; cursor: pointer; font-family: var(--k-sans); font-size: 15px; font-weight: 600;
-  color: #1A1A1A; text-decoration: underline; text-decoration-color: #AF0018;
-  text-decoration-thickness: 2px; text-underline-offset: 5px;
+  color: #0A4FB8; text-decoration: none; line-height: 1.4;
 }
-.s0-emne-change:hover { color: #AF0018; }
-.s0-emne-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.s0-emne-change:hover { text-decoration: underline; text-underline-offset: 4px; }
+/* Sletting av et emne er rød her, mens programkortene beholder den blå. */
+.s0-emne-row .k-delete { background: #FDECEC; color: #C0392B; }
+.s0-emne-row .k-delete:hover { background: #F9D8D8; }
+.s0-emne-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.s0-fakta { display: flex; flex-wrap: wrap; gap: 8px 36px; margin-top: 14px; }
+.s0-fakta-felt { display: flex; flex-direction: column; gap: 2px; }
+.s0-fakta-navn { font-size: 14px; color: #8C4A52; line-height: 1.3; }
+.s0-fakta-verdi { font-size: 15px; font-weight: 600; color: #1A1A1A; line-height: 1.3; }
 .s0-emne-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .s0-emne-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
 /* Slettknapp – én utforming i hele appen: blå X på lys blå sirkel */
@@ -1018,7 +1024,7 @@ body {
 .bt-emne-row:last-child { border-bottom: none; }
 .bt-emne-main { min-width: 0; }
 .bt-emne-label { font-size: 13px; color: #5C5C5C; margin-bottom: 2px; }
-.bt-emne-name { font-size: 16px; font-weight: 600; color: #1A1A1A; }
+.bt-emne-name { font-size: 16px; font-weight: 600; color: #1A1A1A; line-height: 1.4; }
 .bt-emne-right { display: flex; align-items: center; gap: 10px; }
 .bt-emne-price { font-variant-numeric: tabular-nums; font-size: 17px; font-weight: 600; color: #1A1A1A; }
 
@@ -1052,12 +1058,27 @@ body {
 .s0-emne-row.vis-feil .k-delete { background: #8B1A1A; color: #fff; }
 .s0-emne-row.vis-feil .k-delete:hover { background: #6E1414; }
 /* Varselet går fra gul påminnelse til rød feil når raden faktisk blokkerer */
-.s0-emne-row.vis-feil .s0-emne-konflikt { background: #8B1A1A; border-color: #8B1A1A; color: #fff; }
+.s0-emne-row.vis-feil .s0-emne-konflikt { background: #8B1A1A; border-color: #8B1A1A; }
+.s0-emne-row.vis-feil .s0-konflikt-tittel,
+.s0-emne-row.vis-feil .s0-konflikt-tekst,
+.s0-emne-row.vis-feil .s0-konflikt-ikon { color: #fff; }
 .s0-emne-konflikt {
-  flex-basis: 100%; margin-top: 12px; padding: 14px 16px;
+  flex-basis: 100%; margin-top: 12px; overflow: hidden;
   background: #FFFBEB; border: 1px solid #FFCA00; border-radius: 8px;
-  font-size: 15px; font-weight: 600; color: #1A1A1A; line-height: 1.4;
 }
+.s0-konflikt-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  padding: 14px 16px; cursor: pointer; user-select: none;
+}
+.s0-konflikt-tittel { font-size: 15px; font-weight: 600; color: #1A1A1A; line-height: 1.4; }
+.s0-konflikt-ikon {
+  width: 16px; flex-shrink: 0; margin-top: 3px; color: #1A1A1A;
+  display: flex; transition: transform .3s ease;
+}
+.s0-emne-konflikt.apen .s0-konflikt-ikon { transform: rotate(180deg); }
+.s0-konflikt-body { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
+.s0-emne-konflikt.apen .s0-konflikt-body { max-height: 200px; }
+.s0-konflikt-tekst { margin: 0; padding: 0 16px 14px; font-size: 15px; color: #1A1A1A; line-height: 1.5; }
 .sbx-card { background: #fff; border: 1px solid #E6E6E6; border-radius: 8px; overflow: hidden; }
 .sbx-group {
   display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 16px;
@@ -1653,7 +1674,7 @@ body {
           <svg class="s0-faq-chevron open" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <div class="s0-faq-body s0-faq-body-tall open">
-          <p class="s0-faq-answer">Startdatoen kan maksimalt settes tre måneder frem i tid og avgjør når du får tilgang til studiet.</p>
+          <p class="s0-faq-answer">Startdatoen kan ikke settes tilbake i tid, og maksimalt tre måneder frem i tid. Den avgjør når du får tilgang til studiet.</p>
           <p class="s0-faq-answer">Fristen for betaling og angrerett bestemmes av startdatoen du velger.</p>
           <p class="s0-faq-answer">Du kan ikke endre startdato etter bestilling, da må du benytte angreretten og bestille emnet på nytt.</p>
         </div>
@@ -1670,18 +1691,18 @@ body {
       </div>
       <div class="s0-faq">
         <button class="s0-faq-header" onclick="toggleS0Faq(this)">
-          <span class="s0-faq-question">Viktig informasjon om Lånekassen</span>
+          <span class="s0-faq-question">Lånekassen – viktig informasjon</span>
           <svg class="s0-faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <div class="s0-faq-body s0-faq-body-xtall">
-          <p class="s0-faq-answer">Du kan søke om lån/stipend hos Lånekassen når du har meldt deg på ett eller flere emner hos oss. Når man bestiller emner på nett, anbefales det at man er tidlig ute med bestilling, da Lånekassen har periodevis lang behandlingstid.</p>
-          <p class="s0-faq-answer" style="padding-bottom:6px;">Lån/stipend vurderes ut fra:</p>
-          <ol class="s0-faq-list">
-            <li>Studiebelastning – hvor mange studiepoeng du tar i din studieperiode, i tilknytning til Lånekassen sine semestre.</li>
-            <li>Studieperiode – når du starter og når du avslutter emnet/emnene (avlegger eksamen).</li>
-          </ol>
-          <p class="s0-faq-answer">NB! Studieperioden din må være på minimum 4 måneder fra startdato til sluttdato (når du skal avlegge eksamen). Høstsemesteret hos Lånekassen går fra 16. august til 15. januar og vårsemesteret går fra 16. januar til 15. juni.</p>
-          <a class="s0-faq-link" href="https://www.kristiania.no/studere-hos-oss/opptaksinformasjon/lanekassen/" target="_blank" rel="noopener">Les mer om Lånekassen</a>
+          <p class="s0-faq-answer">Søknadsfrist hos Lånekassen: <strong>15. mars</strong> for vårsemesteret og <strong>15. november</strong> for høstsemesteret.</p>
+          <p class="s0-faq-answer">Bestill i god tid – vi kan først bekrefte studiestatus når bestillingen er ferdig behandlet, og Lånekassen har periodevis lang saksbehandling.</p>
+          <p class="s0-faq-answer">Studieperioden for emnene du søker på (fra tidligste startdato til seneste eksamensdato) må være <strong>minst 4 måneder</strong> for å gi rett til lån/stipend.</p>
+          <p class="s0-faq-answer">Studiebelastning avgjør støtten: 30 studiepoeng per semester tilsvarer heltid, alt under dette tilsvarer deltid. Det gis ikke støtte for mer enn 30 studiepoeng per semester.</p>
+          <p class="s0-faq-answer">Lånekassen gir ikke støtte for perioden <strong>16. juni – 15. august</strong>.</p>
+          <p class="s0-faq-answer">Vi tar ikke forbehold om støtte fra Lånekassen, uavhengig om du betaler med kort eller faktura, betalingsfristen må derfor overholdes uavhengig av Lånekassens vedtak. Det er 14 dagers angrefrist fra startdato.</p>
+          <p class="s0-faq-answer">Du er selv ansvarlig for å kjenne Lånekassens regler. Mer informasjon på <a href="https://www.lanekassen.no/" target="_blank" rel="noopener">lanekassen.no</a>.</p>
+          <a class="s0-faq-link" href="https://www.kristiania.no/studere-hos-oss/opptaksinformasjon/lanekassen/" target="_blank" rel="noopener">Les mer om Lånekassen på vår hjemmeside her.</a>
         </div>
       </div>
     </aside>
@@ -1769,7 +1790,9 @@ body {
   </div>
 </div>
 
+<script src="admin-dato.js"></script>
 <script src="basket.js"></script>
+<script src="studiestart-modal.js"></script>
 <script>
 var _currentStep = 0;
 var _phoneNumber = '';
@@ -1818,11 +1841,11 @@ function stepToPhaseKey(n) {
 
 var PHASE_TO_STEP = { studievalg: 0, opplysninger: 3, betaling: 4 };
 
-/* Én kilde til sannhet for «hvor går vi etter Studievalg»: innlogging hoppes over
-   når brukeren allerede er innlogget. Brukes både av «Gå videre» på Studievalg og
-   av inngangen fra handlekurven (?steg=login). */
+/* Innloggingen skjer i sidemenyen, ikke som egne steg her. Etter Studievalg går
+   alle derfor rett til Opplysninger – innlogget får feltene forhåndsutfylt, de
+   andre fyller dem ut selv. */
 function stegEtterStudievalg() {
-  return getAuthState() ? 3 : 1;
+  return 3;
 }
 
 /* Innlogget bruker skal alltid ha personopplysningene sine tilgjengelig, også
@@ -1834,8 +1857,15 @@ function sikrePersonopplysninger() {
   if (!document.getElementById('fornavn').value) prefillFormData();
 }
 
-/* Gå til første steg etter Studievalg, med riktig tilstand på plass */
+/* Gå til første steg etter Studievalg, med riktig tilstand på plass.
+   Bestått eller påbegynt emne i kurven stopper søknaden uansett hvor man kommer
+   inn – også fra handlekurven, som ellers hopper forbi Studievalg helt. */
 function gaTilStegEtterStudievalg() {
+  if (s0Konflikter().length) {
+    gaVidere(0);
+    visKonfliktFeil();
+    return;
+  }
   var steg = stegEtterStudievalg();
   if (steg === 3) sikrePersonopplysninger();
   gaVidere(steg);
@@ -1980,14 +2010,15 @@ function s0Konflikter() {
     .filter(function(e) { return emneKonflikt(e.code); });
 }
 
+/* Marker emnene som sperrer, og rull til det første. */
+function visKonfliktFeil() {
+  var rader = document.querySelectorAll('.s0-emne-row.har-konflikt');
+  rader.forEach(function(r) { r.classList.add('vis-feil'); });
+  if (rader[0]) rader[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
+
 function gaVidereFraSteg0() {
-  var sperret = s0Konflikter();
-  if (sperret.length) {
-    var rader = document.querySelectorAll('.s0-emne-row.har-konflikt');
-    rader.forEach(function(r) { r.classList.add('vis-feil'); });
-    if (rader[0]) rader[0].scrollIntoView({ block: 'center', behavior: 'smooth' });
-    return;
-  }
+  if (s0Konflikter().length) { visKonfliktFeil(); return; }
   gaTilStegEtterStudievalg();
 }
 
@@ -2165,10 +2196,10 @@ function renderStep0() {
       var safeId = p.id ? p.id.toString().replace(/'/g, "\\'") : '';
       var meta = (p.points ? studiepoengTekst(p.points) + ' · ' : '') + (p.emner || []).length + ' emne' + ((p.emner || []).length !== 1 ? 'r' : '')
         + gjennomforingSuffix(p);
-      emnerHtml += buildEmnegroupHtml(p.name, meta, p.emner || [], safeId, false, 's0RemoveEmne', true, 's0EndreProgram');
+      emnerHtml += buildEmnegroupHtml(p.name, meta, p.emner || [], safeId, false, 's0RemoveEmne', true, 's0RedigerOppstart');
     });
     if (looseEmner.length > 0) {
-      emnerHtml += buildEmnegroupHtml('Emner uten tilknytning til studieprogram', looseEmner.length + ' emne' + (looseEmner.length !== 1 ? 'r' : ''), looseEmner, null, true, 's0RemoveEmne', true, 's0EndreProgram');
+      emnerHtml += buildEmnegroupHtml('Emner uten tilknytning til studieprogram', looseEmner.length + ' emne' + (looseEmner.length !== 1 ? 'r' : ''), looseEmner, null, true, 's0RemoveEmne', true, 's0RedigerOppstart');
     }
     document.getElementById('step0EmnerList').innerHTML = emnerHtml;
   }
@@ -2176,22 +2207,58 @@ function renderStep0() {
 
 /* Emnet skal kunne bytte grad uten \u00e5 tas ut og legges inn p\u00e5 nytt \u2013 samme
    valgpanel som n\u00e5r det ble lagt til, men her flyttes det. */
-function s0EndreProgram(programId, code, isLoose) {
+/* Skriver oppstartsdato og svarene fra panelet tilbake på emnet i kurven, så
+   faktaraden i Studievalg viser dem og «Rediger» kan hente dem fram igjen.
+   Må gå via saveBasket – getBasket() gir en fersk kopi hver gang, så det
+   holder ikke å endre objektet man fikk utlevert. */
+function s0LagreValg(code, datoStr, valg) {
   var b = getBasket();
-  var emne = null;
-  if (isLoose) {
-    emne = (b.looseEmner || []).find(function(e) { return e.code === code; });
-  } else {
-    var prog = (b.programs || []).find(function(p) { return p.id === programId; });
-    emne = prog && (prog.emner || []).find(function(e) { return e.code === code; });
-  }
-  if (!emne) return;
-  /* Gjennomføringen hører til det gamle valget og settes på nytt i panelet. */
-  var kopi = JSON.parse(JSON.stringify(emne));
-  delete kopi.studieform; delete kopi.studiekode;
-  startEndreStudieprogram(kopi, function() {
-    if (isLoose) removeLooseEmne(code);
-    else removeEmne(programId, code);
+  var sett = function(e) {
+    if (String(e.code) !== String(code)) return;
+    if (datoStr) e.startDate = datoStr;
+    if (!valg) return;
+    /* Skrives alltid, også tomt: svarer studenten «nei» på Lånekassen hoppes
+       eksamenssteget over, og et gammelt eksamensvalg skal da ikke bli
+       stående igjen på kortet. */
+    e.lanekassen = valg.lanekassen || '';
+    e.eksamen = valg.eksamen || '';
+    if (valg.raa) e.oppstartValg = valg.raa;
+  };
+  (b.programs || []).forEach(function(p) { (p.emner || []).forEach(sett); });
+  (b.looseEmner || []).forEach(sett);
+  saveBasket(b);
+}
+
+function s0FinnEmne(programId, code, isLoose) {
+  var b = getBasket();
+  if (isLoose) return (b.looseEmner || []).find(function(e) { return e.code === code; });
+  var prog = (b.programs || []).find(function(p) { return p.id === programId; });
+  return prog && (prog.emner || []).find(function(e) { return e.code === code; });
+}
+
+/* «Rediger» åpner studiestart-panelet fra første steg, slik at studenten kan
+   endre Lånekasse-svaret, eksamensperioden og oppstartsdatoen på nytt. */
+function s0RedigerOppstart(programId, code, isLoose) {
+  var emne = s0FinnEmne(programId, code, isLoose);
+  if (!emne || typeof renderStudiestartStep !== 'function') return;
+  if (typeof openSoknaderPanel === 'function') openSoknaderPanel();
+  var body = document.getElementById('hk-body');
+  if (!body) return;
+  if (typeof refreshSokPanelFooter === 'function') refreshSokPanelFooter(true);
+  renderStudiestartStep(body, null, {
+    emner: [emne],
+    /* Åpne med de samme valgene krysset av som sist. */
+    forhandsvalg: emne.oppstartValg || null,
+    onTitle: function(tekst) {
+      var el = document.getElementById('hk-title');
+      if (el) el.textContent = tekst;
+    },
+    onConfirm: function(datoStr, perEmne, valg) {
+      s0LagreValg(code, datoStr, valg);
+      if (typeof renderBasketPanel === 'function') renderBasketPanel();
+      renderStep0();
+      renderSidebar();
+    }
   });
 }
 
@@ -2348,25 +2415,69 @@ function emneKortInnholdHtml(e, extrasHtml, priceHtml, tilknytning, actionsHtml)
   if (pts) label.push(studiepoengTekst(pts));
   if (tilknytning) label.push(tilknytning);
 
-  var tagger = (extrasHtml || '') + '<span class="s0-badge s0-badge-nett">Nett</span>';
+  var erFakta = (extrasHtml || '').indexOf('s0-fakta') > -1;
+  var tagger = (erFakta ? '' : (extrasHtml || '')) + '<span class="s0-badge s0-badge-nett">Nett</span>';
 
   return '<div class="bt-emne-label">' + label.join(' \u00b7 ') + '</div>'
     + '<div class="s0-emne-top">'
     + '<div class="bt-emne-name">' + (e.name || '') + '</div>'
     + (actionsHtml ? '<div class="s0-emne-actions">' + actionsHtml + '</div>' : '')
     + '</div>'
+    + (erFakta ? extrasHtml : '')
     + '<div class="s0-emne-bottom">'
     + '<div class="s0-emne-extras">' + tagger + '</div>'
     + (priceHtml || '')
     + '</div>';
 }
 
+var S0_IKON_PENN = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">'
+  + '<path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3z" stroke="currentColor" stroke-width="1.8" '
+  + 'stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+/* Varselet er utfoldbart: overskriften sier hva som er galt, kroppen hva
+   studenten må gjøre. Samme form som det gule feltet i studiestart-panelet. */
+function s0KonfliktBoksHtml(konflikt) {
+  var tittel = konflikt === 'bestatt'
+    ? 'Du har allerede bestått dette emnet.'
+    : 'Du er allerede aktiv i dette emnet.';
+  var chevron = '<svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M1.5 1.5L8 8l6.5-6.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  return '<div class="s0-emne-konflikt">'
+    + '<div class="s0-konflikt-head" onclick="s0ToggleKonflikt(this)">'
+    + '<span class="s0-konflikt-tittel">' + tittel + '</span>'
+    + '<span class="s0-konflikt-ikon">' + chevron + '</span>'
+    + '</div>'
+    + '<div class="s0-konflikt-body"><p class="s0-konflikt-tekst">Fjern det for å gå videre. Du kan legge til andre emner i stedet.</p></div>'
+    + '</div>';
+}
+
+function s0ToggleKonflikt(head) {
+  var boks = head && head.closest ? head.closest('.s0-emne-konflikt') : null;
+  if (boks) boks.classList.toggle('apen');
+}
+
+/* Oppstart, eksamen og Lånekasse-svaret står som tre kolonner over taggene,
+   slik at studenten ser hele valget sitt uten å åpne panelet. */
+function s0FaktaradHtml(e) {
+  var felt = [
+    ['Oppstart', e.startDate || e.startSemester || ''],
+    ['Eksamen', e.eksamen || ''],
+    ['Lån/stipend', e.lanekassen || '']
+  ].filter(function(f) { return !!f[1]; });
+  if (!felt.length) return '';
+  return '<div class="s0-fakta">' + felt.map(function(f) {
+    return '<div class="s0-fakta-felt">'
+      + '<span class="s0-fakta-navn">' + f[0] + '</span>'
+      + '<span class="s0-fakta-verdi">' + f[1] + '</span>'
+      + '</div>';
+  }).join('') + '</div>';
+}
+
 function buildEmneRowHtml(e, removeFnCall, showPrice, changeFnCall, tilknytning) {
-  var oppstart = e.startDate ? e.startDate : (e.startSemester ? e.startSemester : '');
-  var extras = oppstart ? '<span class="s0-badge">Oppstart ' + oppstart + '</span>' : '';
+  var extras = s0FaktaradHtml(e);
   var actions = '';
   if (changeFnCall) {
-    actions += '<button class="s0-emne-change" onclick="' + changeFnCall + '">Endre studieprogram</button>';
+    actions += '<button class="s0-emne-change" onclick="' + changeFnCall + '">'
+      + S0_IKON_PENN + 'Rediger</button>';
   }
   if (removeFnCall) {
     actions += '<button class="k-delete" onclick="' + removeFnCall + '" aria-label="Fjern">' + ICON_X_PLAIN + '</button>';
@@ -2374,11 +2485,7 @@ function buildEmneRowHtml(e, removeFnCall, showPrice, changeFnCall, tilknytning)
   /* Sletting finnes bare i handlekurven/Søknad-panelet og på Studievalg.
      Varselet hører hjemme samme sted – det ber studenten fjerne emnet. */
   var konflikt = removeFnCall && typeof emneKonflikt === 'function' ? emneKonflikt(e.code) : null;
-  var varsel = konflikt
-    ? '<div class="s0-emne-konflikt">' + (konflikt === 'bestatt'
-        ? 'Du har allerede bestått dette emnet. Fjern det for å gå videre.'
-        : 'Du er allerede aktiv i dette emnet. Fjern det for å gå videre.') + '</div>'
-    : '';
+  var varsel = konflikt ? s0KonfliktBoksHtml(konflikt) : '';
 
   return '<div class="s0-emne-row' + (konflikt ? ' har-konflikt' : '') + '">'
     + emneKortInnholdHtml(e, extras, showPrice ? emneKortPrisHtml(e) : '', tilknytning, actions)
@@ -3436,7 +3543,7 @@ function renderStep5() {
     emnerHtml += '<div class="sum-section"><span class="summary-label">Emner</span>';
     allEmner.forEach(function(e) {
       var opp = e.startDate || e.startSemester || '';
-      var label = ['#' + (e.code || ''), opp ? 'oppstart ' + opp : ''].filter(Boolean).join(' \u00b7 ');
+      var label = ['#' + (e.code || ''), opp ? oppstartEtikett(opp).toLowerCase() : ''].filter(Boolean).join(' \u00b7 ');
       emnerHtml += '<div class="sum-row">'
         + '<span><span class="sum-row-label">' + label + '</span>'
         + '<span class="sum-emne-name">' + (e.name || '') + '</span></span>'
@@ -3836,7 +3943,7 @@ function buildSidebarGroup(label, emner, isLoose) {
     if (e.code) kode.push('#' + e.code);
     if (e.points) kode.push(studiepoengTekst(e.points));
     var tags = '';
-    if (opp) tags += '<span class="s0-badge">Oppstart ' + opp + '</span>';
+    if (opp) tags += '<span class="s0-badge">' + oppstartEtikett(opp) + '</span>';
     tags += '<span class="s0-badge s0-badge-nett">Nett</span>';
     return '<div class="sbx-emne">'
       + '<div class="sbx-label">' + kode.join(' \u00b7 ') + '</div>'
