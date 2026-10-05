@@ -231,16 +231,7 @@ var BASKET_CSS = '\
 .hk-card:has(.hk-emner-list.open) .hk-emner-list{border-top-color:#F9CCD2}\
 /* Alle emner i s\u00f8knaden har samme status \u2013 de er lagt til. Derfor b\u00e6rer\
    hver rad den bl\u00e5 «lagt til»-markeringen, ikke bare den sist tilf\u00f8yde. */\
-.hk-emne-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid #E6E6E6;gap:8px;background:#fff}\
-/* Varsel om bestatt eller paabegynt emne, lukket som standard. */\
-.hk-konflikt{flex-basis:100%;margin-top:4px;overflow:hidden;background:#FFFBEB;border:1px solid #FFCA00;border-radius:8px}\
-.hk-konflikt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;width:100%;padding:12px 14px;background:none;border:none;cursor:pointer;font-family:inherit;text-align:left}\
-.hk-konflikt-tittel{font-size:14px;font-weight:600;color:#1A1A1A;line-height:1.4}\
-.hk-konflikt-ikon{width:16px;flex-shrink:0;margin-top:3px;color:#1A1A1A;display:flex;transition:transform .3s ease}\
-.hk-konflikt.apen .hk-konflikt-ikon{transform:rotate(180deg)}\
-.hk-konflikt-body{max-height:0;overflow:hidden;transition:max-height .35s ease}\
-.hk-konflikt.apen .hk-konflikt-body{max-height:200px}\
-.hk-konflikt-tekst{margin:0;padding:0 14px 12px;font-size:14px;color:#1A1A1A;line-height:1.5}\
+.hk-emne-row{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid #E6E6E6;gap:8px;background:#fff}\
 .hk-emne-left{flex:1;min-width:0}\
 .hk-emne-oppstart{font-size:14px;font-weight:400;color:#1A1A1A;line-height:17.5px;margin-top:2px}\
 .hk-emne-oppstart strong{font-weight:600;color:#1A1A1A}\
@@ -802,35 +793,6 @@ function renderCampusCard(prog) {
     + '</div></div></div>';
 }
 
-/* Varselet om at emnet er bestått eller påbegynt står der emnet ligger – i
-   handlekurven på alle sider, og på emnekortet i Studievalg. Lukket som
-   standard; overskriften sier det studenten trenger. */
-function hkKonfliktBoksHtml(code) {
-  var konflikt = typeof emneKonflikt === 'function' ? emneKonflikt(code) : null;
-  if (!konflikt) return '';
-  var tittel = konflikt === 'bestatt'
-    ? 'Du har allerede bestått dette emnet.'
-    : 'Du er allerede aktiv i dette emnet.';
-  var chevron = '<svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true">'
-    + '<path d="M1.5 1.5L8 8l6.5-6.5" stroke="currentColor" stroke-width="2.2" '
-    + 'stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  return '<div class="hk-konflikt">'
-    + '<button type="button" class="hk-konflikt-head" onclick="hkToggleKonflikt(event, this)" aria-expanded="false">'
-    + '<span class="hk-konflikt-tittel">' + tittel + '</span>'
-    + '<span class="hk-konflikt-ikon">' + chevron + '</span>'
-    + '</button>'
-    + '<div class="hk-konflikt-body"><p class="hk-konflikt-tekst">Fjern det for å gå videre.</p></div>'
-    + '</div>';
-}
-
-function hkToggleKonflikt(event, head) {
-  event.stopPropagation();
-  var boks = head.closest('.hk-konflikt');
-  if (!boks) return;
-  var apen = boks.classList.toggle('apen');
-  head.setAttribute('aria-expanded', apen ? 'true' : 'false');
-}
-
 function renderNettCard(prog) {
   var emnerCount = prog.emner ? prog.emner.length : 0;
   var totalPts = 0;
@@ -849,9 +811,7 @@ function renderNettCard(prog) {
         + '<span class="hk-badge hk-badge-nett hk-emne-nett">Nett</span></div>'
         + '<div class="hk-emne-right">'
         + '<button class="k-delete" onclick="hkRemoveEmne(\'' + prog.id + '\',\'' + e.code + '\')" aria-label="Fjern">' + TRASH_SVG + '</button>'
-        + '</div>'
-        + hkKonfliktBoksHtml(e.code)
-        + '</div>';
+        + '</div></div>';
     });
   }
 
@@ -880,9 +840,7 @@ function renderLooseEmner(emner) {
       + '<span class="hk-badge hk-badge-nett hk-emne-nett">Nett</span></div>'
       + '<div class="hk-emne-right">'
       + '<button class="k-delete" onclick="hkRemoveLooseEmne(\'' + e.code + '\')" aria-label="Fjern">' + TRASH_SVG + '</button>'
-      + '</div>'
-      + hkKonfliktBoksHtml(e.code)
-      + '</div>';
+      + '</div></div>';
   });
   return '<div class="hk-card" data-prog-id="' + HK_LOOSE_CARD_ID + '"><div class="hk-card-header hk-clickable" onclick="toggleHkEmner(this)">'
     + '<div><div class="hk-section-title">Emner uten tilknytning til studieprogram</div>'

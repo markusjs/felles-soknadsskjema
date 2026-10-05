@@ -749,6 +749,16 @@ body {
 .s0-fakta-linje { font-size: 15px; line-height: 1.4; color: #1A1A1A; }
 .s0-fakta-verdi { font-weight: 600; }
 .s0-emne-bunn { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+/* Programvelgeren i redigeringspanelet */
+.s0-red-select {
+  width: 100%; min-height: 48px; padding: 12px 40px 12px 14px;
+  border: 1px solid #767676; border-radius: 8px; background: #fff;
+  font-family: var(--k-sans); font-size: 16px; color: #1A1A1A; cursor: pointer;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='10' viewBox='0 0 16 10' fill='none'%3E%3Cpath d='M1.5 1.5L8 8l6.5-6.5' stroke='%231A1A1A' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 16px center;
+}
+.s0-red-select:focus { outline: 2px solid #0A4FB8; outline-offset: 1px; }
 /* Prisen står til høyre uansett om «Rediger» finnes på raden. */
 .s0-emne-bunn .s0-emne-price, .s0-emne-bunn .s0-emne-price-strike { margin-left: auto; }
 .s0-emne-bunn .s0-emne-price-strike + .s0-emne-price { margin-left: 8px; }
@@ -2250,8 +2260,11 @@ function renderStep0() {
    holder ikke å endre objektet man fikk utlevert. */
 function s0LagreValg(code, datoStr, valg) {
   var b = getBasket();
+  /* Tar ett emne eller en liste – redigeringspanelet kan skrive samme svar
+     til alle emnene i programmet. */
+  var koder = (Array.isArray(code) ? code : [code]).map(String);
   var sett = function(e) {
-    if (String(e.code) !== String(code)) return;
+    if (koder.indexOf(String(e.code)) === -1) return;
     if (datoStr) e.startDate = datoStr;
     if (!valg) return;
     /* Skrives alltid, også tomt: svarer studenten «nei» på Lånekassen hoppes
@@ -2273,33 +2286,174 @@ function s0FinnEmne(programId, code, isLoose) {
   return prog && (prog.emner || []).find(function(e) { return e.code === code; });
 }
 
-/* «Rediger» åpner studiestart-panelet fra første steg, slik at studenten kan
-   endre Lånekasse-svaret, eksamensperioden og oppstartsdatoen på nytt. */
+/* «Rediger» åpner ett panel med alle valgene emnet har, i stedet for å kjøre
+   stegløpet på nytt. Studieprogrammet og «gjelder alle emnene»-avkryssingen
+   hører til søknaden og bygges her; spørsmålene om Lånekassen, eksamen og
+   startdato kommer fra studiestart-panelet. */
+var S0_LOOSE = '__loose';
+var _s0Rediger = null;
+
+function s0RedigerProgramValg() {
+  var b = getBasket();
+  var valg = (b.programs || [])
+    .filter(function(p) { return p.type === 'nett'; })
+    .map(function(p) {
+      return { id: p.id, navn: p.name + (p.programCode ? ' [' + p.programCode + ']' : '') };
+    });
+  valg.push({ id: S0_LOOSE, navn: 'Frittstående enkeltemne' });
+  return valg;
+}
+
+function s0RedigerProgramHtml() {
+  if (!_s0Rediger) return '';
+  var valgt = _s0Rediger.valgtProgram;
+  var opsjoner = s0RedigerProgramValg().map(function(v) {
+    return '<option value="' + v.id + '"' + (v.id === valgt ? ' selected' : '') + '>' + v.navn + '</option>';
+  }).join('');
+  return '<div class="ss-red-seksjon">'
+    + '<h3 class="ss-red-tittel"><span class="ss-red-nr">1</span>Studieprogram</h3>'
+    + '<select class="s0-red-select" onchange="s0RedigerVelgProgram(this.value)" aria-label="Studieprogram">'
+    + opsjoner + '</select>'
+    + '<p class="ss-red-hjelp">Velg et annet program, eller ta emnet som frittstående enkeltemne.</p>'
+    + '</div>';
+}
+
+function s0RedigerVelgProgram(id) {
+  if (!_s0Rediger) return;
+  _s0Rediger.valgtProgram = id;
+  /* Avkryssingen nederst gjelder programmet emnet havner i, så panelet må
+     tegnes på nytt når programmet byttes. */
+  if (typeof ssRedTegn === 'function') ssRedTegn();
+}
+
+/* Antall emner i programmet emnet skal ligge i – avgjør om det i det hele
+   tatt gir mening å tilby «samme valg for alle». */
+function s0RedigerSoskenEmner() {
+  if (!_s0Rediger) return [];
+  var b = getBasket();
+  var id = _s0Rediger.valgtProgram;
+  if (id === S0_LOOSE) return [];
+  var prog = (b.programs || []).find(function(p) { return p.id === id; });
+  if (!prog) return [];
+  return (prog.emner || []).map(function(e) { return String(e.code); });
+}
+
+function s0RedigerAlleHtml() {
+  if (!_s0Rediger) return '';
+  var koder = s0RedigerSoskenEmner();
+  if (koder.length < 2) return '';
+  var b = getBasket();
+  var prog = (b.programs || []).find(function(p) { return p.id === _s0Rediger.valgtProgram; });
+  var hake = '<svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var av = !!_s0Rediger.alleEmner;
+  return '<div class="ss-same-date" style="margin-top:20px" onclick="s0RedigerToggleAlle()">'
+    + '<span class="ss-checkbox-box' + (av ? ' checked' : '') + '">' + (av ? hake : '') + '</span>'
+    + '<span class="ss-same-date-label">Bruk de samme valgene for alle ' + koder.length
+    + ' emnene i ' + ((prog && prog.name) || 'programmet') + '</span>'
+    + '</div>';
+}
+
+function s0RedigerToggleAlle() {
+  if (!_s0Rediger) return;
+  _s0Rediger.alleEmner = !_s0Rediger.alleEmner;
+  if (typeof ssRedTegn === 'function') ssRedTegn();
+}
+
+/* Flytter emnet mellom programkortene, eller ut som frittstående. Tomme
+   programkort ryddes bort slik removeEmne også gjør. */
+function s0FlyttEmne(fraId, tilId, code) {
+  if (fraId === tilId) return;
+  var b = getBasket();
+  var emne = null;
+  if (fraId === S0_LOOSE) {
+    var i = (b.looseEmner || []).findIndex(function(e) { return String(e.code) === String(code); });
+    if (i > -1) emne = b.looseEmner.splice(i, 1)[0];
+  } else {
+    var fra = (b.programs || []).find(function(p) { return p.id === fraId; });
+    var j = fra ? (fra.emner || []).findIndex(function(e) { return String(e.code) === String(code); }) : -1;
+    if (j > -1) emne = fra.emner.splice(j, 1)[0];
+    if (fra && (fra.emner || []).length === 0) {
+      b.programs = b.programs.filter(function(p) { return p.id !== fraId; });
+    }
+  }
+  if (!emne) return;
+  if (tilId === S0_LOOSE) {
+    b.looseEmner = b.looseEmner || [];
+    b.looseEmner.push(emne);
+  } else {
+    var til = (b.programs || []).find(function(p) { return p.id === tilId; });
+    if (!til) return;
+    til.emner = til.emner || [];
+    if (!til.emner.find(function(e) { return String(e.code) === String(code); })) til.emner.push(emne);
+  }
+  saveBasket(b);
+}
+
+/* Emner lagt til før panelet fantes – eller rett fra studieplanleggeren –
+   har bare visningstekstene på kortet. Da leses valgene tilbake fra dem, slik
+   at «Rediger» åpner med det kortet faktisk viser. */
+function s0ForhandsvalgFor(e) {
+  if (e.oppstartValg) return e.oppstartValg;
+  var lkTxt = e.lanekassen || '';
+  var lanekassen = /ikke \u00e5 s\u00f8ke/i.test(lkTxt) ? 'nei'
+    : (/^planlegger \u00e5 s\u00f8ke/i.test(lkTxt) ? 'ja' : (lkTxt ? 'vetikke' : null));
+
+  var eksamen = null;
+  var m = /^(H\u00f8st|V\u00e5r)\s+(\d{4})$/.exec(e.eksamen || '');
+  if (m) eksamen = (m[1] === 'H\u00f8st' ? 'h' : 'v') + m[2];
+  else if (/vet ikke/i.test(e.eksamen || '')) eksamen = 'vetikke';
+
+  var oppstart = null, oppstartDato = null;
+  var sd = e.startDate || e.startSemester || '';
+  if (typeof erFortlopendeOppstart === 'function' && erFortlopendeOppstart(sd)) {
+    oppstart = 'fortlopende';
+  } else {
+    var d = /^(\d{2})\.(\d{2})\.(\d{2})$/.exec(sd);
+    if (d) { oppstart = 'custom'; oppstartDato = '20' + d[3] + '-' + d[2] + '-' + d[1]; }
+  }
+  return { lanekassen: lanekassen, eksamen: eksamen, oppstart: oppstart, oppstartDato: oppstartDato };
+}
+
 function s0RedigerOppstart(programId, code, isLoose) {
   var emne = s0FinnEmne(programId, code, isLoose);
-  if (!emne || typeof renderStudiestartStep !== 'function') return;
+  if (!emne || typeof renderStudiestartRediger !== 'function') return;
   if (typeof openSoknaderPanel === 'function') openSoknaderPanel();
   var body = document.getElementById('hk-body');
   if (!body) return;
   if (typeof refreshSokPanelFooter === 'function') refreshSokPanelFooter(true);
-  renderStudiestartStep(body, null, {
-    emner: [emne],
+  var tittel = document.getElementById('hk-title');
+  if (tittel) tittel.textContent = 'Rediger emne';
+
+  var fra = isLoose ? S0_LOOSE : programId;
+  _s0Rediger = { fraProgram: fra, valgtProgram: fra, code: String(code), alleEmner: false };
+
+  function lukk() {
+    _s0Rediger = null;
+    if (typeof closeSoknaderPanel === 'function') closeSoknaderPanel();
+    if (typeof renderBasketPanel === 'function') renderBasketPanel();
+    renderStep0();
+    renderSidebar();
+  }
+
+  renderStudiestartRediger(body, {
+    emne: emne,
     /* Åpne med de samme valgene krysset av som sist. */
-    forhandsvalg: emne.oppstartValg || null,
-    onTitle: function(tekst) {
-      var el = document.getElementById('hk-title');
-      if (el) el.textContent = tekst;
+    forhandsvalg: s0ForhandsvalgFor(emne),
+    nummerStart: 1,
+    topHtml: s0RedigerProgramHtml,
+    bunnHtml: s0RedigerAlleHtml,
+    onLagre: function(datoStr, valg) {
+      var st = _s0Rediger || {};
+      s0FlyttEmne(st.fraProgram, st.valgtProgram, st.code);
+      var koder = [st.code];
+      if (st.alleEmner) {
+        _s0Rediger = st;
+        koder = s0RedigerSoskenEmner();
+      }
+      s0LagreValg(koder, datoStr, valg);
+      lukk();
     },
-    onConfirm: function(datoStr, perEmne, valg) {
-      s0LagreValg(code, datoStr, valg);
-      /* Redigeringen er ferdig når siste valg er bekreftet. Da lukker vi
-         skuffen i stedet for å la studenten stå igjen i handlekurven og måtte
-         gå videre en gang til. */
-      if (typeof closeSoknaderPanel === 'function') closeSoknaderPanel();
-      if (typeof renderBasketPanel === 'function') renderBasketPanel();
-      renderStep0();
-      renderSidebar();
-    }
+    onAvbryt: lukk
   });
 }
 

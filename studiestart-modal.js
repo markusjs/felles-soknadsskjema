@@ -197,6 +197,22 @@ function injectStyles() {
 .ss-inline-host .ss-faq-section{padding:8px 0 0}\
 .ss-inline-host .ss-footer{padding:20px 0 0;border-top:none;background:none}\
 .ss-emne-item .ss-footer{padding:16px 0 0;border-top:none;background:none}\
+/* Redigeringspanel: alle spoersmaalene under hverandre paa ett skjermbilde */\
+.ss-red-emne{padding-bottom:16px;border-bottom:1px solid #E6E6E6}\
+.ss-red-emne-kode{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:14px;color:#5C5C5C}\
+.ss-red-emne-navn{font-size:18px;font-weight:600;color:#1A1A1A;margin-top:6px}\
+.ss-red-seksjon{margin-top:26px}\
+.ss-red-tittel{display:flex;align-items:baseline;gap:10px;font-size:17px;font-weight:600;color:#1A1A1A;margin:0 0 12px;line-height:1.35}\
+.ss-red-nr{font-size:14px;font-weight:600;color:#46000A;flex-shrink:0}\
+.ss-red-hjelp{font-size:14px;color:#5C5C5C;line-height:1.5;margin:8px 0 0}\
+.ss-segment{display:flex;border:1px solid #D4D4D4;border-radius:8px}\
+.ss-seg{flex:1;min-height:48px;padding:10px 8px;background:none;border:none;border-right:1px solid #D4D4D4;font-family:inherit;font-size:15px;font-weight:600;color:#1A1A1A;cursor:pointer;border-radius:8px}\
+.ss-seg:last-child{border-right:none}\
+.ss-seg:hover{background:#F5F5F5}\
+.ss-seg.valgt{background:#F2F7FF;color:#0A4FB8;box-shadow:inset 0 0 0 2px #0A4FB8}\
+.ss-red-fot{margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:14px}\
+.ss-red-avbryt{background:none;border:none;padding:0;font-family:inherit;font-size:16px;font-weight:600;color:#0A4FB8;cursor:pointer}\
+.ss-red-avbryt:hover{text-decoration:underline;text-underline-offset:4px}\
 ';
   document.head.appendChild(css);
 }
@@ -1258,6 +1274,157 @@ window.openStudiestartModal = function(pendingCourses, scenarioOverride, options
 
 /* Samme steg som skuffen, men rendret rett i en beholder – søknadspanelet.
    opts: { onConfirm(datoStr, perEmne), onNotify(epost), onTitle(tekst), emner, gruppe } */
+/* ── Redigeringspanel ──────────────────────────────────────────────────────
+   Samme spørsmål som i stegløpet, men alle under hverandre. Studenten som
+   skal rette ett svar skal se hele valget sitt og kunne endre det på stedet,
+   ikke gå gjennom stegene på nytt.
+   Seksjon 1 (studieprogram) og avkryssingen nederst eies av kalleren og
+   sendes inn som funksjoner, slik at de tegnes på nytt sammen med resten. */
+var _ssRed = null;   /* { container, opts } så lenge panelet står åpent */
+
+window.renderStudiestartRediger = function(container, opts) {
+  if (!container) return;
+  opts = opts || {};
+  injectStyles();
+
+  var old = document.getElementById('ss-backdrop');
+  if (old) old.remove();
+
+  _ssPending = [];
+  ssNullstillValg();
+  _ssEmner = opts.emne ? [opts.emne] : [];
+  _ssGruppe = null;
+  _ssOnBack = null;
+  _ssInline = null;
+  /* Datovalget måler mot hele bunken, og her er bunken dette ene emnet. */
+  _ssSteg = 'startdato';
+  ssSettValg(opts.forhandsvalg);
+
+  _ssRed = { container: container, opts: opts };
+  ssRedTegn();
+};
+
+function ssRedBit(bit) {
+  if (typeof bit === 'function') return bit() || '';
+  return bit || '';
+}
+
+function ssRedSeksjon(nr, tittel, innhold, hjelp) {
+  return '<div class="ss-red-seksjon">'
+    + '<h3 class="ss-red-tittel"><span class="ss-red-nr">' + nr + '</span>' + tittel + '</h3>'
+    + innhold
+    + (hjelp ? '<p class="ss-red-hjelp">' + hjelp + '</p>' : '')
+    + '</div>';
+}
+
+function ssRedSegment(verdi, tekst, valgt) {
+  return '<button type="button" class="ss-seg' + (valgt ? ' valgt' : '') + '" '
+    + 'onclick="ssRedLanekassen(\'' + verdi + '\')" aria-pressed="' + (valgt ? 'true' : 'false') + '">'
+    + tekst + '</button>';
+}
+
+function ssRedEmneHode(e) {
+  if (!e) return '';
+  var kode = e.code ? '#' + e.code : '';
+  var pts = e.pts || e.points;
+  var meta = [kode, pts ? (String(pts).replace('.', ',') + ' studiepoeng') : ''].filter(Boolean).join(' · ');
+  return '<div class="ss-red-emne">'
+    + '<div class="ss-red-emne-kode"><span>' + meta + '</span>'
+    + '<span class="ss-emne-tag" style="margin:0">Nett</span></div>'
+    + '<div class="ss-red-emne-navn">' + (e.name || '') + '</div>'
+    + '</div>';
+}
+
+function ssRedTegn() {
+  if (!_ssRed) return;
+  var o = _ssRed.opts;
+  var sc = window.STUDIESTART_SCENARIO || getStudiestartScenario();
+  var nr = o.nummerStart || 1;
+
+  var topp = ssRedBit(o.topHtml);
+  if (topp) nr++;
+
+  var lk = _ssWantsLanekassen;
+  var seksjoner = topp
+    + ssRedSeksjon(nr++, 'Skal du søke lån eller stipend?',
+        '<div class="ss-segment">'
+        + ssRedSegment('ja', 'Ja', lk === true)
+        + ssRedSegment('nei', 'Nei', lk === false)
+        + ssRedSegment('vetikke', 'Vet ikke ennå', lk === 'vetikke')
+        + '</div>');
+
+  /* Eksamensperioden spørres bare når studenten faktisk skal søke støtte –
+     samme regel som i stegløpet. */
+  if (lk === true) {
+    var kort = ssEksamensPerioder().map(function(a) {
+      return ssValgkort(a.verdi, a.label, _ssEksamen === a.verdi, 'ssRedEksamen', a.sub, a.forKort);
+    }).join('') + ssValgkort('vetikke', 'Vet ikke ennå', _ssEksamen === 'vetikke', 'ssRedEksamen');
+    seksjoner += ssRedSeksjon(nr++, 'Når planlegger du å ta eksamen?',
+      '<div class="ss-radio-group">' + kort + '</div>');
+  }
+
+  seksjoner += ssRedSeksjon(nr++, 'Startdato', ssDatokortHTML(sc, SS_ALLE));
+  seksjoner += ssRedBit(o.bunnHtml);
+
+  _ssRed.container.innerHTML = '<div class="ss-backdrop ss-inline-host open" id="ss-backdrop">'
+    + '<div class="ss-modal ss-inline" id="ss-modal">'
+    + '<div class="ss-body">'
+    + ssRedEmneHode(o.emne)
+    + seksjoner
+    + '<div class="ss-faq-section">' + buildInfoAccordion() + '</div>'
+    + '<p class="ss-error" id="ss-error" hidden></p>'
+    + '<div class="ss-red-fot">'
+    + '<button class="ss-btn" onclick="ssRedLagre()">' + (o.lagreTekst || 'Lagre endringer') + '</button>'
+    + '<button type="button" class="ss-red-avbryt" onclick="ssRedAvbryt()">Avbryt</button>'
+    + '</div>'
+    + '</div></div></div>';
+
+  /* Kalenderen og studieperiode-varselet hører til det valgte kortet og må
+     settes opp igjen hver gang panelet tegnes. */
+  if (_ssPerEmne[SS_ALLE] === 'custom') ssApneKalender(SS_ALLE);
+  ssOppdaterVarsel(SS_ALLE);
+}
+window.ssRedTegn = ssRedTegn;
+
+window.ssRedLanekassen = function(verdi) {
+  _ssWantsLanekassen = (verdi === 'ja') ? true : (verdi === 'nei' ? false : 'vetikke');
+  /* Et gammelt eksamenssvar må ikke bli hengende igjen og styre
+     studieperiode-sjekken når spørsmålet ikke lenger stilles. */
+  if (verdi !== 'ja') _ssEksamen = null;
+  ssVisFeil(null);
+  ssRedTegn();
+};
+
+window.ssRedEksamen = function(kort, verdi) {
+  _ssEksamen = verdi;
+  ssVisFeil(null);
+  ssRedTegn();
+};
+
+function ssRedValider() {
+  if (_ssWantsLanekassen === null) return 'Velg om du skal søke lån eller stipend.';
+  if (_ssWantsLanekassen === true && !_ssEksamen) return 'Velg når du planlegger å ta eksamen.';
+  if (!ssDatoFor(SS_ALLE)) return 'Velg en oppstartsdato.';
+  return null;
+}
+
+window.ssRedLagre = function() {
+  if (!_ssRed) return;
+  var feil = ssRedValider();
+  if (feil) { ssVisFeil(feil); return; }
+  var o = _ssRed.opts;
+  var dato = ssDatoFor(SS_ALLE);
+  var valg = ssValgOppsummering();
+  _ssRed = null;
+  if (o.onLagre) o.onLagre(dato, valg);
+};
+
+window.ssRedAvbryt = function() {
+  var o = _ssRed ? _ssRed.opts : {};
+  _ssRed = null;
+  if (o.onAvbryt) o.onAvbryt();
+};
+
 window.renderStudiestartStep = function(container, scenarioOverride, opts) {
   if (!container) return;
   opts = opts || {};
