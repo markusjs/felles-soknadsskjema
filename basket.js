@@ -300,6 +300,7 @@ var BASKET_CSS = '\
 .hk-prog-meta{font-size:15px;font-weight:400;color:#5c5c5c;line-height:1.35}\
 .hk-prog-name{display:block;font-size:18px;font-weight:600;color:#1A1A1A;line-height:1.3;margin-top:4px}\
 .hk-prog-progress{display:block;font-size:15px;font-weight:400;color:#5c5c5c;line-height:1.35;margin-top:8px}\
+.hk-prog-tall{font-weight:600;color:#1A1A1A}\
 .hk-prog-sub{display:block;font-size:15px;font-weight:400;color:#1A1A1A;line-height:1.4;margin-top:4px}\
 .hk-prog-heading{font-size:19px;font-weight:600;color:#1A1A1A;margin:0 0 8px}\
 .hk-prog-heading + .hk-prog-card{margin-top:0}\
@@ -1379,15 +1380,14 @@ function showEmneProgramChoice(emne, programs, opts) {
 
   var html = '<div style="padding:8px 0;">' + (opts.onCommit ? hkEmneContextCard(emne) : '');
 
-  if (programs.length === 0) {
-    html += hkChoiceLine('Dette emnet inngår ikke i noen av bachelorgradene på nett.', false)
-          + hkChoiceLine('Du kan ta det som et frittstående enkeltemne.', true);
-  } else {
+  /* Inngår emnet ikke i noen grad, er frittstående det eneste valget. Da
+     tilbyr vi det rett ut i stedet for å forklare hva som ikke finnes. */
+  if (programs.length) {
     /* Skillet mellom «fortsett der du er» og «start på nytt» gir bare mening
        når vi vet hva som er påbegynt – utlogget er listen flat, og foten
        tilbyr innlogging i stedet. */
     if (paagaaende.length) {
-      html += hkProgramHeading('Fortsett', false);
+      html += hkProgramHeading('Fortsett studieprogram', false);
       paagaaende.forEach(function(x) { html += kort(x); });
     }
     if (nye.length) {
@@ -1446,9 +1446,20 @@ function hkProgramCard(p, startet, leggerTilPts, onclick) {
     + '<span class="hk-prog-meta">' + meta + '</span>'
     + (startet ? HK_BADGE_PAAGAAR : '')
     + '</span>'
-    + '<span class="hk-prog-name">' + p.name + '</span>'
-    + '<span class="hk-prog-progress">' + hkPts(tatt) + ' / ' + hkPts(total) + ' studiepoeng</span>'
+    + '<span class="hk-prog-name">' + p.name + hkStartetKode(startet) + '</span>'
+    + '<span class="hk-prog-progress">Fullf\u00f8rt: <strong class="hk-prog-tall">'
+    + hkPts(tatt) + ' / ' + hkPts(total) + ' studiepoeng</strong></span>'
     + '</button>';
+}
+
+/* Studiekoden til programmet studenten alt er tatt opp p\u00e5 \u2013 den f\u00f8lger
+   gjennomf\u00f8ringen de har studierett p\u00e5. For programmer de ikke har startet
+   p\u00e5 vet vi den ikke enn\u00e5; gjennomf\u00f8ringen velges i neste steg. */
+function hkStartetKode(startet) {
+  if (!startet || !startet.href || !startet.studieform) return '';
+  var koder = PROGRAM_CODES[programKeyFromHref(startet.href)];
+  var kode = koder && koder[String(startet.studieform).toLowerCase()];
+  return kode ? ' [' + kode + ']' : '';
 }
 
 /* 7.5 → «7,5», 30 → «30» */
@@ -1457,10 +1468,10 @@ function hkPts(n) {
   return (v % 1 === 0 ? String(v) : v.toFixed(1)).replace('.', ',');
 }
 
-/* \u00abStudie p\u00e5g\u00e5r\u00bb \u2013 markerer programmet studenten allerede holder p\u00e5 med */
+/* \u00abAktivt\u00bb \u2013 markerer programmet studenten allerede holder p\u00e5 med */
 var HK_BADGE_PAAGAAR = '<span style="flex-shrink:0;display:inline-flex;align-items:center;'
   + 'background:#0A4FB8;color:#fff;border-radius:999px;padding:7px 16px;'
-  + 'font-size:14px;font-weight:600;line-height:1.2;white-space:nowrap;">Studie p\u00e5g\u00e5r</span>';
+  + 'font-size:14px;font-weight:600;line-height:1.2;white-space:nowrap;">Aktivt</span>';
 
 /* ─── Byggeklosser for valgpanelet ─── */
 

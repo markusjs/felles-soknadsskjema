@@ -710,7 +710,8 @@ function buildInfoAccordion() {
     + '<span class="ss-info-header-icon">' + chevron + '</span>'
     + '</div>'
     + '<div class="ss-info-body"><div class="ss-info-body-inner"><ul>'
-    + '<li>Du får tilgang til emnet når eventuell dokumentasjon er godkjent og søknaden til studiet er behandlet. Har du valgt å utsette oppstart, får du tilgang ved valgt dato, eller fortløpende, basert på når dokumentasjonen din er godkjent.</li>'
+    + '<li>Du får tilgang til emnet når eventuell dokumentasjon er godkjent og søknaden til studiet er behandlet.</li>'
+    + '<li>Har du valgt å utsette oppstart, får du tilgang ved valgt dato, eller fortløpende, basert på når dokumentasjonen din er godkjent.</li>'
     + '<li>Hvis behandlingen av søknaden går lengre enn valgt oppstartsdato, får du tilsvarende utvidet studierett.</li>'
     + '</ul></div></div>'
     + '</div>';
