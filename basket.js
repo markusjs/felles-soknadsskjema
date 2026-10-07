@@ -223,8 +223,8 @@ var BASKET_CSS = '\
 .k-profil-lenke:hover{background:#F5F5F5}\
 .k-profil-handling{display:block;width:100%;text-align:left;background:none;border:none;padding:10px 16px;font-family:inherit;font-size:16px;color:#1A1A1A;cursor:pointer;border-radius:8px}\
 .k-profil-handling:hover{background:#F5F5F5}\
-.k-delete{background:#F2F7FF;border:none;border-radius:50%;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;color:#0A4FB8;transition:background .15s,color .15s;flex-shrink:0}\
-.k-delete:hover{background:#E0EBFE;color:#083D8F}\
+.k-delete{background:#FCE4E8;border:none;border-radius:50%;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;color:#AF0018;transition:background .15s,color .15s;flex-shrink:0}\
+.k-delete:hover{background:#F9CCD2;color:#8B1A1A}\
 .hk-chevron{background:none;border:none;cursor:pointer;padding:4px;transition:transform .2s;color:#1A1A1A}\
 .hk-emner-list{border-top:1px solid #E6E6E6;display:none}\
 .hk-emner-list.open{display:block}\
