@@ -1690,7 +1690,7 @@ body {
           <div id="pd-body" style="margin-top:24px;"></div>
           <p class="bt-fineprint" id="pd-charge-note" style="display:none;">Kortet blir ikke belastet nå — beløpet trekkes først når du sender inn søknaden i neste steg.</p>
           <div class="btn-row" style="margin-top:32px;">
-            <button class="btn-secondary" onclick="gaVidere(4)">Tilbake til betaling</button>
+            <button class="btn-secondary" onclick="gaVidere(4)">Gå tilbake</button>
             <button class="btn-primary" id="pd-cta" onclick="confirmPaymentDetail()">Gå videre</button>
           </div>
         </div>
@@ -2673,7 +2673,7 @@ function s0FaktalinjerHtml(e) {
   /* Lånekasse-svaret står ikke på kortet: det styrer bare hvilken eksamen og
      startdato vi anbefaler, og de to står her i stedet. Svaret lagres likevel,
      så «Rediger» åpner med det krysset av. */
-  var linjer = [['Oppstart', oppstart], ['Eksamen', e.eksamen || '']]
+  var linjer = [['Oppstart', oppstart], ['Planlegger eksamen', e.eksamen || '']]
     .filter(function(f) { return !!f[1]; })
     .map(function(f) {
       return '<div class="s0-fakta-linje"><span class="s0-fakta-navn">' + f[0] + ':</span> '
@@ -3529,10 +3529,15 @@ function showPaymentDetail(method) {
   document.getElementById('step4b').classList.add('active');
   document.getElementById('summarySidebar').style.display = 'none';
   document.getElementById('checkoutGrid').classList.add('single-col');
+  /* Siste skjerm før innsending: ingen stegindikator, bare handlingen. */
+  var stepper = document.getElementById('checkoutStepper');
+  if (stepper) stepper.style.display = 'none';
   window.scrollTo(0, 0);
 }
 
 function restorePaymentDetailNode() {
+  var stepper = document.getElementById('checkoutStepper');
+  if (stepper) stepper.style.display = '';
   var method = _currentPaymentMethod;
   if (!method) return;
   var expand = document.getElementById('expand-' + method);
@@ -3829,11 +3834,11 @@ function trekkesVedInnsending(metode) {
   return metode === 'kort' || metode === 'avdrag';
 }
 
+/* Betalingsskjermen har bare én handling. Beløpet og hva som skjer står i
+   linjen over knappen, så knappen sier bare hva du gjør. */
 function commitCtaLabel(metode) {
   if (!basketHasEmner()) return 'Send inn søknad';
-  return trekkesVedInnsending(metode)
-    ? 'Send inn søknad og betal ' + belopAaBetale().toLocaleString('nb-NO') + ' kr'
-    : 'Send inn søknad';
+  return trekkesVedInnsending(metode) ? 'Betal' : 'Send inn søknad';
 }
 
 function commitNoteText(metode) {

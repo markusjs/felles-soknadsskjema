@@ -57,6 +57,7 @@ function injectStyles() {
 .ss-radio-card>.ss-perisk{flex-basis:100%}\
 .ss-perisk-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px 14px;cursor:pointer;user-select:none}\
 .ss-perisk-tittel{font-size:15px;font-weight:600;color:#1A1A1A;line-height:1.35}\
+.ss-oppmelding{border:1px solid #FFCA00;background:#FFFBEB;border-radius:8px;padding:14px 16px;font-size:15px;font-weight:600;color:#1A1A1A;line-height:1.4}\
 .ss-perisk-ikon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;color:#1A1A1A;flex-shrink:0;margin-top:2px;transition:transform .3s ease}\
 .ss-perisk.apen .ss-perisk-ikon{transform:rotate(180deg)}\
 .ss-perisk-body{max-height:0;overflow:hidden;transition:max-height .35s ease}\
@@ -1048,6 +1049,14 @@ window.ssVelgLanekassen = function(kort, verdi) {
 /* ── Steg 2: eksamensdato ────────────────────────────────────────────────
    Vises bare når studenten svarer «Ja» på Lånekassen. Svaret er sluttdatoen
    Kristiania i dag må be om på e-post for å rapportere den videre. */
+/* Eksamensvalget her er bare planen vi legger for studieperioden – selve
+   oppmeldingen skjer fortsatt i StudentWeb, og det må studenten vite. */
+var SS_OPPMELDING_TEKST = 'Du må fortsatt melde deg opp til vurdering i StudentWeb';
+
+function ssOppmeldingBoks() {
+  return '<div class="ss-oppmelding">' + SS_OPPMELDING_TEKST + '</div>';
+}
+
 function buildEksamenHTML(sc) {
   var kort = ssEksamensPerioder().map(function(a) {
     return ssValgkort(a.verdi, a.label, _ssEksamen === a.verdi, 'ssVelgEksamen', a.sub, a.forKort);
@@ -1060,6 +1069,7 @@ function buildEksamenHTML(sc) {
     + '<div class="ss-question">Når planlegger du å ta eksamen?</div>'
     + '<p class="ss-subtitle">Svaret avgjør hvor lang studieperiode du har.</p>'
     + '</div>'
+    + ssOppmeldingBoks()
     + '<div class="ss-radio-group">' + kort + '</div>'
     + ssFot()
     + '<div class="ss-faq-section">' + buildInfoAccordion() + '</div>'
@@ -1361,7 +1371,7 @@ function ssRedTegn() {
       return ssValgkort(a.verdi, a.label, _ssEksamen === a.verdi, 'ssRedEksamen', a.sub, a.forKort);
     }).join('') + ssValgkort('vetikke', 'Vet ikke ennå', _ssEksamen === 'vetikke', 'ssRedEksamen');
     seksjoner += ssRedSeksjon(nr++, 'Når planlegger du å ta eksamen?',
-      '<div class="ss-radio-group">' + kort + '</div>');
+      ssOppmeldingBoks() + '<div class="ss-radio-group" style="margin-top:12px">' + kort + '</div>');
   }
 
   seksjoner += ssRedSeksjon(nr++, 'Startdato', ssDatokortHTML(sc, SS_ALLE));
