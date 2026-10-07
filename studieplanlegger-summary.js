@@ -77,6 +77,49 @@ function spValgteEmner() {
     });
 }
 
+/* ─── Utvalget overlever refresh ───
+   Emner som er valgt i planleggeren, men ikke sendt videre, holdes med vilje
+   utenfor søknaden til studenten trykker «Gå videre». Da lever de bare i
+   minnet, og en refresh ville tømt sammendraget. Derfor lagres de som et eget
+   utkast – ett per planleggerside – og hentes inn igjen ved innlasting. */
+var SP_UTKAST_NOKKEL = 'kristiania_planlegger_utkast_v1';
+
+function spUtkastSideId() {
+  var prog = (typeof SP_SIDENS_PROGRAM !== 'undefined') ? SP_SIDENS_PROGRAM : null;
+  return (prog && prog.id) ? prog.id : location.pathname;
+}
+
+function spLesUtkast() {
+  try { return JSON.parse(localStorage.getItem(SP_UTKAST_NOKKEL) || '{}') || {}; }
+  catch (e) { return {}; }
+}
+
+function spLagreUtkast() {
+  try {
+    var alle = spLesUtkast();
+    var pend = spPendingList();
+    if (pend.length) alle[spUtkastSideId()] = pend;
+    else delete alle[spUtkastSideId()];
+    localStorage.setItem(SP_UTKAST_NOKKEL, JSON.stringify(alle));
+  } catch (e) { /* full eller sperret lagring – utvalget lever i minnet */ }
+}
+
+function spGjenopprettUtkast() {
+  var lagret = spLesUtkast()[spUtkastSideId()];
+  if (!lagret || !lagret.length) return 0;
+  var antall = 0;
+  lagret.forEach(function(e) {
+    if (!e || !e.code || spCart[e.code]) return;
+    if (typeof spCompletedCourses !== 'undefined' && spCompletedCourses.indexOf(e.code) > -1) return;
+    /* Emnet må finnes som rad på denne siden, ellers kan det ikke vises. */
+    if (!document.querySelector('.sp-course-row[data-code="' + e.code + '"]')) return;
+    spSelect(e, true);
+    antall++;
+  });
+  _spNyKode = null;
+  return antall;
+}
+
 function spMarkRow(code, valgt) {
   document.querySelectorAll('.sp-course-row[data-code="' + code + '"] .sp-add-btn').forEach(function(b) {
     if (b.classList.contains('completed')) return;
@@ -226,6 +269,9 @@ function spRenderSummary() {
     + '<button class="sp-sum-cta" onclick="spGaVidere()"' + (valgte.length ? '' : ' disabled') + '>Gå videre</button>'
     + '</div>'
     + '</div>';
+
+  /* Alle endringer i utvalget ender her, så det er nok å lagre ett sted. */
+  spLagreUtkast();
 }
 
 /* Knappen i semesterfoten bestiller ikke lenger – den fyller sammendraget, og
@@ -469,10 +515,20 @@ function spVisVarselKvittering(epost) {
 /* ─── Oppstart ─── */
 function spInitSummary() {
   spInjectSummaryShell();
+  /* Utkastet må inn før første tegning: spRenderSummary() lagrer det den ser,
+     og ville ellers skrevet over et tomt utvalg. */
+  var hentet = spGjenopprettUtkast();
   spRenderSummary();
   /* Den innebygde koden leser søknaden 100 ms etter DOMContentLoaded og merker
      radene som alt ligger der – sammendraget må tegnes på nytt etterpå. */
   setTimeout(spRenderSummary, 200);
+  /* Fant vi ingen rader å gjenopprette på, kan planleggeren ha blitt bygd
+     ferdig etter oss. Da prøver vi en gang til når alt er lastet. */
+  if (!hentet) {
+    window.addEventListener('load', function() {
+      if (spGjenopprettUtkast()) spRenderSummary();
+    });
+  }
 }
 
 if (document.readyState === 'loading') {
