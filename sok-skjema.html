@@ -4172,11 +4172,11 @@ function renderSidebar() {
   }
   document.getElementById('sidebar-emner').innerHTML = emnerHtml;
 
-  /* Veien tilbake til Studievalg for å endre programmer eller emner. */
+  /* Veien tilbake til Studievalg, der både programmer og emner endres. */
   var redigerEl = document.getElementById('sidebar-rediger');
   if (redigerEl) {
     redigerEl.innerHTML = (campusPrograms.length > 0 || allEmner.length > 0)
-      ? '<button class="sidebar-rediger-link" onclick="gaVidere(0)">Rediger studieprogram og emner</button>'
+      ? '<button class="sidebar-rediger-link" onclick="gaVidere(0)">Rediger søknad</button>'
       : '';
   }
 
