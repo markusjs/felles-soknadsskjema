@@ -254,6 +254,8 @@ var BASKET_CSS = '\
 .hk-section-title{font-size:14px;font-weight:400;color:#1A1A1A}\
 .hk-footer{padding:16px 20px;border-top:1px solid #D4D4D4;flex-shrink:0;display:flex;flex-direction:column;gap:10px;position:sticky;bottom:0;background:#fff;z-index:2}\
 .hk-auth-row{display:flex;align-items:center;justify-content:space-between;gap:12px}\
+.hk-auth-topp{margin:0 0 18px}\
+.hk-auth-topp .hk-auth-prompt{font-size:15px}\
 .hk-auth-row-loggedin{background:#f5f5f5;border-radius:8px;padding:10px 12px}\
 .hk-auth-prompt{font-size:14px;font-weight:500;color:#46000A;flex:1;margin:0}\
 .hk-auth-identity{display:flex;align-items:center;gap:10px;min-width:0}\
@@ -1380,18 +1382,23 @@ function showEmneProgramChoice(emne, programs, opts) {
 
   var html = '<div style="padding:8px 0;">' + (opts.onCommit ? hkEmneContextCard(emne) : '');
 
+  /* Utlogget er oppfordringen om \u00e5 logge inn svaret p\u00e5 hvorfor listen er flat,
+     s\u00e5 den st\u00e5r \u00f8verst her i stedet for nede i foten. */
+  var utlogget = !getAuthState();
+  if (utlogget) html += '<div class="hk-auth-topp">' + buildAuthFooterRow(true) + '</div>';
+
   /* Inngår emnet ikke i noen grad, er frittstående det eneste valget. Da
      tilbyr vi det rett ut i stedet for å forklare hva som ikke finnes. */
   if (programs.length) {
     /* Skillet mellom «fortsett der du er» og «start på nytt» gir bare mening
-       når vi vet hva som er påbegynt – utlogget er listen flat, og foten
-       tilbyr innlogging i stedet. */
+       når vi vet hva som er påbegynt. Er ingenting påbegynt – eller er
+       studenten utlogget – står programmene i én flat liste. */
     if (paagaaende.length) {
       html += hkProgramHeading('Fortsett studieprogram', false);
       paagaaende.forEach(function(x) { html += kort(x); });
-    }
-    if (nye.length) {
-      html += hkProgramHeading('Start på et nytt program', paagaaende.length > 0);
+      html += hkProgramHeading('Start på et nytt program', true);
+      nye.forEach(function(x) { html += kort(x); });
+    } else {
       nye.forEach(function(x) { html += kort(x); });
     }
   }
@@ -1406,6 +1413,10 @@ function showEmneProgramChoice(emne, programs, opts) {
 
   html += '</div>';
   body.innerHTML = html;
+  if (utlogget) {
+    var slot = document.getElementById('hk-auth-slot');
+    if (slot) slot.innerHTML = '';
+  }
 }
 
 function hkProgramHeading(tekst, harSeksjonOver) {
@@ -1447,8 +1458,12 @@ function hkProgramCard(p, startet, leggerTilPts, onclick) {
     + (startet ? HK_BADGE_PAAGAAR : '')
     + '</span>'
     + '<span class="hk-prog-name">' + p.name + hkStartetKode(startet) + '</span>'
-    + '<span class="hk-prog-progress">Fullf\u00f8rt: <strong class="hk-prog-tall">'
-    + hkPts(tatt) + ' / ' + hkPts(total) + ' studiepoeng</strong></span>'
+    /* Utlogget kjenner vi ikke studiehistorikken, og «0 / 180» ville v\u00e6rt en
+       p\u00e5stand vi ikke kan st\u00e5 for. Da st\u00e5r kortet uten fremdrift. */
+    + (getAuthState()
+        ? '<span class="hk-prog-progress">Fullf\u00f8rt: <strong class="hk-prog-tall">'
+          + hkPts(tatt) + ' / ' + hkPts(total) + ' studiepoeng</strong></span>'
+        : '')
     + '</button>';
 }
 

@@ -712,8 +712,8 @@ body {
    hjørne mot rett kant, og ga dobbel strek i bunnen. Her står gruppene flush
    med kortet og skilles av én delelinje – da flukter innholdet også med
    «Emner»-overskriften. */
-#step0EmnerList > .s0-emnegroup { border: none; border-radius: 0; margin-bottom: 0; }
-#step0EmnerList > .s0-emnegroup + .s0-emnegroup { border-top: 1px solid #E6E6E6; }
+.s0-emneliste > .s0-emnegroup { border: none; border-radius: 0; margin-bottom: 0; }
+.s0-emneliste > .s0-emnegroup + .s0-emnegroup { border-top: 1px solid #E6E6E6; }
 /* Kortet klipper innholdet, slik at bakgrunn og feilramme på den nederste
    raden følger den avrundede kanten i stedet for å stikke utenfor. */
 #step0EmnerCard { overflow: hidden; }
@@ -754,6 +754,10 @@ body {
 .s0-fakta-linje { font-size: 15px; line-height: 1.4; color: #1A1A1A; }
 .s0-fakta-verdi { font-weight: 600; }
 .s0-emne-bunn { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+/* Faktalinjene og prisen på samme rad, prisen nederst til høyre */
+.s0-emne-faktarad { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+.s0-emne-faktarad .s0-fakta { flex: 1; min-width: 0; }
+.s0-emne-faktarad .s0-emne-pris { flex-shrink: 0; }
 /* Programvelgeren i redigeringspanelet */
 .s0-red-select {
   width: 100%; min-height: 48px; padding: 12px 40px 12px 14px;
@@ -1205,7 +1209,7 @@ body {
           <span class="s0-section-label">Emner</span>
           <span class="payment-section-meta" id="step0EmnerMeta"></span>
         </div>
-        <div id="step0EmnerList"></div>
+        <div id="step0EmnerList" class="s0-emneliste"></div>
       </div>
       <button class="s0-legg-til-btn" id="step0AddEmnerBtn" onclick="window.location.href='/utdanning'">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="#0A4FB8" stroke-width="2.5" stroke-linecap="round"/></svg>
@@ -1510,8 +1514,8 @@ body {
 
       <!-- Steg 4: Betaling -->
       <div class="step" id="step4">
+        <h1 class="step-title" style="margin:0 0 20px;">Betaling</h1>
         <div class="form-col">
-          <h1 class="step-title">Betaling</h1>
 
           <div>
             <!-- Siste gjennomgang av søkeren før innsending -->
@@ -2695,6 +2699,21 @@ var S0_IKON_EMNE = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" 
   + '<path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H14a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h4.5a1.5 1.5 0 0 0 1.5-1.5v-10z" '
   + 'stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
 
+/* Nederst i kortet: «Rediger» til venstre og prisen til høyre. Uten «Rediger»
+   – på Betaling – får prisen plass ytterst på faktalinjene i stedet for å ta
+   en egen rad under dem. */
+function s0EmneBunnHtml(e, showPrice, changeFnCall) {
+  var fakta = s0FaktalinjerHtml(e);
+  var pris = showPrice ? emneKortPrisHtml(e) : '';
+  if (changeFnCall) {
+    return fakta + '<div class="s0-emne-bunn">'
+      + '<button class="s0-emne-change" onclick="' + changeFnCall + '">' + S0_IKON_PENN + 'Rediger</button>'
+      + pris + '</div>';
+  }
+  if (!pris) return fakta;
+  return '<div class="s0-emne-faktarad">' + fakta + '<div class="s0-emne-pris">' + pris + '</div></div>';
+}
+
 function buildEmneRowHtml(e, removeFnCall, showPrice, changeFnCall, niva) {
   /* Sletting finnes bare i handlekurven/Søknad-panelet og på Studievalg.
      Varselet hører hjemme samme sted – det ber studenten fjerne emnet. */
@@ -2712,13 +2731,7 @@ function buildEmneRowHtml(e, removeFnCall, showPrice, changeFnCall, niva) {
     + '<span class="s0-emne-fakta-bit">' + S0_IKON_EMNE + s0EmneNivaTekst(niva) + '</span>'
     + '<span class="s0-badge s0-badge-nett">Nett</span>'
     + '</div>'
-    + s0FaktalinjerHtml(e)
-    + '<div class="s0-emne-bunn">'
-    + (changeFnCall
-        ? '<button class="s0-emne-change" onclick="' + changeFnCall + '">' + S0_IKON_PENN + 'Rediger</button>'
-        : '')
-    + (showPrice ? emneKortPrisHtml(e) : '')
-    + '</div>'
+    + s0EmneBunnHtml(e, showPrice, changeFnCall)
     + (konflikt ? s0KonfliktBoksHtml(konflikt) : '')
     + '</div>';
 }
@@ -2729,7 +2742,7 @@ function buildEmnegroupHtml(label, meta, emner, groupId, isLoose, removeFn, show
   var rows = emner.map(function(e) {
     var safeCode = e.code ? e.code.toString().replace(/'/g, "\\'") : '';
     var args = "(" + (groupId ? "'" + groupId + "'" : 'null') + ",'" + safeCode + "'," + (isLoose ? 'true' : 'false') + ")";
-    return buildEmneRowHtml(e, removeFn + args, showPrice, changeFn ? changeFn + args : null, e.level || niva);
+    return buildEmneRowHtml(e, removeFn ? removeFn + args : null, showPrice, changeFn ? changeFn + args : null, e.level || niva);
   }).join('');
   return '<div class="s0-emnegroup">'
     + '<div class="s0-emnegroup-header" onclick="toggleS0EmnegroupOpen(this)">'
@@ -3346,14 +3359,24 @@ function renderBetalingEmnerGroups(nettPrograms, looseEmner) {
 
   var poster = [];
   nettPrograms.forEach(function(p) {
-    (p.emner || []).forEach(function(e) { poster.push({ e: e, groupId: p.id, groupName: p.name, loose: false }); });
+    (p.emner || []).forEach(function(e) {
+      poster.push({ e: e, groupId: p.id, groupName: p.name, loose: false, niva: p.level });
+    });
   });
-  (looseEmner || []).forEach(function(e) { poster.push({ e: e, groupId: null, groupName: '', loose: true }); });
+  (looseEmner || []).forEach(function(e) {
+    poster.push({ e: e, groupId: null, groupName: '', loose: true, niva: null });
+  });
 
   if (!poster.length) { el.innerHTML = ''; return; }
 
   var emnerSum = poster.reduce(function(sum, x) { return sum + ((x.e && x.e.price) || 0); }, 0);
-  var rader = poster.map(btEmneRowHtml).join('');
+
+  /* Samme emnekort som i Studievalg, men uten sletting og «Rediger»: her er
+     valgene gjort, og kortet skal bare bekrefte dem. Emnene står i én liste –
+     hvilket program de hører til vises i sammendraget ved siden av. */
+  var rader = poster.map(function(x) {
+    return buildEmneRowHtml(x.e, null, true, null, x.niva);
+  }).join('');
 
   el.innerHTML = '<div class="bt-card">'
     + '<div class="bt-card-header">'
@@ -3362,22 +3385,6 @@ function renderBetalingEmnerGroups(nettPrograms, looseEmner) {
     + (poster.length !== 1 ? 'r' : '') + ' \u00b7 ' + emnerSum.toLocaleString('nb-NO') + ' kr</span>'
     + '</div>'
     + rader
-    + '</div>';
-}
-
-/* Emnerad på Betaling (mockup): «#kode · studiepoeng · tilknytning» over navnet,
-   med Nett-tagg og pris til høyre. */
-function btEmneRowHtml(x) {
-  var e = x.e || {};
-  var label = [];
-  if (e.code) label.push('#' + e.code);
-  if (e.points) label.push(studiepoengTekst(e.points));
-  label.push(x.loose ? 'enkeltemne' : (x.groupName || ''));
-
-  return '<div class="bt-emne-row">'
-    + emneKortInnholdHtml(e, '',
-        '<span class="bt-emne-price">' + (e.price || 0).toLocaleString('nb-NO') + ' kr</span>',
-        x.loose ? 'enkeltemne' : (x.groupName || ''))
     + '</div>';
 }
 
