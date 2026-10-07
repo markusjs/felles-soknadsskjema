@@ -1518,9 +1518,6 @@ body {
         <div class="form-col">
 
           <div>
-            <!-- Siste gjennomgang av søkeren før innsending -->
-            <div id="betalingSokerRow"></div>
-
             <div id="betalingEmnerSection" style="display:none;">
               <div id="betalingProgramSection"></div>
               <div id="betalingEmnerGroups"></div>
@@ -1666,7 +1663,9 @@ body {
                 Jeg bekrefter og aksepterer <a href="#" onclick="event.stopPropagation()">Kristianias personvern-erklæring</a>
               </span>
             </div>
-            <div class="checkbox-row">
+            <!-- Studiebetingelsene gjelder emnene man kjøper nå. Søker man bare
+                 på studieprogram, er det personvernerklæringen som gjelder. -->
+            <div class="checkbox-row" id="betingelserRow">
               <div class="checkbox-box" id="cb-betingelser" onclick="this.classList.toggle('checked')">
                 <svg width="12" height="10" viewBox="0 0 12 10" fill="none"><path d="M1 5l3.5 3.5L11 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </div>
@@ -3312,9 +3311,13 @@ function renderPaymentStep() {
   btVis('betalingMetodeBlokk', harEmner);
   btVis('betalingTrustRow', harEmner);
   btVis('betalingRabattSection', harEmner);
+  btVis('betingelserRow', harEmner);
+  /* Feilmeldingen gjelder avkryssingene slik de står nå – den skal ikke bli
+     hengende igjen fra forrige gang steget ble tegnet. */
+  var samtykkeErr = document.getElementById('err-samtykke');
+  if (samtykkeErr) samtykkeErr.style.display = 'none';
 
   renderBetalingRabattSection();
-  renderBetalingSokerRow();
   updateStep4Cta();
 }
 
@@ -3324,23 +3327,6 @@ function btVis(id, vis) {
 }
 
 /* Søkeren, slik at man kan verifisere seg selv rett før innsending */
-function renderBetalingSokerRow() {
-  var el = document.getElementById('betalingSokerRow');
-  if (!el) return;
-
-  var navn = (document.getElementById('fornavn').value + ' ' + document.getElementById('etternavn').value).trim();
-  if (!navn) { el.innerHTML = ''; return; }
-
-  var epost = document.getElementById('epost').value;
-  el.innerHTML = '<div class="pay-summary-card" style="margin-bottom:24px;">'
-    + '<div class="pay-summary-main">'
-    + '<div class="pay-summary-name">' + navn + '</div>'
-    + '<div class="pay-summary-detail">' + (epost || 'Søker') + '</div>'
-    + '</div>'
-    + '<button class="pay-summary-change" style="padding:0;" onclick="gaVidere(3)">Endre</button>'
-    + '</div>';
-}
-
 /* Forklaringen under betalingsmåtene følger valget. Selve knappen på Betaling
    er alltid «Gå videre» — innsending og betaling skjer på bekreftelsesskjermen. */
 function updateStep4Cta() {
@@ -3468,9 +3454,19 @@ function gaVidereStep4() {
   processCompletedConflicts();
 
   var personvernOk = document.getElementById('cb-personvern').classList.contains('checked');
-  var betingelserOk = document.getElementById('cb-betingelser').classList.contains('checked');
+  /* Studiebetingelsene spørres bare om når søknaden har emner – da står ikke
+     avkryssingen der, og den kan heller ikke kreves. */
+  var krevBetingelser = typeof basketHasEmner === 'function' && basketHasEmner();
+  var betingelserOk = !krevBetingelser
+    || document.getElementById('cb-betingelser').classList.contains('checked');
   var samtykkeErr = document.getElementById('err-samtykke');
-  if (!personvernOk || !betingelserOk) { samtykkeErr.style.display = 'block'; return; }
+  if (!personvernOk || !betingelserOk) {
+    samtykkeErr.textContent = krevBetingelser
+      ? 'Du må godta personvernerklæringen og studiebetingelsene for å gå videre'
+      : 'Du må godta personvernerklæringen for å gå videre';
+    samtykkeErr.style.display = 'block';
+    return;
+  }
   samtykkeErr.style.display = 'none';
 
   var b = getBasket();

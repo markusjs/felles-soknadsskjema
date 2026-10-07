@@ -254,8 +254,8 @@ var BASKET_CSS = '\
 .hk-section-title{font-size:14px;font-weight:400;color:#1A1A1A}\
 .hk-footer{padding:16px 20px;border-top:1px solid #D4D4D4;flex-shrink:0;display:flex;flex-direction:column;gap:10px;position:sticky;bottom:0;background:#fff;z-index:2}\
 .hk-auth-row{display:flex;align-items:center;justify-content:space-between;gap:12px}\
-.hk-auth-topp{margin:0 0 18px}\
-.hk-auth-topp .hk-auth-prompt{font-size:15px}\
+#hk-auth-topp:not(:empty){padding:16px 20px;border-bottom:1px solid #E6E6E6;flex-shrink:0}\
+#hk-auth-topp .hk-auth-prompt{font-size:15px}\
 .hk-auth-row-loggedin{background:#f5f5f5;border-radius:8px;padding:10px 12px}\
 .hk-auth-prompt{font-size:14px;font-weight:500;color:#46000A;flex:1;margin:0}\
 .hk-auth-identity{display:flex;align-items:center;gap:10px;min-width:0}\
@@ -514,6 +514,8 @@ function injectSidebarPanel() {
     + '<button class="hk-close" onclick="closeSoknaderPanel()" aria-label="Lukk">'
     + '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>'
     + '</button></div>'
+    /* Utlogget st\u00e5r innloggingen \u00f8verst, over alt innholdet i panelet. */
+    + '<div id="hk-auth-topp"></div>'
     + '<div class="hk-body" id="hk-body"></div>'
     + '<div class="hk-footer" id="hk-footer">'
     /* Foten står nederst i sidebaren uansett steg. Rekkefølgen går fra det
@@ -689,8 +691,15 @@ function hkGaVidereFraKurv() {
 }
 
 function refreshSokPanelFooter(awaitingChoice) {
+  /* Utlogget hører oppfordringen om å logge inn hjemme øverst – den er det
+     første studenten bør ta stilling til. Innlogget står identiteten nederst,
+     som en kvittering på hvem søknaden gjelder. */
+  var utlogget = !getAuthState();
+  var authTopp = document.getElementById('hk-auth-topp');
   var authSlot = document.getElementById('hk-auth-slot');
-  if (authSlot) authSlot.innerHTML = buildAuthFooterRow(awaitingChoice);
+  var rad = buildAuthFooterRow(awaitingChoice);
+  if (authTopp) authTopp.innerHTML = utlogget ? rad : '';
+  if (authSlot) authSlot.innerHTML = utlogget ? '' : rad;
   var ctaBtn = document.getElementById('hk-cta-btn');
   if (ctaBtn) {
     var b = getBasket();
@@ -1382,10 +1391,6 @@ function showEmneProgramChoice(emne, programs, opts) {
 
   var html = '<div style="padding:8px 0;">' + (opts.onCommit ? hkEmneContextCard(emne) : '');
 
-  /* Utlogget er oppfordringen om \u00e5 logge inn svaret p\u00e5 hvorfor listen er flat,
-     s\u00e5 den st\u00e5r \u00f8verst her i stedet for nede i foten. */
-  var utlogget = !getAuthState();
-  if (utlogget) html += '<div class="hk-auth-topp">' + buildAuthFooterRow(true) + '</div>';
 
   /* Inngår emnet ikke i noen grad, er frittstående det eneste valget. Da
      tilbyr vi det rett ut i stedet for å forklare hva som ikke finnes. */
@@ -1413,10 +1418,6 @@ function showEmneProgramChoice(emne, programs, opts) {
 
   html += '</div>';
   body.innerHTML = html;
-  if (utlogget) {
-    var slot = document.getElementById('hk-auth-slot');
-    if (slot) slot.innerHTML = '';
-  }
 }
 
 function hkProgramHeading(tekst, harSeksjonOver) {
@@ -1833,6 +1834,9 @@ function hkVisLoggInn() {
   if (!body) return;
   _hkLoginValg = null;
   if (typeof refreshSokPanelFooter === 'function') refreshSokPanelFooter(true);
+  /* Hele skjermen er innloggingen – da trenger den ingen oppfordring over seg. */
+  var authTopp = document.getElementById('hk-auth-topp');
+  if (authTopp) authTopp.innerHTML = '';
 
   var title = document.getElementById('hk-title');
   if (title) title.textContent = 'Logg inn';
