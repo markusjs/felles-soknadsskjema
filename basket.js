@@ -1180,28 +1180,42 @@ function absEmneUrl(url) {
    Kun bachelorprogrammer tas med (lenker med /bachelor/ i URL-en) –
    årsstudier og enkeltemner utelates. */
 function getEmneIncludedPrograms(root) {
-  var strongs = (root || document).querySelectorAll('strong, h2, h3');
+  var doc = root || document;
+  var strongs = doc.querySelectorAll('strong, h2, h3');
   for (var i = 0; i < strongs.length; i++) {
-    if (/Dette emnet inngår i/i.test(strongs[i].textContent || '')) {
-      var parent = strongs[i].parentElement;
-      var links = parent ? parent.querySelectorAll('ul a') : [];
-      var seen = {};
-      var out = [];
-      for (var j = 0; j < links.length; j++) {
-        var href = links[j].getAttribute('href') || '';
-        if (href.indexOf('/bachelor/') === -1) continue;
-        var txt = (links[j].textContent || '').trim();
-        /* Dedupliser på programmet lenken peker til, ikke på lenketeksten:
-           kristiania.no lister samme bachelorgrad under flere navn (f.eks.
-           «HR, ledelse og organisasjon» og «HR og personalledelse» peker
-           begge på /bachelor/hr-ledelse-og-organisasjon/). Første navn vinner. */
-        var key = programKeyFromHref(href);
-        if (txt && !seen[key]) { seen[key] = 1; out.push({ name: txt, href: href }); }
-      }
-      return out;
-    }
+    if (!/Dette emnet inngår i/i.test(strongs[i].textContent || '')) continue;
+    var parent = strongs[i].parentElement;
+    return parent ? hkProgramLenker(parent) : [];
   }
   return [];
+}
+
+/* Lenkene i «Dette emnet inngår i» peker på lokale filer i de lagrede sidene –
+   den ekte programadressen ligger i react-dataene ved siden av. Derfor leses
+   JSON-en først, med href-ene som reserve. */
+function hkProgramLenker(rot) {
+  var seen = {};
+  var ut = [];
+
+  function legg(navn, href) {
+    if (!navn || !href || href.indexOf('/bachelor/') === -1) return;
+    /* Dedupliser på programmet lenken peker til, ikke på lenketeksten:
+       kristiania.no lister samme bachelorgrad under flere navn. Første navn vinner. */
+    var key = programKeyFromHref(href);
+    if (seen[key]) return;
+    seen[key] = 1;
+    ut.push({ name: String(navn).trim(), href: href });
+  }
+
+  var re = /"label":"([^"]*)","href":"([^"]*)"/g;
+  var m;
+  while ((m = re.exec(rot.innerHTML || ''))) legg(m[1], m[2]);
+  if (ut.length) return ut;
+
+  rot.querySelectorAll('ul a').forEach(function(a) {
+    legg(a.textContent || '', a.getAttribute('href') || '');
+  });
+  return ut;
 }
 
 /* Åpne riktig program-kort, scroll til den nye emne-raden og fremhev den */
@@ -1401,8 +1415,11 @@ function showEmneProgramChoice(emne, programs, opts) {
     if (paagaaende.length) {
       html += hkProgramHeading('Fortsett studieprogram', false);
       paagaaende.forEach(function(x) { html += kort(x); });
-      html += hkProgramHeading('Start på et nytt program', true);
-      nye.forEach(function(x) { html += kort(x); });
+      /* Overskriften gir bare mening når det faktisk står programmer under. */
+      if (nye.length) {
+        html += hkProgramHeading('Start på et nytt program', true);
+        nye.forEach(function(x) { html += kort(x); });
+      }
     } else {
       nye.forEach(function(x) { html += kort(x); });
     }

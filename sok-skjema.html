@@ -621,6 +621,8 @@ body {
 .s0-badge-city { background: #AF0018; color: #fff; }
 .s0-program-name { font-size: 17px; font-weight: 600; color: #1A1A1A; }
 .s0-program-meta { font-size: 14px; color: #5C5C5C; margin: 0 0 2px; }
+/* Alene i søknaden: ingen prioritet, ingen pil-knapper, ingen draghåndtak */
+.s0-prio-row-alene { cursor: default; }
 .s0-legg-til-btn {
   display: flex; align-items: center; gap: 6px;
   color: #0A4FB8; font-size: 15px; font-weight: 500;
@@ -1050,7 +1052,7 @@ body {
 .bt-prog-label { font-size: 13px; color: #5C5C5C; margin-bottom: 3px; }
 .bt-card-note { padding: 16px 24px 20px; }
 /* Studieprogram på Betaling er ren informasjon – programmene står i sammendraget */
-.bt-prog-note { background: #fff; border: 1px solid #D4D4D4; border-radius: 8px; padding: 20px 24px; margin-bottom: 12px; }
+.bt-prog-note { background: #FCF8F5; border: 1px solid #F9CCD2; border-radius: 8px; padding: 20px 24px; margin-bottom: 12px; }
 .bt-prog-note-title { display: block; font-size: 15px; font-weight: 600; color: #46000A; margin-bottom: 6px; }
 .bt-prog-note-text { font-size: 15px; color: #1A1A1A; line-height: 1.55; margin: 0; }
 /* Valgt betalingsmåte: .selected settes på .payment-radio, derfor :has() */
@@ -1170,9 +1172,9 @@ body {
   <div id="step0Page">
     <div class="s0-page">
       <h1 class="s0-title">Søknad</h1>
-      <p class="s0-intro">Du søker på hele studieprogram og enkeltemner i samme søknad.
-        Rekkefølgen på programmene er prioriteringen din — dra dem, eller bruk pilene.</p>
-      <div class="s0-faq">
+      <p class="s0-intro">Du søker på hele studieprogram og enkeltemner i samme søknad.<span
+        id="s0IntroRekkefolge"> Rekkefølgen på programmene er prioriteringen din — dra dem, eller bruk pilene.</span></p>
+      <div class="s0-faq" id="s0FaqRekkefolge">
         <button class="s0-faq-header" onclick="toggleS0Faq(this)">
           <span class="s0-faq-question">Kan jeg endre rekkefølgen senere?</span>
           <svg class="s0-faq-chevron" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1190,7 +1192,7 @@ body {
       </div>
       <button class="s0-legg-til-btn" onclick="toggleProgramSearch()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#0A4FB8" stroke-width="2.5" stroke-linecap="round"/></svg>
-        <span id="addProgramBtnLabel">Legg til studieprogram</span>
+        <span id="addProgramBtnLabel">Legg til studier</span>
       </button>
       <div id="step0ProgramSearch" style="display:none;margin-top:12px;">
         <div class="s0-search-wrap">
@@ -1680,7 +1682,7 @@ body {
 
             <div class="btn-row" style="margin-top:32px;">
               <button class="btn-secondary" onclick="gaVidere(3)">Tilbake til opplysninger</button>
-              <button class="btn-primary" onclick="gaVidereStep4()">Gå videre</button>
+              <button class="btn-primary" id="step4Cta" onclick="gaVidereStep4()">Gå videre</button>
             </div>
           </div>
         </div>
@@ -2138,7 +2140,7 @@ function toggleProgramSearch() {
   var panel = document.getElementById('step0ProgramSearch');
   var label = document.getElementById('addProgramBtnLabel');
   panel.style.display = _programSearchOpen ? 'block' : 'none';
-  if (label) label.textContent = _programSearchOpen ? 'Lukk søk' : 'Legg til studieprogram';
+  if (label) label.textContent = _programSearchOpen ? 'Lukk søk' : 'Legg til studier';
   if (_programSearchOpen) {
     renderProgramSearchFilters();
     renderProgramSearchResults();
@@ -2204,6 +2206,13 @@ function addProgramFromSearch(id) {
 function renderStep0() {
   var b = getBasket();
   var programs = (b.programs || []).filter(function(p) { return p.type !== 'nett'; });
+  /* Rekkefølge er noe man har først med to valg. Med ett program – eller ingen –
+     står det verken prioritet, piler eller draghåndtak å forklare. */
+  var harRekkefolge = programs.length > 1;
+  var introRekke = document.getElementById('s0IntroRekkefolge');
+  if (introRekke) introRekke.style.display = harRekkefolge ? '' : 'none';
+  var faqRekke = document.getElementById('s0FaqRekkefolge');
+  if (faqRekke) faqRekke.style.display = harRekkefolge ? '' : 'none';
   var nettPrograms = (b.programs || []).filter(function(p) { return p.type === 'nett'; });
   var looseEmner = b.looseEmner || [];
 
@@ -2508,12 +2517,19 @@ function buildPrioritetCardHtml(p, idx, total, removeFn, moveFn) {
       + ' onclick="' + moveFn + '(\'' + safeId + '\',\'' + dir + '\')" aria-label="' + label + '">' + svg + '</button>';
   }
 
-  return '<div class="s0-prio-row" draggable="true" data-progid="' + safeId + '"'
-    + ' ondragstart="s0DragStart(event,\'' + safeId + '\')" ondragover="s0DragOver(event)"'
-    + ' ondragleave="s0DragLeave(event)" ondrop="s0Drop(event)" ondragend="s0DragEnd(event)">'
-    + '<span class="s0-drag-handle">' + ICON_DRAG + '</span>'
+  /* Med ett program finnes det ingen rekkefølge å endre. Da faller prioriteten,
+     draghåndtaket og pilene bort, og raden står igjen med selve valget. */
+  var flere = total > 1;
+
+  return '<div class="s0-prio-row' + (flere ? '' : ' s0-prio-row-alene') + '"'
+    + (flere
+        ? ' draggable="true" ondragstart="s0DragStart(event,\'' + safeId + '\')" ondragover="s0DragOver(event)"'
+          + ' ondragleave="s0DragLeave(event)" ondrop="s0Drop(event)" ondragend="s0DragEnd(event)"'
+        : '')
+    + ' data-progid="' + safeId + '">'
+    + (flere ? '<span class="s0-drag-handle">' + ICON_DRAG + '</span>' : '')
     + '<div class="s0-prio-main">'
-    + '<div class="s0-prioritet-label">' + (idx + 1) + '. prioritet</div>'
+    + (flere ? '<div class="s0-prioritet-label">' + (idx + 1) + '. prioritet</div>' : '')
     /* Omfanget står rett under prioriteten, før navnet – samme rekkefølge som
        emnegruppene, der meta også kommer før overskriften. */
     + (meta ? '<div class="s0-program-meta">' + meta + '</div>' : '')
@@ -2521,8 +2537,8 @@ function buildPrioritetCardHtml(p, idx, total, removeFn, moveFn) {
     + (badges ? '<div class="s0-badges">' + badges + '</div>' : '')
     + '</div>'
     + '<div class="s0-prio-actions">'
-    + icon(idx === 0, 'up', 'Flytt ' + navn + ' opp', ICON_UP)
-    + icon(idx === total - 1, 'down', 'Flytt ' + navn + ' ned', ICON_DOWN)
+    + (flere ? icon(idx === 0, 'up', 'Flytt ' + navn + ' opp', ICON_UP) : '')
+    + (flere ? icon(idx === total - 1, 'down', 'Flytt ' + navn + ' ned', ICON_DOWN) : '')
     + '<button class="k-delete" onclick="' + removeFn + '(\'' + safeId + '\')" aria-label="Fjern ' + navn + ' fra s\u00f8knaden">' + ICON_X_PLAIN + '</button>'
     + '</div>'
     + '</div>';
@@ -3312,6 +3328,9 @@ function renderPaymentStep() {
   btVis('betalingTrustRow', harEmner);
   btVis('betalingRabattSection', harEmner);
   btVis('betingelserRow', harEmner);
+  /* Uten emner er dette siste side – da sender knappen inn søknaden. */
+  var step4Cta = document.getElementById('step4Cta');
+  if (step4Cta) step4Cta.textContent = harEmner ? 'Gå videre' : 'Send inn søknad';
   /* Feilmeldingen gjelder avkryssingene slik de står nå – den skal ikke bli
      hengende igjen fra forrige gang steget ble tegnet. */
   var samtykkeErr = document.getElementById('err-samtykke');
@@ -3486,9 +3505,10 @@ function gaVidereStep4() {
     return;
   }
 
-  // Ingenting å betale for → søknaden sendes inn fra sammendraget
+  /* Ingenting å betale for – da er Betaling siste side, og søknaden sendes
+     herfra i stedet for via en egen oppsummering. */
   _valgtBetalingsmate = null;
-  gaVidere(5);
+  animateSend();
 }
 
 /* Betalingsdetaljer (steg 4b) — vises etter valg av betalingsmetode */
