@@ -2165,11 +2165,27 @@ function renderProgramSearchFilters() {
   document.getElementById('programSearchFilters').innerHTML = html;
 }
 
+/* Programmer lagt til fra en studieside bærer studiekoden sin som id
+   («MH26BCSHO1»), mens katalogen her bruker sine egne slugger. Da må
+   gjenkjenningen gå på navnet også, ellers står et program i søknaden uten å
+   være merket «Valgt» – og kan legges til en gang til. */
+function s0ProgramNokkel(navn, niva) {
+  var rent = String(navn || '').toLowerCase();
+  /* Navnet bærer ofte graden selv («Bachelor i Cybersikkerhet»). Den tas ut av
+     navnet og legges til som eget ledd, så Design (bachelor) og Design (master)
+     ikke blir det samme programmet. */
+  var fraNavn = rent.match(/^(bachelor|master|årsstudium|fagskole)( i)?\s+/);
+  if (fraNavn) rent = rent.slice(fraNavn[0].length);
+  var grad = String(niva || (fraNavn && fraNavn[1]) || '').toLowerCase();
+  return rent.replace(/[^a-zæøå0-9]+/g, '') + '|' + grad.replace(/[^a-zæøå0-9]+/g, '');
+}
+
 function renderProgramSearchResults() {
   var query = (document.getElementById('programSearchInput').value || '').toLowerCase().trim();
   var checkedLevels = Array.prototype.slice.call(document.querySelectorAll('#programSearchFilters input:checked')).map(function(c) { return c.value; });
   var b = getBasket();
   var addedIds = (b.programs || []).map(function(p) { return p.id; });
+  var addedNavn = (b.programs || []).map(function(p) { return s0ProgramNokkel(p.name, p.level); });
 
   var results = PROGRAM_CATALOG.filter(function(item) {
     if (query && item.name.toLowerCase().indexOf(query) === -1) return false;
@@ -2182,7 +2198,8 @@ function renderProgramSearchResults() {
     html = '<p style="font-size:14px;color:#5C5C5C;padding:12px 4px;">Ingen studieprogram matcher søket.</p>';
   } else {
     results.forEach(function(item) {
-      var already = addedIds.indexOf(item.id) > -1;
+      var already = addedIds.indexOf(item.id) > -1
+        || addedNavn.indexOf(s0ProgramNokkel(item.name, item.level)) > -1;
       html += '<div class="s0-search-result' + (already ? ' added' : '') + '"' + (already ? '' : ' onclick="addProgramFromSearch(\'' + item.id + '\')"') + '>'
         + '<div><div class="s0-search-result-name">' + item.name + (already ? ' <span class="s0-badge-valgt">Valgt</span>' : '') + '</div>'
         + '<div class="s0-search-result-meta">' + item.level + (item.city ? ' · ' + item.city : ' · Nettstudium') + '</div></div>'
@@ -2196,11 +2213,19 @@ function addProgramFromSearch(id) {
   var item = PROGRAM_CATALOG.find(function(p) { return p.id === id; });
   if (!item) return;
   var b = getBasket();
-  if (b.programs.find(function(p) { return p.id === id; })) return;
+  var nokkel = s0ProgramNokkel(item.name, item.level);
+  if (b.programs.find(function(p) {
+    return p.id === id || s0ProgramNokkel(p.name, p.level) === nokkel;
+  })) return;
   b.programs.push({ id: item.id, name: item.name, level: item.level, points: '', type: item.type, city: item.city, startSemester: 'Høst 2026' });
   saveBasket(b);
+  /* Valget er tatt – da lukker søket seg, så studenten ser hva som nettopp
+     havnet i søknaden i stedet for å bli stående i listen. */
+  if (_programSearchOpen) toggleProgramSearch();
+  /* Søketeksten nullstilles, så neste søk starter blankt. */
+  var sokefelt = document.getElementById('programSearchInput');
+  if (sokefelt) sokefelt.value = '';
   renderStep0();
-  renderProgramSearchResults();
 }
 
 function renderStep0() {
@@ -2213,6 +2238,9 @@ function renderStep0() {
   if (introRekke) introRekke.style.display = harRekkefolge ? '' : 'none';
   var faqRekke = document.getElementById('s0FaqRekkefolge');
   if (faqRekke) faqRekke.style.display = harRekkefolge ? '' : 'none';
+  /* Står søket åpent, må «Valgt»-merkingen følge med når noe legges til eller
+     fjernes – ellers blir listen stående med gårsdagens svar. */
+  if (_programSearchOpen) renderProgramSearchResults();
   var nettPrograms = (b.programs || []).filter(function(p) { return p.type === 'nett'; });
   var looseEmner = b.looseEmner || [];
 
