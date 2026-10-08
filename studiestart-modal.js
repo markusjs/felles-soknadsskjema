@@ -679,15 +679,34 @@ var SS_PERISK_TITTEL = 'Studieperioden kan bli for kort for å ta denne eksamene
 var SS_PERISK_TEKST = 'Studieperioden må være minimum 4 måneder fra startdato til '
   + 'sluttdato (siste eksamensdato) for å kvalifisere til støtte fra Lånekassen.';
 
-function ssForKortBoks() {
+function ssPeriskBoks(tittel, tekst, apen) {
   var chevron = '<svg width="16" height="10" viewBox="0 0 16 10" fill="none"><path d="M1.5 1.5L8 8l6.5-6.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  return '<div class="ss-perisk">'
+  return '<div class="ss-perisk' + (apen ? ' apen' : '') + '">'
     + '<div class="ss-perisk-head" onclick="ssTogglePerisk(event, this)">'
-    + '<span class="ss-perisk-tittel">' + SS_PERISK_TITTEL + '</span>'
+    + '<span class="ss-perisk-tittel">' + tittel + '</span>'
     + '<span class="ss-perisk-ikon">' + chevron + '</span>'
     + '</div>'
-    + '<div class="ss-perisk-body"><p class="ss-perisk-tekst">' + SS_PERISK_TEKST + '</p></div>'
+    + '<div class="ss-perisk-body"><p class="ss-perisk-tekst">' + tekst + '</p></div>'
     + '</div>';
+}
+
+function ssForKortBoks() {
+  return ssPeriskBoks(SS_PERISK_TITTEL, SS_PERISK_TEKST, false);
+}
+
+/* Uten en konkret semesterstart å foreslå blir oppstarten fortløpende, og da
+   vet verken vi eller studenten når studieperioden begynner. Da må Lånekassens
+   fire-måneders-krav stå tydelig på startdato-steget. Den som har svart «nei»
+   på Lånekassen trenger ikke påminnelsen. */
+var SS_FORTLOP_TITTEL = 'Studieperioden kan bli for kort for å få støtte fra Lånekassen';
+var SS_FORTLOP_TEKST = 'Minner om Lånekassens regel om at man må ha en studieperiode på '
+  + 'minimum 4 måneder fra startdato (tidligste startdato) til sluttdato '
+  + '(siste eksamensdato) for å kvalifisere til støtte.';
+
+function ssFortlopendeVarsel() {
+  if (_ssWantsLanekassen === false) return '';
+  if (ssAnbefaltSemesterstart()) return '';
+  return ssPeriskBoks(SS_FORTLOP_TITTEL, SS_FORTLOP_TEKST, true);
 }
 
 /* ── Info accordion ── */
@@ -846,6 +865,7 @@ function buildApproachingHTML(sc) {
     + '<h2 class="ss-title">Velg studiestart</h2>'
     + '<div class="ss-body">' + ssStegIndikatorHtml() + ssTilbakeKnapp()
     + '<div class="ss-question" style="font-size:20px;margin:0">Startdato</div>'
+    + ssFortlopendeVarsel()
     /* Avkryssingen har bare mening når bunken har flere emner – fra en
        enkeltemneside, eller når ett emne redigeres, er det bare ett. */
     + (_ssEmner.length > 1
@@ -1057,10 +1077,23 @@ function ssOppmeldingBoks() {
   return '<div class="ss-oppmelding">' + SS_OPPMELDING_TEKST + '</div>';
 }
 
+/* Varselet står på kortet når perioden uansett er for kort, og i tillegg på
+   det valgte kortet når vi ikke kan love en konkret startdato: da blir
+   oppstarten fortløpende, og studieperioden fram til eksamen er uviss. */
+function ssEksamenVarsel(periode, valgt) {
+  if (periode.forKort) return true;
+  return !!valgt && !ssSemesterstartForPeriode(periode.verdi);
+}
+
+function ssEksamenskortHtml(handler) {
+  return ssEksamensPerioder().map(function(a) {
+    var valgt = _ssEksamen === a.verdi;
+    return ssValgkort(a.verdi, a.label, valgt, handler, a.sub, ssEksamenVarsel(a, valgt));
+  }).join('') + ssValgkort('vetikke', 'Vet ikke ennå', _ssEksamen === 'vetikke', handler);
+}
+
 function buildEksamenHTML(sc) {
-  var kort = ssEksamensPerioder().map(function(a) {
-    return ssValgkort(a.verdi, a.label, _ssEksamen === a.verdi, 'ssVelgEksamen', a.sub, a.forKort);
-  }).join('') + ssValgkort('vetikke', 'Vet ikke ennå', _ssEksamen === 'vetikke', 'ssVelgEksamen');
+  var kort = ssEksamenskortHtml('ssVelgEksamen');
 
   return SS_LUKK
     + '<h2 class="ss-title">Studieperiode</h2>'
@@ -1084,6 +1117,8 @@ window.ssVelgEksamen = function(kort, verdi) {
   kort.classList.add('selected');
   var btn = document.getElementById('ss-confirm-btn');
   if (btn) btn.disabled = false;
+  /* Varselet hører til valget, så kortene må bygges om når valget endrer seg. */
+  if (_ssSteg === 'eksamen') ssGaTilSteg('eksamen');
 };
 
 /* ── Stegmotor ──────────────────────────────────────────────────────────── */
@@ -1367,14 +1402,12 @@ function ssRedTegn() {
   /* Eksamensperioden spørres bare når studenten faktisk skal søke støtte –
      samme regel som i stegløpet. */
   if (lk === true) {
-    var kort = ssEksamensPerioder().map(function(a) {
-      return ssValgkort(a.verdi, a.label, _ssEksamen === a.verdi, 'ssRedEksamen', a.sub, a.forKort);
-    }).join('') + ssValgkort('vetikke', 'Vet ikke ennå', _ssEksamen === 'vetikke', 'ssRedEksamen');
+    var kort = ssEksamenskortHtml('ssRedEksamen');
     seksjoner += ssRedSeksjon(nr++, 'Når planlegger du å ta eksamen?',
       ssOppmeldingBoks() + '<div class="ss-radio-group" style="margin-top:12px">' + kort + '</div>');
   }
 
-  seksjoner += ssRedSeksjon(nr++, 'Startdato', ssDatokortHTML(sc, SS_ALLE));
+  seksjoner += ssRedSeksjon(nr++, 'Startdato', ssFortlopendeVarsel() + ssDatokortHTML(sc, SS_ALLE));
   seksjoner += ssRedBit(o.bunnHtml);
 
   _ssRed.container.innerHTML = '<div class="ss-backdrop ss-inline-host open" id="ss-backdrop">'
