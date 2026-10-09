@@ -55,6 +55,8 @@ function injectStyles() {
 .ss-radio-desc{font-size:14px;color:#5C5C5C;margin:4px 0 0;line-height:1.45}\
 .ss-perisk{border:1px solid #FFCA00;background:#FFFBEB;border-radius:8px;overflow:hidden;flex-shrink:0}\
 .ss-radio-card>.ss-perisk{flex-basis:100%}\
+.ss-datovarsel{flex-basis:100%}\
+.ss-datovarsel:not(:empty){margin-top:12px}\
 .ss-perisk-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:12px 14px;cursor:pointer;user-select:none}\
 .ss-perisk-tittel{font-size:15px;font-weight:600;color:#1A1A1A;line-height:1.35}\
 .ss-oppmelding{border:1px solid #FFCA00;background:#FFFBEB;border-radius:8px;padding:14px 16px;font-size:15px;font-weight:600;color:#1A1A1A;line-height:1.4}\
@@ -640,6 +642,7 @@ window.ssCalSelect = function(y, m, d) {
   if (_ssAktivtEmne) {
     _ssPerEmneDato[_ssAktivtEmne] = _ssCalSelected;
     ssOppdaterVarsel(_ssAktivtEmne);
+    ssOppdaterDatovarsel(_ssAktivtEmne);
   }
   ssVisFeil(null);
   ssRenderCalendar();
@@ -702,6 +705,24 @@ var SS_FORTLOP_TITTEL = 'Studieperioden kan bli for kort for å få støtte fra 
 var SS_FORTLOP_TEKST = 'Minner om Lånekassens regel om at man må ha en studieperiode på '
   + 'minimum 4 måneder fra startdato (tidligste startdato) til sluttdato '
   + '(siste eksamensdato) for å kvalifisere til støtte.';
+
+/* En dato studenten plukker selv er ikke den vi har anbefalt, og da kan vi
+   ikke garantere at studieperioden holder fram til eksamen. Påminnelsen står
+   derfor i kortet så lenge en slik dato er valgt. */
+function ssValgfriVarsel(kode) {
+  if (_ssWantsLanekassen === false) return '';
+  if (_ssPerEmne[kode] !== 'custom') return '';
+  var dato = _ssPerEmneDato[kode];
+  if (!dato) return '';
+  var anbefalt = ssAnbefaltSemesterstart();
+  if (anbefalt && anbefalt.getTime() === dato.getTime()) return '';
+  return ssPeriskBoks(SS_FORTLOP_TITTEL, SS_FORTLOP_TEKST, false);
+}
+
+window.ssOppdaterDatovarsel = function(kode) {
+  var el = document.getElementById('ss-datovarsel-' + kode);
+  if (el) el.innerHTML = ssValgfriVarsel(kode);
+};
 
 function ssFortlopendeVarsel() {
   if (_ssWantsLanekassen === false) return '';
@@ -815,6 +836,10 @@ function ssDatokortHTML(sc, kode) {
     /* Klikk inne i kalenderen må ikke boble opp til kortet – da kalles
        ssVelgDato på nytt, kalenderen bygges om og hopper tilbake til i dag. */
     + '<div class="ss-calendar-wrap" id="ss-cal-wrap-' + kode + '" onclick="event.stopPropagation()"></div>'
+    /* Varselet om valgt dato hører til kortet, ikke til kalenderen – den
+       bygges om ved hvert klikk. */
+    + '<div class="ss-datovarsel" id="ss-datovarsel-' + kode + '" onclick="event.stopPropagation()">'
+    + ssValgfriVarsel(kode) + '</div>'
     + '</div>'
     + (ssValgtPeriodeForKort() ? ssForKortBoks() : '<div class="ss-varsel" id="ss-varsel-' + kode + '" hidden></div>')
     + '</div>';
